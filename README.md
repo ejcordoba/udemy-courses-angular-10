@@ -8,7 +8,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
 
 ## 5. Instalaciones y configuraciones mínimas necesarias.
 
-Instalaciones necesarias para el curso
+**Instalaciones necesarias para el curso**
 
 1. NodeJS: https://nodejs.org/es/
 2. Google Chrome:
@@ -21,7 +21,7 @@ https://github.com/angular/angular-cli
 5. Ionic
 http://ionicframework.com/getting-started/
 
-Editores de Texto:
+**Editores de Texto:**
 
 Atom
 https://atom.io/
@@ -29,9 +29,9 @@ https://atom.io/
 Visual Studio Code
 https://code.visualstudio.com/
 
-Plugins recomendados para los siguientes editores:
+**Plugins recomendados para los siguientes editores:**
 
-ATOM
+**ATOM**
 
 * Angular 2 Type Script Snippets
 * Atom Bootstrap3
@@ -40,7 +40,7 @@ ATOM
 * Platformio Ide Terminal
 * V Bootstrap4
 
-Visual Studio Code
+**Visual Studio Code**
 
 * Angular 2 TypeScript Emmet
 * Angular 5 Snippets – TypeScript, Html, Angular Material...
