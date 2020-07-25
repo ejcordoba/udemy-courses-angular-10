@@ -58,3 +58,25 @@ https://code.visualstudio.com/
 * TSLint
 * TypeScript Hero
 * TypeScript Importer
+
+# Sección 2:Gentil introducción a TypeScript y ES6
+
+## 10. Demostración de TypeScript
+
+Explicación de cómo es un lenguaje tipado, para empezar renombramos el archivo app.js a app.ts
+
+Ahora nos muestra errores, la función saludar requería un argumento, que ahora le podemos pasar.
+
+Cuando definimos el argumento a pasar en la función como tipo string y le pasamos el atributo de tipo string del objeto constante nos da un error:
+
+>Uncaught SyntaxError: Unexpected token ':'
+
+Esto es porque el navegador no soporta cargar directamente un archivo tipo .ts que es lo que le estamos indicando en el &lt;script> del html
+
+Para compilar el archivo ts en un archivo js:
+
+>tsc --version
+
+>Version 3.7.5
+
+>tsc app.ts
