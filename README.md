@@ -80,3 +80,21 @@ Para compilar el archivo ts en un archivo js:
 >Version 3.7.5
 
 >tsc app.ts
+
+## 11. Configuración de TypeScript
+
+Crear un archivo de configuración:
+
+>tsc --init
+
+Esto genera un archivo tsconfig.json
+
+>tsc -w 
+
+Esto hace que entre en modo observador, pendiente de recompilar cuando haya cambios en el archivo ts
+
+## 12. Variables let y const
+
+Dentro de un scope (entre llaves), cuando las variables se declaran con *let* tienen validez dentro de ese scope, cuando se declaran dos variables *let* con el mismo nombre, al compilarlas a js se renombran, de tal manera que no hay conflicto.
+
+Por otro lado, se puede declarar un valor como constante, *const*, pero entonces no se le podrá asignar otro valor, la convención es declarar los nombres todos en mayúsculas.
