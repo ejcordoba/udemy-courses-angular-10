@@ -73,7 +73,7 @@ Cuando definimos el argumento a pasar en la función como tipo string y le pasam
 
 Esto es porque el navegador no soporta cargar directamente un archivo tipo .ts que es lo que le estamos indicando en el &lt;script> del html
 
-Para compilar el archivo ts en un archivo js:
+Para compilar el archivo ts en un archivo js *tsc: typescript compiler* : 
 
 >tsc --version
 
@@ -98,3 +98,35 @@ Esto hace que entre en modo observador, pendiente de recompilar cuando haya camb
 Dentro de un scope (entre llaves), cuando las variables se declaran con *let* tienen validez dentro de ese scope, cuando se declaran dos variables *let* con el mismo nombre, al compilarlas a js se renombran, de tal manera que no hay conflicto.
 
 Por otro lado, se puede declarar un valor como constante, *const*, pero entonces no se le podrá asignar otro valor, la convención es declarar los nombres todos en mayúsculas.
+
+## 13. Introducción a los tipos de datos
+
+let mensaje: string = "Hola";
+
+let numero: number = 123;
+
+let booleano: boolean = true;
+
+let hoy: Date = new Date();
+
+let cualquiercosa;
+
+//let cualquiercosa: string | number; <-- asignar varios tipos a una misma variable con un pipe
+
+cualquiercosa = mensaje;
+
+cualquiercosa = numero;
+
+cualquiercosa = booleano;
+
+cualquiercosa = hoy;
+
+let spiderman = {
+    nombre: 'Peter',
+    edad: 30
+};
+spiderman = {
+    nombre: 'Juan',
+    edad: 40
+};
+

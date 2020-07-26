@@ -1,8 +1,27 @@
 //Función auto-invaocada para evitar errores de variables reutilizadas
 (function(){
 
-    var mensaje  = "Hola";
-    console.log(mensaje);
+    let mensaje: string = "Hola";
+    let numero: number = 123;
+    let booleano: boolean = true;
+    let hoy: Date = new Date();
+    let cualquiercosa;
+    //let cualquiercosa: string | number; <-- asignar varios tipos a una misma variable con un pipe
+    cualquiercosa = mensaje;
+    cualquiercosa = numero;
+    cualquiercosa = booleano;
+    cualquiercosa = hoy;
+    
+    let spiderman = {
+        nombre: 'Peter',
+        edad: 30
+    };
+    spiderman = {
+        nombre: 'Juan',
+        edad: 40
+    };
+   /*  var mensaje  = "Hola";
+    console.log(mensaje) */    
 
 })();
 
