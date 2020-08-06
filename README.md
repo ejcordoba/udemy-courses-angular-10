@@ -141,4 +141,18 @@ Si entramos en modo observador "tsc -w" también encontrará ese directorio y lo
 Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typescript"],
 
 ## 15. Template literales del ES6
+(function(){
 
+    function getEdad() {
+        return 100 + 100 + 300;
+    }
+    const nombre = "Eduardo";
+    const apellido = "Córdoba";
+    const edad = 38;
+    // const salida = nombre + apellido + edad;
+    // const salida = nombre + " " + apellido + " ( " + edad + " ) ";
+    // Eduardo Córdoba (Edad: 38)
+    const salida = `${ nombre } \n${ apellido } \n( ${ edad + 100 } ) funcion edad= ${getEdad()}`;
+    console.log(salida);
+
+})();
