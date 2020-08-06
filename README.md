@@ -177,3 +177,5 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     }
     activar('Gordon','tarde');
 })();
+
+## 17. Funciones de Flecha
