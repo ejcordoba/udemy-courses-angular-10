@@ -139,3 +139,6 @@ Creamos un nuevo directorio "typescript" y hacemos una copia del archivo app.ts,
 Si entramos en modo observador "tsc -w" también encontrará ese directorio y lo compilará. Pero no lo deseo, porque quiero tipos.ts sólo para mis propias notas.
 
 Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typescript"],
+
+## 15. Template literales del ES6
+
