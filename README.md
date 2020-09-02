@@ -273,3 +273,5 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     }
     extraerArr(avengers);
 })();
+
+## 19. Promesas
