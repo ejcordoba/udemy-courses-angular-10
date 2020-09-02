@@ -337,3 +337,5 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
         .catch ( console.warn )
     
 })();
+
+## 21. Interfaces de TypeScript
