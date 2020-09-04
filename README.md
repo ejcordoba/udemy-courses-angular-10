@@ -372,3 +372,7 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     regresarAlCuartel( wolverine );
 
 })();
+
+## 22. Introducción a las Clases de la POO
+
+Controlado, pasando lección.
