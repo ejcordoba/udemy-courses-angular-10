@@ -433,3 +433,40 @@ Controlado, pasando lección.
     console.log(antman);
 })();
 
+## 25. Importaciones * URL
+
+Descargamos el código de ejemplo de la lección: https://github.com/Klerith/webpack-starter-typescript
+
+Dentro del directorio ejecutamos "npm install"
+
+Posteriormente ejecutamos el index.ts con "npm start"
+
+Creamos dentro del directorio src un nuevo directorio llamado "classes" o un nombre a nuestra elección, dentro de él creamos un archivo llamado "xmen.class.ts", el nombre .class. es opcional pero es una convencción opcional (alguna gente lo considera redundante)
+
+Básicamente, para exportar una clase(xmen.class.ts):
+
+
+export class Xmen {
+    constructor(
+        public nombre: string,
+        public clave : string
+    ){}
+
+    imprimir() {
+        console.log(`${ this.nombre } - ${ this.clave}`);
+    }
+}
+
+Para importarla (index.ts):
+
+
+import { Xmen } from './classes/xmen.class';
+
+
+
+const wolverine = new Xmen('Logan','Wolverine');
+
+wolverine.imprimir();
+
+
+

@@ -1,3 +1,5 @@
 "use strict";
-const mensaje = 'Hola Mundo!';
-console.log(mensaje);
+Object.defineProperty(exports, "__esModule", { value: true });
+const xmen_class_1 = require("./classes/xmen.class");
+const wolverine = new xmen_class_1.Xmen('Logan', 'Wolverine');
+wolverine.imprimir();
