@@ -4,6 +4,25 @@
 
 Udemy Angular course: From zero to expert (Angular 10+)
 
+## Índice del curso
+
+* Sección 1:Introducción al curso de Angular
+* 1.5: Instalaciones y configuaraciones mínimas necesarias.
+* Sección 2:Gentil introducción a TypeScript y ES6
+* 2.10: Demostración de TypeScript
+* 2.11: Configuración de TypeScript
+* 2.12: Variables let y const
+* 2.13. Introducción a los tipos de datos
+* 2.14. Excluir archivos a traducir
+* 2.15. Template literales del ES6
+* 2.16. Funciones: Parámetros opcionales, obligatorios y por defecto
+* 2.17. Funciones de Flecha
+* 2.18. Desestructuración de Objetos y Arreglos (arrays)
+* 2.
+
+
+
+
 Enlace [de prueba](#10-Demostracion-de-TypeScript)
 
 # Sección 1:Introducción al curso de Angular
