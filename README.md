@@ -1,6 +1,6 @@
 # angular-10
 
-## Curso de Udemy Angular: De cero a experto (Angular 10+)
+# Curso de Udemy Angular: De cero a experto (Angular 10+)
 
 Udemy Angular course: From zero to expert (Angular 10+)
 
@@ -101,26 +101,27 @@ Por otro lado, se puede declarar un valor como constante, *const*, pero entonces
 
 ## 13. Introducción a los tipos de datos
 
-let mensaje: string = "Hola";
+>let mensaje: string = "Hola";
 
-let numero: number = 123;
+>let numero: number = 123;
 
-let booleano: boolean = true;
+>let booleano: boolean = true;
 
-let hoy: Date = new Date();
+>let hoy: Date = new Date();
 
-let cualquiercosa;
+>let cualquiercosa;
 
-//let cualquiercosa: string | number; <-- asignar varios tipos a una misma variable con un pipe
+>//let cualquiercosa: string | number; <-- asignar varios tipos a una misma variable con un pipe
 
-cualquiercosa = mensaje;
+>cualquiercosa = mensaje;
 
-cualquiercosa = numero;
+>cualquiercosa = numero;
 
-cualquiercosa = booleano;
+>cualquiercosa = booleano;
 
-cualquiercosa = hoy;
+>cualquiercosa = hoy;
 
+```
 let spiderman = {
     nombre: 'Peter',
     edad: 30
@@ -129,7 +130,7 @@ spiderman = {
     nombre: 'Juan',
     edad: 40
 };
-
+```
 ## 14. Excluir archivos a traducir
 
 Exclusión de archivos a traducir de TS a JS
@@ -141,6 +142,8 @@ Si entramos en modo observador "tsc -w" también encontrará ese directorio y lo
 Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typescript"],
 
 ## 15. Template literales del ES6
+
+```
 (function(){
 
     function getEdad() {
@@ -156,9 +159,12 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     console.log(salida);
 
 })();
+```
 
 ## 16. Funciones: Parámetros opcionales, obligatorios y por defecto
-//Función auto-invaocada para evitar errores de variables reutilizadas
+
+```
+//Función auto-invocada para evitar errores de variables reutilizadas
 (function(){
     //quien = argumento obligatorio
     //momento = argumento opcional
@@ -177,10 +183,12 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     }
     activar('Gordon','tarde');
 })();
+```
 
 ## 17. Funciones de Flecha
 
-//Función auto-invaocada para evitar errores de variables reutilizadas
+```
+//Función auto-invocada para evitar errores de variables reutilizadas
 (function(){
 
     // Si declaramos la función en una constante no podremos sobreescribir la declaración de la función
@@ -218,9 +226,11 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
 
 
 })();
+```
 
 ## 18. Desestructuración de Objetos y Arreglos (arrays)
 
+```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
 (()=>{
     //objeto
@@ -273,9 +283,11 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     }
     extraerArr(avengers);
 })();
+```
 
 ## 19. Promesas
 
+```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
 (()=>{
 //Las promesas, básicamente, nos sirven para ejecutar un código sin bloquear el código de la aplicación
@@ -303,9 +315,10 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
         .catch( err => console.warn(err));//console.warn se muestra en amarillo
     console.log('Fin');
 })();
+```
 
 ## 20. Promesas y su tipado en TypeScript
-
+```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
 (()=>{
     //Para definir el tipo (tipado) de retorno de las promesas, vamos a definirlo tras los argumentos, indicando entre <> que tipo si hace el resolve (correcto)
@@ -337,9 +350,11 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
         .catch ( console.warn )
     
 })();
+```
 
 ## 21. Interfaces de TypeScript
 
+```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
 (()=>{
 
@@ -372,13 +387,15 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     regresarAlCuartel( wolverine );
 
 })();
+```
 
 ## 22. Introducción a las Clases de la POO
 
-Controlado, pasando lección.
+>Controlado, pasando lección.
 
 ## 23. Definición de una clase básica en TypeScript
 
+```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
 (()=>{
 
@@ -398,9 +415,10 @@ Controlado, pasando lección.
 
     console.log(antman);
 })();
+```
 
 ## 24. Constructores de una clase en TypeScript
-
+```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
 (()=>{
 
@@ -432,6 +450,7 @@ Controlado, pasando lección.
 
     console.log(antman);
 })();
+```
 
 ## 25. Importaciones * URL
 
@@ -445,7 +464,7 @@ Creamos dentro del directorio src un nuevo directorio llamado "classes" o un nom
 
 Básicamente, para exportar una clase(xmen.class.ts):
 
-
+```
 export class Xmen {
     constructor(
         public nombre: string,
@@ -456,20 +475,19 @@ export class Xmen {
         console.log(`${ this.nombre } - ${ this.clave}`);
     }
 }
-
+```
 Para importarla (index.ts):
 
-
+```
 import { Xmen } from './classes/xmen.class';
-
-
 
 const wolverine = new Xmen('Logan','Wolverine');
 
 wolverine.imprimir();
+```
 
 ## 26. Decoradores de Clases
-
+```
 function imprimirConsola( constructorClase: Function) {
     console.log( constructorClase );
 }//Para recibir el constructor de la función, o firma de la clase
@@ -486,9 +504,9 @@ export class Xmen {
         console.log(`${ this.nombre } - ${ this.clave}`);
     }
 }
-
+```
 ## 27. Tipado del retorno de una función
-
+```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
 (()=>{
 
@@ -505,5 +523,13 @@ export class Xmen {
 
     obtenerSalario().then( a => console.log( a.toUpperCase() ) )
 })();
+```
+## 28. Exámen práctico #1
 
+## 29. Explicación de la tarea
 
+## 30. Resolución del examen práctico #1
+
+## Cuestionario 1: Examen teórico #1
+
+## 31. Código fuente de la sección
