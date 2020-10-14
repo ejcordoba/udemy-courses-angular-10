@@ -4,6 +4,8 @@
 
 Udemy Angular course: From zero to expert (Angular 10+)
 
+Enlace [de prueba](#10-Demostracion-de-TypeScript)
+
 # Sección 1:Introducción al curso de Angular
 
 ## 5. Instalaciones y configuraciones mínimas necesarias.
