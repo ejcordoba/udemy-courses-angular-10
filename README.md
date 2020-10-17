@@ -645,5 +645,24 @@ class Rectangulo {
 
 - Directivas estructurales: Instrucciones que indical al HTML qué hacer, *ngIf por ejemplo para mostrar o no contenedores, etc ... *ngFor para hacer repeticiones de elementos HTML
 
+## 36. Nuestra primera interacción en Angular
+
+> Visitar https://angular.io
+
+- Cuando buscamos en la web nos aparecen informaciones con un icono delante que representa:
+- Pk: Package
+- C: Clase
+- I: Interfaz
+- K: Constante
+- F: Función
+- E: Enumeración
+- P: Pipe
+
+> Visitar https://plnkr.co/ Que se usará para códigos de demostración
+> También https://stackblitz.com/
+
+Usando este último crearemos un nuevo proyecto de Angular para testeo
+
+
 
 
