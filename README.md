@@ -670,6 +670,38 @@ Usando este último crearemos un nuevo proyecto de Angular para testeo.
 - Would you like to add Angular routing? No -> Nosotros haremos nuestras propias rutas
 - Which stylesheet format would you like to use? CSS (a elegir entre CSS, SCSS, SASS, LESS, Stylus)
 
+## 38. Creando un entorno local de Angular
+
+- https://angular.io/guide/quickstart
+- Angular CLI
+> ng new my-app
+> ng serve -o 
+
+- app.compontent.html:
+```
+<h1>Hola Mundo</h1>
+
+<ul>
+    <li>Nombre: {{ nombre }}</li>
+    <li>Apellido: {{ apellido }}</li>
+</ul>
+```
+- app.component.ts:
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  
+  nombre = 'Fernando';
+  apellido = 'Herrera';
+}
+
+```
 
 
 
