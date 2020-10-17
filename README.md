@@ -737,3 +737,62 @@ export class AppComponent {
 - README.md: cómo funciona la aplicación, archivo Markdown
 - tsconfig.json: le dice a typescript cómo trabajar
 - tslint.json: reglas de escritura
+
+## 40. Utilizando Bootstrap 4
+
+> https://getbootstrap.com/ -> Download
+```
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+```
+
+- Creación manual de un componente:
+
+    - app/components/header/header.component.ts
+
+- Indicar a la aplicación la creación del componente:
+    - app/app.module.ts
+
+- app.module.ts:
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+import { HeaderComponent } from './components/header/header.component';
+@NgModule({
+  declarations: [// Declarar componentes
+    AppComponent,
+    HeaderComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+- app.component.html
+```
+<app-header></app-header>
+
+<ul>
+    <li>Nombre: {{ nombre }}</li>
+    <li>Apellido: {{ apellido }}</li>
+</ul>
+```
+- header.component.ts
+```
+import { Component } from '@angular/core';
+
+/* Declaramos decorador para indicar que la clase HeaderComponen instanciará un componente */
+@Component({
+    selector: 'app-header', // Para llamar al componente mediante etiqueta en el html
+    template: `<h1>Header component</h1>`
+})
+export class HeaderComponent { // indicamos export para poder llamarlo en app.module.ts
+
+}
+```
