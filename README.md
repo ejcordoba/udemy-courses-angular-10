@@ -703,6 +703,37 @@ export class AppComponent {
 
 ```
 
+## 39. Estructura del proyecto
 
-
-
+- e2e: Test end to end, pruebas unitarias, integración, pruebas automáticas
+- node_modules: módulos de node.js
+- src: aplicación de Angular
+    - app
+        - Primera aplicacion de angular
+            - app.component.ts: primer componente
+            - app.component.css: archivo de estilo que sólo se aplica a este componente
+            - app.component.html: html del componente
+            - app.component.spec.ts: Archivo de pruebas automáticas (todo archivo "spec")
+            - app.module.ts.
+    - assets: Recursos estáticos, imágenes, etc...
+    - enviroments:
+        - enviroment.prod.ts: Variable de ambiente de producción
+        - enviroment.ts: Variable de ambiente de desarrollo
+    - browserslist: lista de navegadores para consolidación de CSS
+    - karma.conf.js: archivo de configuración de las pruebas de karma
+    - main.js: Primer código que Angular ejecutará para lanzar la aplicación
+        - platformBrowserDynamic(): Es una función que configura todo el ambiente para una aplicación web
+    - polyfills.ts: Funciones que ayudan a la compatibilidad entre versiones antiguas de navegadores web
+    - styles.css: CSS global de la aplicación
+    - index.html: Toda la aplicación se renderiza en <app-root>
+    - tsconfig.app.json: Especificaciones propias de la aplicacion de typescript
+    - tsconfig.spec.json: Configuración para las pruebas
+    - tslint.json: formas para la presentación de errores de código
+- .editorconfig: configuración del editor
+- .gitignore: ignorar archivos para el repositorio
+- angular.json: configuración de la aplicación
+- package-lock.json: nos dice como fué creado package.json
+- package.json: dependencias de producción, de desarrollo
+- README.md: cómo funciona la aplicación, archivo Markdown
+- tsconfig.json: le dice a typescript cómo trabajar
+- tslint.json: reglas de escritura
