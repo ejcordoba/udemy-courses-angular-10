@@ -547,7 +547,20 @@ export class Xmen {
 ```
 ## 28. Exámen práctico #1
 
+Instrucciones
+Descargue el material adjunto, el cual es un archivo de TypeScript.
+
+Se requiere que sea lo más especifico posible en cuanto a los tipos y uso de lo aprendido en esta sección (como es el ES6)
+
+Sea lo más explícito posible y siga las instrucciones que se encuentran en los comentarios del mismo.
+
+Por si acaso tienen problemas con la descarga (por alguna razón) Les dejo aquí el código
+
+Lean todos los comentarios y vean el siguiente video
+
 ## 29. Explicación de la tarea
+
+> Ver vídeo
 
 ## 30. Resolución del examen práctico #1
 
