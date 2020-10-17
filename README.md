@@ -661,7 +661,15 @@ class Rectangulo {
 > Visitar https://plnkr.co/ Que se usará para códigos de demostración
 > También https://stackblitz.com/
 
-Usando este último crearemos un nuevo proyecto de Angular para testeo
+Usando este último crearemos un nuevo proyecto de Angular para testeo.
+
+## 37. Nota de Actualización del Angular CLI
+
+> Al hacer ng new miApp ahora Angular CLI hace dos preguntas:
+
+- Would you like to add Angular routing? No -> Nosotros haremos nuestras propias rutas
+- Which stylesheet format would you like to use? CSS (a elegir entre CSS, SCSS, SASS, LESS, Stylus)
+
 
 
 
