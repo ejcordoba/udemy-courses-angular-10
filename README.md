@@ -641,5 +641,9 @@ class Rectangulo {
 
 ## 35. Introducción a los componentes y directivas estructurales.
 
+- Componentes: Pequeñas clases que cumplen una tarea específica, por ejemplo: Menú de navegación, Barra Lateral, Páginas, sub-páginas...footer...
+
+- Directivas estructurales: Instrucciones que indical al HTML qué hacer, *ngIf por ejemplo para mostrar o no contenedores, etc ... *ngFor para hacer repeticiones de elementos HTML
+
 
 
