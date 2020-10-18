@@ -1123,6 +1123,35 @@ Y posteriormente lo llamamos, aprovechamos tambien para guardar el index y usarl
 
 10 de 10 !!!
 
+# Sección 4:Aplicación #2: Aplicación de una sola página (SPA)
+
+¿Qué veremos en esta sección?
+
+A continuación vamos a aprender sobre los siguientes temas:
+
+- Crearemos una aplicación de una sola página (Single Page Application)
+- Creación de proyectos de Angular usando el CLI (Command Line Interface)
+- Instalando bootstrap o librerías de terceros usando el Angular-CLI
+- Creación de rutas de nuestra aplicación
+- Uso de RouterLink y RouterLinkActive para movernos de página y colocar clases a los elementos activos.
+- Uso del modulo Router, que nos permite movernos de página mediante código.
+- Obtención de parámetros vía URL.
+- Configuración de nuestro primer servicio en Angular para el manejo de la data.
+- Breve introducción a los Pipes 
+- Uso del buscador del navbar para realizar una consulta a nuestro arreglo de héroes.
+- Durante la sección, tendremos una tarea práctica bastante retadora pero servirá de reforzamiento de todo lo que veremos en esta sección.
+
+## 49. Iniciar el proyecto - SPA
+
+Sencillamente creamos el nuevo proyecto con:
+
+>ng new spa
+
+Para luego renombrar la carpeta "spa" a 02-spa, y entrando en ella lanzar el proyecto con:
+
+>ng serve -o
+
+## 50. Creando la estructura de nuestro proyecto
 
 
 
