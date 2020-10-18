@@ -1119,6 +1119,10 @@ Y posteriormente lo llamamos, aprovechamos tambien para guardar el index y usarl
         </ul>
 ```
 
+## Cuestionario 2: Examen teórico - de la sección Hola Mundo
+
+10 de 10 !!!
+
 
 
 
