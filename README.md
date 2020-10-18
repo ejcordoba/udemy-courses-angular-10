@@ -898,4 +898,93 @@ import { BodyComponent } from './components/body/body.component';
 export class AppModule { }
 ```
 
+## 42. Creando el footer.component
+
+En este caso vamos a usar angularCLI para crear el componente
+
+>ng g c components/footer
+
+Esto es la abreviatura de:
+
+>ng generate component components/footer
+```
+$ ng g c components/footer
+CREATE src/app/components/footer/footer.component.html (21 bytes)
+CREATE src/app/components/footer/footer.component.spec.ts (628 bytes)
+CREATE src/app/components/footer/footer.component.ts (275 bytes)
+CREATE src/app/components/footer/footer.component.css (0 bytes)
+UPDATE src/app/app.module.ts (627 bytes)
+```
+
+Una vez generado ya tenemos todos los archivos, incluidas las importaciones en app.module.ts
+
+Entonces podemos añadir código al footer.component.html:
+
+```
+<footer class="footer bg-dark text-center">
+    <div class="container">
+        <p>
+            &copy; Eduardo Córdoba 2020
+        </p>
+    </div>
+</footer>
+```
+
+Y llamar al componente en app.component.html:
+
+```
+<app-header></app-header>
+
+<app-body class="container"></app-body>
+
+<app-footer></app-footer>
+```
+
+Para posicionar el componente abajo en la web, usamos estilos CSS, al ser un estilo común es recomendable hacerlo en src/styles.css
+
+```
+footer {
+  color: white;
+  position: fixed;
+  bottom: 0;
+}
+```
+
+Vamos a hacer que en el footer se visualice el año actual automáticamente, para eso usaremos la función Date() de JavaScript, declaramos la variable anio y en el constructor la inicializamos con la función que devuelve el año actual, de tal manera que cuando se cargue la aplicación y este componente, en el HTML aparecerá ese valor, será de la siguiente manera, en footer.component.ts:
+
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-footer',
+  templateUrl: './footer.component.html',
+  styleUrls: ['./footer.component.css']
+})
+export class FooterComponent {
+  anio: number;
+
+  constructor() {
+    this.anio = new Date().getFullYear();
+  }
+
+}
+```
+
+En footer.component.html:
+
+```
+<footer class="footer bg-dark text-center">
+    <div class="container">
+        <p>
+            &copy; {{ anio }} Eduardo Córdoba
+        </p>
+    </div>
+</footer>
+```
+
+## 43. Estructura del body component
+
+
+
+
 
