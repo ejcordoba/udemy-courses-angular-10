@@ -1049,6 +1049,76 @@ Y quedaría el body.component.html tal que:
 </div>
 ```
 
+## 44. Directivas estructurales: *ngFor y el *ngIf
+
+Vamos a usar estas directivas para generar dinámicamente código HTML en nuestros elementos del body component
+
+Creamos un objeto con dos atributos tipo string:
+
+```
+export class BodyComponent { // indicamos export para poder llamarlo en app.module.ts
+
+    frase: any = {
+        mensaje: 'Un gran poder requiere una gran responsabilidad',
+        autor: 'Ben Parker'
+    };
+}
+```
+
+Y luego las llamamos en el html tipo {{ objeto.atributo }}
+
+```
+<div class="card-body">
+                <h5 class="card-title"> {{ frase.autor }} </h5>
+                <p class="card-text"> {{ frase.mensaje }} </p>
+            </div>
+```
+
+Ahora usaremos *ngIf para mostrar u ocultar la tarjeta, para ello declaramos una variable booleana que haga de bandera en el componente:
+
+```
+export class BodyComponent { // indicamos export para poder llamarlo en app.module.ts
+
+    mostrar = true;
+```
+
+Y añadimos la condición *ngIf al elemento que queremos manipular, además de en el boton añadir un evento (click) que vaya alternando el valor de la bandera de true a false y viceversa:
+
+```
+ <div *ngIf="mostrar" class="card text-white bg-primary mb-3" style="width: 100%;">
+            <div class="card-body">
+                <h5 class="card-title"> {{ frase.autor }} </h5>
+                <p class="card-text"> {{ frase.mensaje }} </p>
+            </div>
+        </div>
+        <button (click)="mostrar = !mostrar" class="btn btn-outline-primary btn-block">Mostrar/Ocultar</button>
+```
+
+Y ahora para usar el *ngFor y generar la lista dinámicamente primero creamos un array de string en el componente:
+
+```
+export class BodyComponent { // indicamos export para poder llamarlo en app.module.ts
+
+    mostrar = true;
+    frase: any = {
+        mensaje: 'Un gran poder requiere una gran responsabilidad',
+        autor: 'Ben Parker'
+    };
+
+    personajes: string[] = ['Spiderman', 'Venom', 'Dr. Octopus'];
+}
+```
+
+Y posteriormente lo llamamos, aprovechamos tambien para guardar el index y usarlo para puntuar numéricamente la lista:
+
+```
+<ul class="list-group">
+            <li *ngFor="let personaje of personajes; let i = index" class="list-group-item">
+                {{ i +1 }} - {{ personaje }}
+            </li>
+        </ul>
+```
+
 
 
 

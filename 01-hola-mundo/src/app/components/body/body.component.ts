@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class BodyComponent { // indicamos export para poder llamarlo en app.module.ts
 
+    mostrar = true;
+    frase: any = {
+        mensaje: 'Un gran poder requiere una gran responsabilidad',
+        autor: 'Ben Parker'
+    };
+
+    personajes: string[] = ['Spiderman', 'Venom', 'Dr. Octopus'];
 }
