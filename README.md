@@ -790,9 +790,112 @@ import { Component } from '@angular/core';
 /* Declaramos decorador para indicar que la clase HeaderComponen instanciará un componente */
 @Component({
     selector: 'app-header', // Para llamar al componente mediante etiqueta en el html
-    template: `<h1>Header component</h1>`
+    template: `<h1>Header component</h1>` // HTML que se mostrará, o bien código directamente si es poco, o bien llamada a la plantilla HTML
 })
 export class HeaderComponent { // indicamos export para poder llamarlo en app.module.ts
 
 }
 ```
+
+## 41. TemplateUrl: Separando el HTML del componente
+
+Vamos a https://getbootstrap.com/ -> Buscamos el navbar
+
+Copiamos el código HTML del navbar y lo incluimos en el template del componente en header.component.ts
+
+```
+import { Component } from '@angular/core';
+
+/* Declaramos decorador para indicar que la clase HeaderComponen instanciará un componente */
+@Component({
+    selector: 'app-header', // Para llamar al componente mediante etiqueta en el html
+    template: `
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Navbar</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+    `
+})
+export class HeaderComponent { // indicamos export para poder llamarlo en app.module.ts
+
+}
+```
+
+tslint nos avisará de que incluir todo ese código directamente excede el máximo permitido, esto se puede ajustar cambiando el parámetro max-line-length en tslint.json
+
+Podemos tanto cambiar el máximo permitido, como desactivar el warning poniendo la propiedad en "false"
+
+```
+"max-line-length": [
+      false,
+      140
+    ],    
+```
+De todas maneras, como hemos comentado, cuando en template el código supera unas cuatro líneas empieza a no ser manejable, así que es recomendable crear un archivo template aparte:
+
+> app/components/header/header.component.html
+
+Aquí copiamos todo el código HTML del navbar
+
+En el decorador del componente tenemos que eliminar el código que teníamos en template, y renombrar template como templateUrl para especificar la ruta a la plantilla html que hemos creado
+
+Crearemos también un body de la misma manera, a la misma etiqueta html de componente podemos añadirle estilos, de esta manera
+
+><app-body class="container"></app-body>
+
+Recordar añadir los componentes al módulo de app (app.module.ts):
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+import { HeaderComponent } from './components/header/header.component';
+import { BodyComponent } from './components/body/body.component';
+@NgModule({
+  declarations: [// Declarar componentes
+    AppComponent,
+    HeaderComponent,
+    BodyComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+
