@@ -984,6 +984,73 @@ En footer.component.html:
 
 ## 43. Estructura del body component
 
+Vamos a https://getbootstrap.com/ -> Buscamos cards y cogemos un código tipo este:
+
+```
+<div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+  <div class="card-header">Header</div>
+  <div class="card-body">
+    <h5 class="card-title">Primary card title</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+  </div>
+</div>
+```
+
+Vamos a https://getbootstrap.com/ -> Buscamos list group y cogemos un código tipo este:
+
+```
+<ul class="list-group">
+            <li class="list-group-item">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+```
+
+Modificamos y ajustamos el estilo del app.component.html para que reciba los nuevos elementos, algo así:
+
+```
+<app-header></app-header>
+
+<div class="container mt-5">
+    <app-body></app-body>
+</div>
+
+<app-footer></app-footer>
+```
+
+Y quedaría el body.component.html tal que:
+
+```
+<div class="row">
+    <div class="col">
+        <h1>*ngIf</h1>
+        <hr>
+        <div class="card text-white bg-primary mb-3" style="width: 100%;">
+            <div class="card-body">
+                <h5 class="card-title">Primary card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+        <button class="btn btn-outline-primary btn-block">Mostrar/Ocultar</button>
+    </div>
+    <div class="col">
+        <h1>*ngFor</h1>
+        <hr>
+        <ul class="list-group">
+            <li class="list-group-item">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+    </div>
+</div>
+```
+
+
+
 
 
 
