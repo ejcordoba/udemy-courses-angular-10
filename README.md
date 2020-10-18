@@ -1161,6 +1161,66 @@ Básicamente creamos dos componentes para empezar, uno para la home y otro que s
 
 Y limpiamos cosas que no queremos, archivos css y spec
 
+## 51. Instalando el bootstrap (u otras liberías de terceros) cuando usamos el Angular-CLI
+
+1. Instalando el Boostrap CDN (requiere internet)(normalmente ya se encontrará en el caché del navegador del cliente)
+
+```
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+```
+```
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+```
+
+Los scripts deberemos colocarlos al final del body, y el link al final del head
+
+2. Instalación local: Descarga directa de bootstrap
+
+https://getbootstrap.com/docs/4.5/getting-started/download/
+
+Creamos en nuestro proyecto la ruta src/assets/libs/dist y dentro copiamos los directorios css y js que hemos descargado
+
+Puede tener la formación de rutas que sea, pero que esté dentro de assets
+
+Se debería repetir esto con todas las librerias que se refirieron en el punto 1, y luego referenciarlas con rutas relativas tipo:
+
+```<link rel="stylesheet" href="./assets/libs/bootstrap/css/bootstrap.min.css">```
+
+3. Instalación con el Gestor de Paquetes de Node.js (npm)
+
+>npm install bootstrap --save
+
+Una vez terminado tendremos bootstrap dentro de node_modules
+
+Hacer lo mismo para jquery y popper.js
+
+>npm install jquery --save
+
+>npm install popper.js --save
+
+(Nota: Esto puede haber cambiado en las últimas versiones de Angular.....)
+
+Ahora habría que especificar en angular.json donde está el css de bootstrap y las librerías javascript a utilizar:
+
+```
+                        "styles": [
+                            "src/styles.css",
+                            "node_modules/bootstrap/dist/css/bootstrap.min.css"
+                        ],
+                        "scripts": [
+                            "node_modules/jquery/dist/jquery.slim.min.js",
+                            "node_modules/popper.js/dist/umd/popper.min.js",
+                            "node_modules/bootstrap/dist/js/bootstrap.min.js"
+                        ]
+```
+
+
+
+
+
 
 
 
