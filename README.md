@@ -1153,6 +1153,14 @@ Para luego renombrar la carpeta "spa" a 02-spa, y entrando en ella lanzar el pro
 
 ## 50. Creando la estructura de nuestro proyecto
 
+Básicamente creamos dos componentes para empezar, uno para la home y otro que sea un navbar que se encuentre en un subdirectorio de componentes compartidos (comunes) a la SPA
+
+>ng g c components/shared/navbar
+
+>ng g c components/home
+
+Y limpiamos cosas que no queremos, archivos css y spec
+
 
 
 
