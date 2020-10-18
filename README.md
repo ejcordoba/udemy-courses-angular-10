@@ -1280,6 +1280,12 @@ Llamamos a los componentes en el app.component.html
 <app-home></app-home>
 ```
 
+Instalamos un par de componentes más: about y heroes, este ultimo lo vamos a crear sin archivo de estilos "-is" (inline style)
+
+> ng g c components/about
+
+> ng g c components/heroes -is
+
 
 
 
