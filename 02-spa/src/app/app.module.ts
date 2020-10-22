@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 // Rutas
 import { APP_ROUTING } from './app.routes'; // Importamos el sistema de rutas
 // Servicios
-
+import { HeroesService } from './servicios/heroes.service';
 // Componentes
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/shared/navbar/navbar.component';
@@ -23,7 +23,9 @@ import { HeroesComponent } from './components/heroes/heroes.component';
     BrowserModule,
     APP_ROUTING // Añadimos el routing a los imports
   ],
-  providers: [],
+  providers: [
+    HeroesService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
