@@ -1376,6 +1376,28 @@ También añadimos la clase especial <li class ="nav-item" routerLinkActive="act
 
 Como el <a> tiene un routerLink mira el elemento padre y al detecar routerLinkActive aplica la clase "active" (podría ser otra)
 
+## 55. Componente Heroes - diseño
+
+Para la sección heroes usaremos cards de Bootstrap, de momento usaremos una ruta estática, pero en la siguiente lección usaremos servicios:
+
+```
+<h1>Héroes <small>Marvel y DC</small></h1>
+<hr>
+
+<div class="card-columns">
+    <div class="card">
+        <img src="assets/img/aquaman.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+          <button type="button" class="btn btn-outline-primary btn-block">
+              Ver más...
+          </button>
+        </div>
+    </div>
+</div>
+```
 
 
 
