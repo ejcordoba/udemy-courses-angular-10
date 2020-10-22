@@ -1286,9 +1286,64 @@ Instalamos un par de componentes más: about y heroes, este ultimo lo vamos a cr
 
 > ng g c components/heroes -is
 
+## 53. Rutas en Angular
 
+Las rutas nos permiten navegar por los diferentes componentes (páginas) sin hacer refresh del navegador
 
+Creamos un nuevo archivo en src/app/app.routes.ts (el nombre es una convención), tiene una sintaxis particular:
 
+si tenemos snippets instalados con escribir ng2routes y pulsar enter se nos genera el código, sino tendríamos que escribir:
+
+```
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+
+const APP_ROUTES: Routes = [ // Array de rutas, cada ruta tiene un path y un componente
+    { path: 'home', component: HomeComponent },
+    { path: '**', pathMatch: 'full', redirectTo: 'home' } // La ruta ** es una ruta especial por si no consigue hacer match con ninguna de las otras
+];
+
+export const APP_ROUTING = RouterModule.forRoot(APP_ROUTES);
+// Si enviamos parámetros por url y hacemos refresh puede fallar, entonces usaríamos el sistema de hash en la URL
+// Para usar el sistema de hash en la URL sería:
+// export const APP_ROUTING = RouterModule.forRoot(APP_ROUTES, { useHash: true});
+// De otro modo tendríamos que indicar en el servidor, con .htaccess por ejemplo, que redirija a la raíz.
+// De manera automática nos configuró angular-cli en el index.html <base href="/"> necesario si no vamos a usar hash.
+```
+
+Para indicar a Angular las rutas que tiene que usar, tenemos que definirlo en app.module.ts:
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+// Rutas
+import { APP_ROUTING } from './app.routes'; // Importamos el sistema de rutas
+// Servicios
+
+// Componentes
+import { AppComponent } from './app.component';
+import { NavbarComponent } from './components/shared/navbar/navbar.component';
+import { HomeComponent } from './components/home/home.component';
+import { AboutComponent } from './components/about/about.component';
+import { HeroesComponent } from './components/heroes/heroes.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    NavbarComponent,
+    HomeComponent,
+    AboutComponent,
+    HeroesComponent
+  ],
+  imports: [
+    BrowserModule,
+    APP_ROUTING // Añadimos el routing a los imports
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
 
 
 
