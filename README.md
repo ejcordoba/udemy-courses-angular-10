@@ -1344,6 +1344,9 @@ import { HeroesComponent } from './components/heroes/heroes.component';
 })
 export class AppModule { }
 ```
+
+## 54. RouterLink y RouterLinkActive - Completando las rutas
+
 Y en nuestro html los enlaces quedarán así en navbar.component.html:
 ```
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -1366,8 +1369,12 @@ Y en nuestro html los enlaces quedarán así en navbar.component.html:
         </form>
     </div>
 ```
-## 54. RouterLink y RouterLinkActive - Completando las rutas
 
+Hemos añadido algunos efectos de transición en el archivo styles.css
+
+También añadimos la clase especial <li class ="nav-item" routerLinkActive="active"> para asignar los enlaces activos.
+
+Como el <a> tiene un routerLink mira el elemento padre y al detecar routerLinkActive aplica la clase "active" (podría ser otra)
 
 
 
