@@ -1344,6 +1344,31 @@ import { HeroesComponent } from './components/heroes/heroes.component';
 })
 export class AppModule { }
 ```
+Y en nuestro html los enlaces quedarán así en navbar.component.html:
+```
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <!-- Class active para marcar enlace activo -->
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['home']">Home</a> <!-- Para definir la ruta usarmos router link en lugar de href de html
+                usa un array como parámetro, cada uno de los elementos del array serían las sub-rutas de la url -->
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['heroes']">Heroes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['about']">About</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+```
+## 54. RouterLink y RouterLinkActive - Completando las rutas
+
+
 
 
 
