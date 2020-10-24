@@ -1566,3 +1566,28 @@ getHeroes():Heroe[] {
         return this.heroes;
     }
 ```
+
+## 58. Página de Heroes - Diseño con *ngFor
+
+Ya que tenemos el array de Héroes guardado como variable local en el componente, podemos generar dinámicamente las tarjetas con esa información.
+
+También podremos llenar información del html con los atributos de los objetos, si por ejemplo queremos src de imagen dinámico, lo definiremos entre []
+
+Quedando el código HTML así:
+
+```
+<div class="card-columns">
+    <div class="card" *ngFor="let heroe of heroes">
+        <img [src]="heroe.img" class="card-img-top" [alt]="heroe.nombre">
+        <div class="card-body">
+            <h5 class="card-title">{{ heroe.nombre }}</h5>
+            <p class="card-text">{{ heroe.bio }}</p>
+            <p class="card-text"><small class="text-muted">{{ heroe.aparicion }}</small></p>
+            <button type="button" class="btn btn-outline-primary btn-block">
+              Ver más...
+          </button>
+        </div>
+    </div>
+</div>
+```
+
