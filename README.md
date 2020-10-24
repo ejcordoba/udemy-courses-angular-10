@@ -1730,4 +1730,22 @@ Crear la página de héroe, mi resolución:
 </div>
 ```
 
+## 62. Resolución de la tarea práctica #1 - Componente del héroe
+
+Resolución del profesor:
+
+```
+Como la mía :D
+```
+
+## 63. Pipes: Transformación visual de la data.
+
+Transforman los datos en el template de forma visual
+
+Breve muestra con pipes predefinidos de Angular que se pueden ver en la documentación de Angular.io
+
+```
+<h1 class="animated fadeIn"> {{ heroe.nombre | uppercase}} <small> ({{ heroe.aparicion | date:'y'}}) </small></h1>
+```
+
 
