@@ -1748,4 +1748,46 @@ Breve muestra con pipes predefinidos de Angular que se pueden ver en la document
 <h1 class="animated fadeIn"> {{ heroe.nombre | uppercase}} <small> ({{ heroe.aparicion | date:'y'}}) </small></h1>
 ```
 
+## 64. Buscador de Héroes
+
+En el input del buscador definimos un alias #buscarTexto y que se dispare un evento cuando se pulse "Enter" que ejecuta una función buscarHeroe():
+
+a buscarHeroe() se le pasará como argumento el contenido del input, que como fue definido con un alias, se recogerá con buscarTexto.value
+
+```
+<form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Buscar héroe" aria-label="Search" (keyup.enter)="buscarHeroe(buscarTexto.value)" #buscarTexto>
+            <button (click)="buscarHeroe(buscarTexto.value)" class="btn btn-outline-primary my-2 my-sm-0" type="button">Buscar</button>
+        </form>
+```
+
+Ahora creamos la función en el componente del navbar:
+
+```
+```
+
+Antes necesitaremos en el servicio poder controlar búsquedas en el array de héroes:
+
+```
+buscarHeroes( termino: string ) {
+
+      let heroesArr:Heroe[] = [];
+      termino = termino.toLowerCase();
+
+      for ( let heroe of this.heroes ) {
+        let nombre = heroe.nombre.toLowerCase();
+        if (nombre.indexOf( termino ) >= 0) {
+          heroesArr.push(heroe);
+        }
+      }
+
+      return heroesArr;
+    }
+```
+
+Lo que hacemos ahí es básicamente recorrer un array temporal que contiene una copia del array de Héroes y comparar con el término que se pasa como parámetro, si el indexOf es mayor que 0 significa que coincide el inicio de las cadenas de texto, por lo tanto la búsqueda coincide
+
+
+
+
 
