@@ -1591,3 +1591,61 @@ Quedando el código HTML así:
 </div>
 ```
 
+## 59. Rutas con parametros - Router
+
+Navegación a otra página:
+
+Creamos un nuevo componente con angular-cli:
+
+```
+ng g c components/heroe -is
+```
+Añadimos las rutas al componente (página), en el path debemos indicar que se va a pasar un parámetro, que será el ID del héroe a buscar (mostrar    )
+
+```
+import { HeroeComponent } from './components/heroe/heroe.component';
+{ path: 'heroe/:id', component: HeroeComponent},
+```
+
+Para tener un id podemos sacarlo a la vez que renderizamos todos los objetos del array heroe, con index = i
+
+```
+<div class="card animated fadeIn fast" *ngFor="let heroe of heroes; let i = index">
+```
+
+Entonces ya podremos generar la ruta en el botón de enlace, usando routerLink se le pasa un array, dicho array serán las posiciones de la URL y sub-posiciones, le pasamos 'heroe' y el ID
+
+```
+<a [routerLink]="['/heroe',i]" class="btn btn-outline-primary">Ver más link...</a>
+```
+
+Para hacer el botón con programación usaremos un evento click y lanzaremos una función:
+
+```
+<button (click)="verHeroe(i)" type="button" class="btn btn-outline-primary btn-block">Ver más...</button>
+```
+
+Y en el componente necesitamos las siguientes importacion para habilitar la navegación:
+
+```
+import { Router } from '@angular/router';
+```
+
+Posteriormente necesitamos una variable de ese tipo:
+
+```
+constructor(   private _heroesService:HeroesService,
+                 private router:Router) { // _heroesService es el alias que tendrá el servicio
+  }
+```
+
+Entonces en la función verHeroe usaremos router y un metodo navigate que usa los mismo parametros para componer la url que en routerLink, con un array:
+
+```
+verHeroe( idx:number ){
+    this.router.navigate( ['/heroe', idx]);
+  } 
+```
+
+
+
