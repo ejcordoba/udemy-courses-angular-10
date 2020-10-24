@@ -1647,5 +1647,57 @@ verHeroe( idx:number ){
   } 
 ```
 
+## 60. Recibiendo parámetros por URL - ActivatedRoute
+
+Para recibir parámetro por URL vamos al componente que recibirá el parámetro, que es 'heroe', la ficha del héroe hacia la que navegar.
+
+Importamos la libreria ActivatedRoute de @angular/router:
+
+```
+import { ActivatedRoute } from '@angular/router';
+```
+
+Y en el constructor creamos un escuchador para estar suscrito a los cambios que haya en el intercambio de parámetros:
+
+```
+this.activatedRoute.params.subscribe( params =>{ // Está constantemene escuchando cambios en params, como en las rutas se definió que se pasaría el id, eso es lo que recibe
+      console.log(params['id']);
+    })
+```
+
+Al igual que el servicio nos devolvía un array de héroes, ahora necesitamos que nos pueda devolver uno solo, tomando como referencia un ID
+Para ello creamos un método que realice esta función:
+
+```
+getHeroe( idx: string ) {
+      return this.heroes[idx];
+    }
+```
+
+Entonces en el componente héroe ya podemos importar el servicio (que incluye este método), para posteriormente en el constructor generar una instacia del servicio, pudiendo acceder al método y así usarlo para que la variable local que almacena el héroe esté accesible, llenándola con la funcion que nos devuelve un héroes y pasandole el ID que está siendo escuchando en la URL mediante params de activated route:
+
+```
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { HeroesService } from '../../servicios/heroes.service';
+
+@Component({
+  selector: 'app-heroe',
+  templateUrl: './heroe.component.html'
+})
+export class HeroeComponent {
+
+  heroe:any = {}; // Variable local para mostrar en el template
+
+  constructor( private activatedRoute: ActivatedRoute,
+               private _heroesService: HeroesService) {
+    this.activatedRoute.params.subscribe( params =>{ // Está constantemene escuchando cambios en params, como en las rutas se definió que se pasaría el id, eso es lo que recibe
+      this.heroe = this._heroesService.getHeroe(params['id']);
+    });
+   }
+}
+
+```
+
 
 
