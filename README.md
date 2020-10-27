@@ -18,7 +18,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
 * 2.16. Funciones: Parámetros opcionales, obligatorios y por defecto
 * 2.17. Funciones de Flecha
 * 2.18. Desestructuración de Objetos y Arreglos (arrays)
-* 2.
+* 2.19. Promesas
 
 
 
