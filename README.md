@@ -20,7 +20,6 @@ Udemy Angular course: From zero to expert (Angular 10+)
 * 2.18. Desestructuración de Objetos y Arreglos (arrays)
 * 2.19. Promesas
 
-[Volver al Índice](#%C3%ADndice-del-curso)
 
 # Sección 1:Introducción al curso de Angular
 
@@ -155,6 +154,9 @@ spiderman = {
     edad: 40
 };
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 14. Excluir archivos a traducir
 
 Exclusión de archivos a traducir de TS a JS
@@ -164,6 +166,8 @@ Creamos un nuevo directorio "typescript" y hacemos una copia del archivo app.ts,
 Si entramos en modo observador "tsc -w" también encontrará ese directorio y lo compilará. Pero no lo deseo, porque quiero tipos.ts sólo para mis propias notas.
 
 Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typescript"],
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 15. Template literales del ES6
 
@@ -184,6 +188,8 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
 
 })();
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 16. Funciones: Parámetros opcionales, obligatorios y por defecto
 
@@ -208,6 +214,8 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     activar('Gordon','tarde');
 })();
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 17. Funciones de Flecha
 
@@ -240,17 +248,16 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
                 console.log(`${ this.nombre } smash!!!`);
 
             }, 1000);
-            
         }
     }
     //console.log( miFuncion('Normal') );
     //console.log( miFuncionF('Flecha') );
 
     hulk.smash();
-
-
 })();
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 18. Desestructuración de Objetos y Arreglos (arrays)
 
@@ -309,6 +316,8 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
 })();
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 19. Promesas
 
 ```
@@ -341,6 +350,8 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
 })();
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 20. Promesas y su tipado en TypeScript
 ```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
@@ -364,7 +375,6 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
                 resolve( dineroActual );
             }
         } );
-
     }
 
     //Para poder manejar la promesa tenemos que especificar en la función el then o el catch
@@ -372,9 +382,10 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
         .then( montoActual => console.log(`Me queda ${ montoActual}`))
         //.catch( err => console.warn (err)); a continuación versión corta, porque solo estoy usando esa variable ahí
         .catch ( console.warn )
-    
 })();
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 21. Interfaces de TypeScript
 
@@ -413,9 +424,13 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
 })();
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 22. Introducción a las Clases de la POO
 
 >Controlado, pasando lección.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 23. Definición de una clase básica en TypeScript
 
@@ -440,6 +455,8 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
     console.log(antman);
 })();
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 24. Constructores de una clase en TypeScript
 ```
@@ -476,6 +493,8 @@ Vamos a tsconfig.json y añadimos la línea: "exclude": ["demo-typescript/typesc
 })();
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 25. Importaciones * URL
 
 Descargamos el código de ejemplo de la lección: https://github.com/Klerith/webpack-starter-typescript
@@ -510,6 +529,8 @@ const wolverine = new Xmen('Logan','Wolverine');
 wolverine.imprimir();
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 26. Decoradores de Clases
 ```
 function imprimirConsola( constructorClase: Function) {
@@ -529,6 +550,9 @@ export class Xmen {
     }
 }
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 27. Tipado del retorno de una función
 ```
 //Función auto-invocada de flecha para evitar errores de variables reutilizadas
@@ -548,6 +572,9 @@ export class Xmen {
     obtenerSalario().then( a => console.log( a.toUpperCase() ) )
 })();
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 28. Exámen práctico #1
 
 Instrucciones
@@ -561,9 +588,13 @@ Por si acaso tienen problemas con la descarga (por alguna razón) Les dejo aquí
 
 Lean todos los comentarios y vean el siguiente video
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 29. Explicación de la tarea
 
 > Ver vídeo
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 30. Resolución del examen práctico #1
 
@@ -591,7 +622,7 @@ Lean todos los comentarios y vean el siguiente video
     nombre: 'Bruno Díaz',
     artesMarciales: ['Karate','Aikido','Wing Chun','Jiu-Jitsu']
   }
-  
+
 
   // Convertir esta funcion a una funcion de flecha
   /* function resultadoDoble( a, b ){
@@ -599,7 +630,7 @@ Lean todos los comentarios y vean el siguiente video
   } */
   const resultadoDoble = ( a: number, b: number):number => {
     return (a + b) *2
-  } 
+  }
 
 
   // Función con parametros obligatorios, opcionales y por defecto
@@ -623,7 +654,7 @@ Lean todos los comentarios y vean el siguiente video
   // También un método que calcule el área  =  base * altura,
   // ese método debe de retornar un numero.
 class Rectangulo {
-  constructor ( public base:number, 
+  constructor ( public base:number,
                 public altura:number ){}
 
   calcularArea = ():number => this.base * this.altura;
@@ -632,13 +663,19 @@ class Rectangulo {
 })();
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## Cuestionario 1: Examen teórico #1
 
 > Resuelto / Aprobadas 9 de 10
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 31. Código fuente de la sección
 
 > Descargar typescript.zip
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 # Sección 3:Aplicación #1: Hola Mundo
 
@@ -647,6 +684,8 @@ class Rectangulo {
 - Componentes: Pequeñas clases que cumplen una tarea específica, por ejemplo: Menú de navegación, Barra Lateral, Páginas, sub-páginas...footer...
 
 - Directivas estructurales: Instrucciones que indical al HTML qué hacer, *ngIf por ejemplo para mostrar o no contenedores, etc ... *ngFor para hacer repeticiones de elementos HTML
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 36. Nuestra primera interacción en Angular
 
@@ -666,12 +705,16 @@ class Rectangulo {
 
 Usando este último crearemos un nuevo proyecto de Angular para testeo.
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 37. Nota de Actualización del Angular CLI
 
 > Al hacer ng new miApp ahora Angular CLI hace dos preguntas:
 
 - Would you like to add Angular routing? No -> Nosotros haremos nuestras propias rutas
 - Which stylesheet format would you like to use? CSS (a elegir entre CSS, SCSS, SASS, LESS, Stylus)
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 38. Creando un entorno local de Angular
 
@@ -699,12 +742,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  
+
   nombre = 'Fernando';
   apellido = 'Herrera';
 }
 
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 39. Estructura del proyecto
 
@@ -740,6 +785,8 @@ export class AppComponent {
 - README.md: cómo funciona la aplicación, archivo Markdown
 - tsconfig.json: le dice a typescript cómo trabajar
 - tslint.json: reglas de escritura
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 40. Utilizando Bootstrap 4
 
@@ -799,6 +846,8 @@ export class HeaderComponent { // indicamos export para poder llamarlo en app.mo
 
 }
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 41. TemplateUrl: Separando el HTML del componente
 
@@ -863,7 +912,7 @@ Podemos tanto cambiar el máximo permitido, como desactivar el warning poniendo 
 "max-line-length": [
       false,
       140
-    ],    
+    ],
 ```
 De todas maneras, como hemos comentado, cuando en template el código supera unas cuatro líneas empieza a no ser manejable, así que es recomendable crear un archivo template aparte:
 
@@ -900,6 +949,8 @@ import { BodyComponent } from './components/body/body.component';
 })
 export class AppModule { }
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 42. Creando el footer.component
 
@@ -985,6 +1036,8 @@ En footer.component.html:
 </footer>
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 43. Estructura del body component
 
 Vamos a https://getbootstrap.com/ -> Buscamos cards y cogemos un código tipo este:
@@ -1051,6 +1104,8 @@ Y quedaría el body.component.html tal que:
     </div>
 </div>
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 44. Directivas estructurales: *ngFor y el *ngIf
 
@@ -1122,9 +1177,13 @@ Y posteriormente lo llamamos, aprovechamos tambien para guardar el index y usarl
         </ul>
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## Cuestionario 2: Examen teórico - de la sección Hola Mundo
 
 10 de 10 !!!
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 # Sección 4:Aplicación #2: Aplicación de una sola página (SPA)
 
@@ -1144,6 +1203,8 @@ A continuación vamos a aprender sobre los siguientes temas:
 - Uso del buscador del navbar para realizar una consulta a nuestro arreglo de héroes.
 - Durante la sección, tendremos una tarea práctica bastante retadora pero servirá de reforzamiento de todo lo que veremos en esta sección.
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 49. Iniciar el proyecto - SPA
 
 Sencillamente creamos el nuevo proyecto con:
@@ -1154,6 +1215,8 @@ Para luego renombrar la carpeta "spa" a 02-spa, y entrando en ella lanzar el pro
 
 >ng serve -o
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 50. Creando la estructura de nuestro proyecto
 
 Básicamente creamos dos componentes para empezar, uno para la home y otro que sea un navbar que se encuentre en un subdirectorio de componentes compartidos (comunes) a la SPA
@@ -1163,6 +1226,8 @@ Básicamente creamos dos componentes para empezar, uno para la home y otro que s
 >ng g c components/home
 
 Y limpiamos cosas que no queremos, archivos css y spec
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 51. Instalando el bootstrap (u otras liberías de terceros) cuando usamos el Angular-CLI
 
@@ -1219,6 +1284,8 @@ Ahora habría que especificar en angular.json donde está el css de bootstrap y 
                             "node_modules/bootstrap/dist/js/bootstrap.min.js"
                         ]
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 52. Configurando el navbar y otros componentes
 
@@ -1289,6 +1356,8 @@ Instalamos un par de componentes más: about y heroes, este ultimo lo vamos a cr
 
 > ng g c components/heroes -is
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 53. Rutas en Angular
 
 Las rutas nos permiten navegar por los diferentes componentes (páginas) sin hacer refresh del navegador
@@ -1348,6 +1417,8 @@ import { HeroesComponent } from './components/heroes/heroes.component';
 export class AppModule { }
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 54. RouterLink y RouterLinkActive - Completando las rutas
 
 Y en nuestro html los enlaces quedarán así en navbar.component.html:
@@ -1379,6 +1450,8 @@ También añadimos la clase especial <li class ="nav-item" routerLinkActive="act
 
 Como el <a> tiene un routerLink mira el elemento padre y al detecar routerLinkActive aplica la clase "active" (podría ser otra)
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 55. Componente Heroes - diseño
 
 Para la sección heroes usaremos cards de Bootstrap, de momento usaremos una ruta estática, pero en la siguiente lección usaremos servicios:
@@ -1401,6 +1474,9 @@ Para la sección heroes usaremos cards de Bootstrap, de momento usaremos una rut
     </div>
 </div>
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 56. Introducción a los Servicios
 
 Los servicios:
@@ -1409,6 +1485,8 @@ Los servicios:
 - Realizan peticiones CRUD (create, read, update, delete)
 - Mantienen la data de forma persistente
 - Sirven como recurso reutilizable para nuestra aplicación
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 57. Creando nuestro primer servicio - HeroesService
 
@@ -1570,6 +1648,8 @@ getHeroes():Heroe[] {
     }
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 58. Página de Heroes - Diseño con *ngFor
 
 Ya que tenemos el array de Héroes guardado como variable local en el componente, podemos generar dinámicamente las tarjetas con esa información.
@@ -1593,6 +1673,8 @@ Quedando el código HTML así:
     </div>
 </div>
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 59. Rutas con parametros - Router
 
@@ -1650,6 +1732,8 @@ verHeroe( idx:number ){
   } 
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 60. Recibiendo parámetros por URL - ActivatedRoute
 
 Para recibir parámetro por URL vamos al componente que recibirá el parámetro, que es 'heroe', la ficha del héroe hacia la que navegar.
@@ -1702,6 +1786,8 @@ export class HeroeComponent {
 
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 61. Tarea práctica #1 - Componente del héroe
 
 Crear la página de héroe, mi resolución:
@@ -1733,6 +1819,8 @@ Crear la página de héroe, mi resolución:
 </div>
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 62. Resolución de la tarea práctica #1 - Componente del héroe
 
 Resolución del profesor:
@@ -1740,6 +1828,8 @@ Resolución del profesor:
 ```
 Como la mía :D
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 63. Pipes: Transformación visual de la data.
 
@@ -1750,6 +1840,8 @@ Breve muestra con pipes predefinidos de Angular que se pueden ver en la document
 ```
 <h1 class="animated fadeIn"> {{ heroe.nombre | uppercase}} <small> ({{ heroe.aparicion | date:'y'}}) </small></h1>
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 64. Buscador de Héroes
 
