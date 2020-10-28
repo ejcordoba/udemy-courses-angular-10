@@ -20,10 +20,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
 * 2.18. Desestructuración de Objetos y Arreglos (arrays)
 * 2.19. Promesas
 
-
-
-
-Enlace [de prueba](#10-Demostracion-de-TypeScript)
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 # Sección 1:Introducción al curso de Angular
 
@@ -102,6 +99,8 @@ Para compilar el archivo ts en un archivo js *tsc: typescript compiler* :
 
 >tsc app.ts
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 11. Configuración de TypeScript
 
 Crear un archivo de configuración:
@@ -114,11 +113,15 @@ Esto genera un archivo tsconfig.json
 
 Esto hace que entre en modo observador, pendiente de recompilar cuando haya cambios en el archivo ts
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 12. Variables let y const
 
 Dentro de un scope (entre llaves), cuando las variables se declaran con *let* tienen validez dentro de ese scope, cuando se declaran dos variables *let* con el mismo nombre, al compilarlas a js se renombran, de tal manera que no hay conflicto.
 
 Por otro lado, se puede declarar un valor como constante, *const*, pero entonces no se le podrá asignar otro valor, la convención es declarar los nombres todos en mayúsculas.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 13. Introducción a los tipos de datos
 
