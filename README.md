@@ -64,6 +64,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [62. Resolución de la tarea práctica #1 - Componente del héroe](#62-resolución-de-la-tarea-práctica-1---componente-del-héroe)
   - [63. Pipes: Transformación visual de la data.](#63-pipes-transformación-visual-de-la-data)
   - [64. Buscador de Héroes](#64-buscador-de-héroes)
+  - [65. Tarea práctica #2: Crear la pantalla de búsqueda de héroes.](#65-tarea-práctica-2-crear-la-pantalla-de-búsqueda-de-héroes)
 
 
 # Sección 1:Introducción al curso de Angular
@@ -1926,6 +1927,10 @@ buscarHeroes( termino: string ) {
 ```
 
 Lo que hacemos ahí es básicamente recorrer un array temporal que contiene una copia del array de Héroes y comparar con el término que se pasa como parámetro, si el indexOf es mayor que 0 significa que coincide el inicio de las cadenas de texto, por lo tanto la búsqueda coincide
+
+## 65. Tarea práctica #2: Crear la pantalla de búsqueda de héroes.
+
+Cuando se busque un héroe usar la variable recibida en el input, crear una ruta a un nuevo componente para que en esa página se muestre el héroe (o héroes) que coincidan con el término de búsqueda recibido por el input
 
 
 
