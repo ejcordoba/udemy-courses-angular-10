@@ -63,6 +63,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [64. Buscador de Héroes](#64-buscador-de-héroes)
   - [65. Tarea práctica #2: Crear la pantalla de búsqueda de héroes.](#65-tarea-práctica-2-crear-la-pantalla-de-búsqueda-de-héroes)
   - [66. Resolución de la tarea 2 - Buscador de Héroes.](#66-resolución-de-la-tarea-2---buscador-de-héroes)
+  - [67. Plus: Mostrando un mensaje cuando no hay resultados.](#67-plus-mostrando-un-mensaje-cuando-no-hay-resultados)
 
 
 # Sección 1:Introducción al curso de Angular
@@ -2026,6 +2027,20 @@ this.termino = params['termino'];
             <p class="card-text"><small class="text-muted">{{ heroe.aparicion }}</small></p>
             <button (click)="verHeroe(i)" type="button" class="btn btn-outline-primary btn-block">Ver más...</button>
             <!-- <a [routerLink]="['/heroe',i]" class="btn btn-outline-primary">Ver más link...</a> -->
+        </div>
+    </div>
+</div>
+```
+
+## 67. Plus: Mostrando un mensaje cuando no hay resultados.
+
+Simplemente definimos que se muestre o no el mensaje en función de si el array tiene valores o no
+
+```
+<div class="row animated fadeIn fast" *ngIf="heroes.length == 0">
+    <div class="col-md-12 col-lg-12">
+        <div class="alert alert-info" role="alert">
+            No existen resultados con el término: {{ termino }}
         </div>
     </div>
 </div>
