@@ -1,12 +1,9 @@
-# angular-10
-
 # Curso de Udemy Angular: De cero a experto (Angular 10+)
 
 Udemy Angular course: From zero to expert (Angular 10+)
 
 ## Índice del curso
 
-- [angular-10](#angular-10)
 - [Curso de Udemy Angular: De cero a experto (Angular 10+)](#curso-de-udemy-angular-de-cero-a-experto-angular-10)
   - [Índice del curso](#índice-del-curso)
 - [Sección 1:Introducción al curso de Angular](#sección-1introducción-al-curso-de-angular)
@@ -65,6 +62,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [63. Pipes: Transformación visual de la data.](#63-pipes-transformación-visual-de-la-data)
   - [64. Buscador de Héroes](#64-buscador-de-héroes)
   - [65. Tarea práctica #2: Crear la pantalla de búsqueda de héroes.](#65-tarea-práctica-2-crear-la-pantalla-de-búsqueda-de-héroes)
+  - [66. Resolución de la tarea 2 - Buscador de Héroes.](#66-resolución-de-la-tarea-2---buscador-de-héroes)
 
 
 # Sección 1:Introducción al curso de Angular
@@ -1932,7 +1930,103 @@ Lo que hacemos ahí es básicamente recorrer un array temporal que contiene una 
 
 Cuando se busque un héroe usar la variable recibida en el input, crear una ruta a un nuevo componente para que en esa página se muestre el héroe (o héroes) que coincidan con el término de búsqueda recibido por el input
 
+## 66. Resolución de la tarea 2 - Buscador de Héroes.
+
+Crear un nuevo componente:
+
+>ng g c componentes/buscador
+
+Agregar la nueva ruta en app.routes.ts
+
+```
+import { BuscadorComponent } from './components/buscador/buscador.component';
+
+{ path: 'buscar/:termino', component: BuscadorComponent},
+```
+
+Vamos al componente del buscador que hemos creado y ahí tenemos que recibir el parámetro que recibimos por el input de la barra de navegación, para ello primero importamos el módulo ActivatedRoute que nos permite pasar parámetros por la url:
+
+```
+import { ActivatedRoute } from '@angular/router';
+```
+
+Para poder usarlo lo instanciamos en el constructor:
+
+```
+constructor( private activatedRoute:ActivatedRoute ) { }
+```
+
+A continuación como en las rutas definimos que se va a pasar por url un parámetro llamado "término" en el componente de buscador definimos que esté "escuchando" si se pasa dicho parámetro, para ello lo definimos, por ejemplo, en ngOnInit, así queda listo escuchando:
+
+```
+this.activatedRoute.params.subscribe( params => {
+      console.log(params['termino']);
+    })
+```
+
+Lo siguientes es redirigir del navbar al componente buscador, así que en el navbar component importamos el router y lo instanciamos en el constructor
+
+```
+import { Router } from '@angular/router';
+constructor( private router:Router ) { }
+```
+
+Entonces en la funcion para buscar ya podemos hacer que navegue al componente buscador, pasandole el término que definimos en app.routes.ts
+
+```
+buscarHeroe( termino: string ) {
+    //console.log(termino);
+    this.router.navigate( ['/buscar',termino]);
+  }
+```
+
+Nota importante: para que el navbar funcione pulsando enter (keyup.enter) hay que definir el botón como "submit" no como "button", corregido el código
+
+En el componente buscador, posteriormente, importamos el servicio para poder mostrar héroes del servicio en función del parámetro recibido desde el navbar y lo instanciamos en el constructor
+
+```
+import { HeroesService } from '../../servicios/heroes.service';
+constructor( private activatedRoute:ActivatedRoute,
+               private _heroesService:HeroesService  ) {
+
+  }
+```
+
+Posteriormente creamos una variable local llamada heroes que usaremos para generar el resultado de la búsqueda, como array, puesto que pueden ser varios los que coincidan con el termino de búsqueda. En la función que definimos en el ngOnInit que escuchaba el parámetro que pasamos por url ahora usamos la función de buscarheroe que definimos en el servicio para guardar en la variable local creada el resultado de la búsqueda por el término:
+
+```
+heroes:any[] = []
+
+this.activatedRoute.params.subscribe( params => {
+      this.termino = params['termino'];
+      this.heroes = this._heroesService.buscarHeroes( params['termino'] );
+      console.log( this.heroes )
+    });
 
 
+```
 
+Ahora definamos el html, que será una versión igual o parecida al heroes.component.html, lo único que guardaremos el término del buscador en una variable para usarla en el frontal
 
+```
+termino:string;
+this.termino = params['termino'];
+```
+
+```
+<h1>Buscando: <small>{{ termino }}</small></h1>
+<hr>
+
+<div class="card-columns">
+    <div class="card animated fadeIn fast" *ngFor="let heroe of heroes; let i = index">
+        <img [src]="heroe.img" class="card-img-top" [alt]="heroe.nombre">
+        <div class="card-body">
+            <h5 class="card-title">{{ heroe.nombre }}</h5>
+            <p class="card-text">{{ heroe.bio }}</p>
+            <p class="card-text"><small class="text-muted">{{ heroe.aparicion }}</small></p>
+            <button (click)="verHeroe(i)" type="button" class="btn btn-outline-primary btn-block">Ver más...</button>
+            <!-- <a [routerLink]="['/heroe',i]" class="btn btn-outline-primary">Ver más link...</a> -->
+        </div>
+    </div>
+</div>
+```
