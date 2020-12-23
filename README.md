@@ -64,6 +64,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [65. Tarea práctica #2: Crear la pantalla de búsqueda de héroes.](#65-tarea-práctica-2-crear-la-pantalla-de-búsqueda-de-héroes)
   - [66. Resolución de la tarea 2 - Buscador de Héroes.](#66-resolución-de-la-tarea-2---buscador-de-héroes)
   - [67. Plus: Mostrando un mensaje cuando no hay resultados.](#67-plus-mostrando-un-mensaje-cuando-no-hay-resultados)
+  - [68. @Input - Recibir información de un componente padre a un hijo.]()
 
 
 # Sección 1:Introducción al curso de Angular
@@ -1927,9 +1928,13 @@ buscarHeroes( termino: string ) {
 
 Lo que hacemos ahí es básicamente recorrer un array temporal que contiene una copia del array de Héroes y comparar con el término que se pasa como parámetro, si el indexOf es mayor que 0 significa que coincide el inicio de las cadenas de texto, por lo tanto la búsqueda coincide
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 65. Tarea práctica #2: Crear la pantalla de búsqueda de héroes.
 
 Cuando se busque un héroe usar la variable recibida en el input, crear una ruta a un nuevo componente para que en esa página se muestre el héroe (o héroes) que coincidan con el término de búsqueda recibido por el input
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 66. Resolución de la tarea 2 - Buscador de Héroes.
 
@@ -2031,6 +2036,7 @@ this.termino = params['termino'];
     </div>
 </div>
 ```
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 67. Plus: Mostrando un mensaje cuando no hay resultados.
 
@@ -2045,3 +2051,103 @@ Simplemente definimos que se muestre o no el mensaje en función de si el array 
     </div>
 </div>
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 68. @Input - Recibir información de un componente padre a un hijo.
+
+Vamos a extraer el código html del componente de héroes que define la tarjeta del héroe, para definir un componente independiente de tarjeta, lo cual usaremos para practicar la tranfusión de información de elementos padres a hijos y viceversa.
+
+Empezamos por generar un componente con el Angular CLI:
+
+> ng g c components/heroeTarjeta
+
+Una vez generado vamos a modificar heroes.component.html, sacaremos el ngFor del html de la tarjeta y lo comentaremos, para tener constancia de que así se generaba antes, dinámicamente en función de los datos que se recibían del servicio, posteriormente sacaremos el html de la tarjeta de ahí y lo pondremos en el html del nuevo componente heroe-tarjeta.component.html
+
+Quedando heroes.component.html:
+
+```
+<h1>Héroes <small>Marvel y DC</small></h1>
+<hr>
+<!-- *ngFor="let heroe of heroes; let i = index" -->
+<div class="card-columns">
+
+</div>
+```
+
+Y heroe-tarjeta.component.html:
+
+```
+<div class="card animated fadeIn fast">
+    <img [src]="heroe.img" class="card-img-top" [alt]="heroe.nombre">
+    <div class="card-body">
+        <h5 class="card-title">{{ heroe.nombre }}</h5>
+        <p class="card-text">{{ heroe.bio }}</p>
+        <p class="card-text"><small class="text-muted">{{ heroe.aparicion }}</small></p>
+        <button (click)="verHeroe(i)" type="button" class="btn btn-outline-primary btn-block">Ver más...</button>
+        <!-- <a [routerLink]="['/heroe',i]" class="btn btn-outline-primary">Ver más link...</a> -->
+    </div>
+</div>
+```
+
+Ahora en heroe-tarjeta.component.ts necesitaremos el héroe, por lo cual lo definimos en la clase del componente como un objeto de tipo "any" vacío:
+
+```
+export class HeroeTarjetaComponent implements OnInit {
+
+  heroe: any = {};
+```
+
+Y en la plantilla html de heroes.component.html ahora podemos llamar al componente por el selector y usar el ngFor que dejamos comentado anteriormente, quedando el código de esta manera:
+
+```
+<h1>Héroes <small>Marvel y DC</small></h1>
+<hr>
+<!-- *ngFor="let heroe of heroes; let i = index" -->
+<div class="card-columns">
+    <app-heroe-tarjeta *ngFor="let heroe of heroes; let i = index"></app-heroe-tarjeta>
+</div>
+```
+
+Para pasar la información del componente padre (heroes.component) al componente hijo (heroe-tarjeta.component) necesitamos importar "Input" en el componente hijo de la librería de angular/core. Esto le dirá a Angular que una propiedad va a ser recibida desde afuera.
+
+> import { Component, OnInit, Input } from '@angular/core';
+
+Usando el decorador en la clase indicamos que puede venir desde afuera, pero si no fuera así podemos usar la propiedad desde el constructor normalmente, por ejemplo con algún parámetro por defecto, etcétera.
+
+> @Input() heroe: any = {};
+
+Entonces desde la llamada al componente, en el selector, podemos pasarle una propiedad al hijo, como el ngFor recibe el servicio y genera un array de datos, podemos pasarle ese "heroe" de esta manera:
+
+```
+    <app-heroe-tarjeta [heroe]="heroe" *ngFor="let heroe of heroes; let i = index"></app-heroe-tarjeta>
+```
+
+A continuación vamos a definir la función verHeroe que al haber movido el html ya no se encuentra definida en el nuevo archivo de typescript. El índice lo vamos a definir como nueva propiedad del Input. Para hacer la redirección en la función de primeras lo vamos a hacer como hicimos en el hereos.component usando Router. Esto también lo actualizaremos en el html del buscador. El código que resulta es el siguiente.
+
+```
+import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-heroe-tarjeta',
+  templateUrl: './heroe-tarjeta.component.html'
+})
+export class HeroeTarjetaComponent implements OnInit {
+
+  @Input() heroe: any = {};
+  @Input() index: number;
+
+  constructor( private router:Router ) { }
+
+  ngOnInit(): void {
+  }
+  verHeroe() {
+    this.router.navigate( ['/heroe', this.index]);
+  }
+}
+
+
+
+```
+
