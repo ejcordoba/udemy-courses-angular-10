@@ -65,6 +65,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [66. Resolución de la tarea 2 - Buscador de Héroes.](#66-resolución-de-la-tarea-2---buscador-de-héroes)
   - [67. Plus: Mostrando un mensaje cuando no hay resultados.](#67-plus-mostrando-un-mensaje-cuando-no-hay-resultados)
   - [68. @Input - Recibir información de un componente padre a un hijo.](#68-input-recibir-informaci%C3%B3n-de-un-componente-padre-a-un-hijo)
+  - [69. @Output - Emitir un evento del hijo hacia el padre.]()
 
 
 # Sección 1:Introducción al curso de Angular
@@ -2150,3 +2151,64 @@ export class HeroeTarjetaComponent implements OnInit {
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
+## 69. @Output - Emitir un evento del hijo hacia el padre.
+
+Aquí haremos lo contrario que en la lección anterior. Que el hijo emita un evento, mientras que el padre está escuchando, y cuando lo escuche realice una acción.
+
+Para ello en este caso práctico vamos a utilizar la función verHeroe que teníamos en heroes.component.ts, queremos llamar a esa función del padre desde el hijo (heroe-tarjeta.component)
+
+Primeramente en el componente hijo importamos "Output" de angular/core, que va de la mano con EventEmitter que se encargará de emitir el evento que el componente padre tiene que escuchar.
+
+Al igual que definimos las propiedades con los decoradores @Input vamos a declarar la propiedad para @Output, pero en este caso tendrá el nombre del evento que queremos que escuche el padre. Además tendremos que especificar que es de tipo EventEmitter, y también que tipo de dato es el que se emitirá, como lo que queremos es el índice del array de héroe, que es de tipo number, quedará:
+
+> @Output() heroeSeleccionado: EventEmitter<number>
+
+En el constructor necesito inicializar el EventEmitter
+
+```
+constructor( private router:Router ) { 
+    this.heroeSeleccionado = new EventEmitter();
+  }
+```
+
+Ahora podemos usar el objeto en la función verHeroe para, usando el método propio "emit", emitir el índice que nos interesa, quedando:
+
+```
+verHeroe() {
+    // this.router.navigate( ['/heroe', this.index]);
+    this.heroeSeleccionado.emit( this.index );
+  }
+```
+
+Ahora el padre debe tener la posibilidad de escuchar, para cuando se emita el índice pueda escucharlo, para ello nos vamos al componente padre, al selector del componente hijo, en lugar de usar un evento tipo click, por ejemplo, usaremos nuestro evento propio definido como heroeSeleccionado, el cual ejecutará la función verHeroe, y como esta necesita un indice, lo que le vamos a pasar es el índice que emite nuestro evento. El código sería el siguiente:
+
+```
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-heroe-tarjeta',
+  templateUrl: './heroe-tarjeta.component.html'
+})
+export class HeroeTarjetaComponent implements OnInit {
+
+  @Input() heroe: any = {};
+  @Input() index: number;
+
+  @Output() heroeSeleccionado: EventEmitter<number>
+
+  constructor( private router:Router ) { 
+    this.heroeSeleccionado = new EventEmitter();
+  }
+
+  ngOnInit(): void {
+  }
+  verHeroe() {
+    // this.router.navigate( ['/heroe', this.index]);
+    this.heroeSeleccionado.emit( this.index );
+  }
+}
+
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
