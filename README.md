@@ -66,7 +66,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [67. Plus: Mostrando un mensaje cuando no hay resultados.](#67-plus-mostrando-un-mensaje-cuando-no-hay-resultados)
   - [68. @Input - Recibir información de un componente padre a un hijo.](#68-input-recibir-informaci%C3%B3n-de-un-componente-padre-a-un-hijo)
   - [69. @Output - Emitir un evento del hijo hacia el padre.](#69-output-emitir-un-evento-del-hijo-hacia-el-padre)
-
+  - [70. Arreglar detalles de la búsqueda.](#70-arreglar-detalles-de-la-búsqueda)
 
 # Sección 1:Introducción al curso de Angular
 
@@ -2208,6 +2208,125 @@ export class HeroeTarjetaComponent implements OnInit {
     this.heroeSeleccionado.emit( this.index );
   }
 }
+
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 70. Arreglar detalles de la búsqueda.
+
+Vamos a implementar el que, tras hacer una búsqueda y que aparezca la ficha de un héroe, se pueda hacer click en "Ver más" y funcione :)
+
+Para ello vamos a alterar de nuevo la función verHeroe, en lugar de que funcione con el evento, lo dejaremos como estaba antes, usando Router.
+
+El problema está en el servicio, porque los objetos no tienen un ID único. Como lo que usamos el la posición del array (el index), cuando realizamos una búsqueda satisfactoria, nos devuelve un array, al tratar de abrir esa ficha de héroe usa el índice, entonces nos devuelve la posición del objeto de héroes del servicio ... para arreglar esto vamos a arreglar la búsqueda.
+
+Vamos a modificar el bucle for que nos rellenaba el arreglo de heroes de la búsqueda, ahora recorreremos todo el array y guardaremos la posición, la cual será opcional y será definida como tal al final, así añadiremos al array de héroes ese dato adicional, el código actualizado quedará así:
+
+```
+
+import { Injectable } from '@angular/core';
+
+@Injectable()
+export class HeroesService {
+
+    private heroes:Heroe[] = [
+        {
+          nombre: "Aquaman",
+          bio: "El poder más reconocido de Aquaman es la capacidad telepática para comunicarse con la vida marina, la cual puede convocar a grandes distancias.",
+          img: "assets/img/aquaman.png",
+          aparicion: "1941-11-01",
+          casa:"DC"
+        },
+        {
+          nombre: "Batman",
+          bio: "Los rasgos principales de Batman se resumen en «destreza física, habilidades deductivas y obsesión». La mayor parte de las características básicas de los cómics han variado por las diferentes interpretaciones que le han dado al personaje.",
+          img: "assets/img/batman.png",
+          aparicion: "1939-05-01",
+          casa:"DC"
+        },
+        {
+          nombre: "Daredevil",
+          bio: "Al haber perdido la vista, los cuatro sentidos restantes de Daredevil fueron aumentados por la radiación a niveles superhumanos, en el accidente que tuvo cuando era niño. A pesar de su ceguera, puede \"ver\" a través de un \"sexto sentido\" que le sirve como un radar similar al de los murciélagos.",
+          img: "assets/img/daredevil.png",
+          aparicion: "1964-01-01",
+          casa: "Marvel"
+        },
+        {
+          nombre: "Hulk",
+          bio: "Su principal poder es su capacidad de aumentar su fuerza hasta niveles prácticamente ilimitados a la vez que aumenta su furia. Dependiendo de qué personalidad de Hulk esté al mando en ese momento (el Hulk Banner es el más débil, pero lo compensa con su inteligencia).",
+          img: "assets/img/hulk.png",
+          aparicion: "1962-05-01",
+          casa:"Marvel"
+        },
+        {
+          nombre: "Linterna Verde",
+          bio: "Poseedor del anillo de poder que posee la capacidad de crear manifestaciones de luz sólida mediante la utilización del pensamiento. Es alimentado por la Llama Verde (revisada por escritores posteriores como un poder místico llamado Starheart), una llama mágica contenida en dentro de un orbe (el orbe era en realidad un meteorito verde de metal que cayó a la Tierra, el cual encontró un fabricante de lámparas llamado Chang)",
+          img: "assets/img/linterna-verde.png",
+          aparicion: "1940-06-01",
+          casa: "DC"
+        },
+        {
+          nombre: "Spider-Man",
+          bio: "Tras ser mordido por una araña radiactiva, obtuvo los siguientes poderes sobrehumanos, una gran fuerza, agilidad, poder trepar por paredes. La fuerza de Spider-Man le permite levantar 10 toneladas o más. Gracias a esta gran fuerza Spider-Man puede realizar saltos íncreibles. Un \"sentido arácnido\", que le permite saber si un peligro se cierne sobre él, antes de que suceda. En ocasiones este puede llevar a Spider-Man al origen del peligro.",
+          img: "assets/img/spiderman.png",
+          aparicion: "1962-08-01",
+          casa: "Marvel"
+        },
+        {
+          nombre: "Wolverine",
+          bio: "En el universo ficticio de Marvel, Wolverine posee poderes regenerativos que pueden curar cualquier herida, por mortal que ésta sea, además ese mismo poder hace que sea inmune a cualquier enfermedad existente en la Tierra y algunas extraterrestres . Posee también una fuerza sobrehumana, que si bien no se compara con la de otros superhéroes como Hulk, sí sobrepasa la de cualquier humano.",
+          img: "assets/img/wolverine.png",
+          aparicion: "1974-11-01",
+          casa: "Marvel"
+        }
+      ];
+
+    constructor() {
+        console.log("Servicio listo para usar!!!");
+    }
+
+    getHeroes():Heroe[] {
+      return this.heroes;
+    }
+
+    getHeroe( idx: string ) {
+      return this.heroes[idx];
+    }
+
+    buscarHeroes( termino: string ) {
+      let heroesArr:Heroe[] = [];
+      termino = termino.toLowerCase();
+
+      for ( let i = 0; i < this.heroes.length; i++) {
+        
+        let heroe = this.heroes[i];
+
+        let nombre = heroe.nombre.toLowerCase();
+
+        if ( nombre.indexOf( termino ) >= 0 ) {
+          heroe.idx = i;
+          heroesArr.push( heroe );
+        }
+      }
+      return heroesArr;
+    }
+}
+export interface Heroe {
+    nombre: string;
+    bio: string;
+    img: string;
+    aparicion: string;
+    casa: string;
+    idx?: number;
+};
+
+```
+
+Ya que tenemos el índice correcto tendremos que llamarlo en el buscador.component.html, quedando:
+
+```
+<app-heroe-tarjeta [heroe]="heroe" [index]="heroe.idx" *ngFor="let heroe of heroes"></app-heroe-tarjeta>
 
 ```
 
