@@ -64,7 +64,7 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [65. Tarea práctica #2: Crear la pantalla de búsqueda de héroes.](#65-tarea-práctica-2-crear-la-pantalla-de-búsqueda-de-héroes)
   - [66. Resolución de la tarea 2 - Buscador de Héroes.](#66-resolución-de-la-tarea-2---buscador-de-héroes)
   - [67. Plus: Mostrando un mensaje cuando no hay resultados.](#67-plus-mostrando-un-mensaje-cuando-no-hay-resultados)
-  - [68. @Input - Recibir información de un componente padre a un hijo.]()
+  - [68. @Input - Recibir información de un componente padre a un hijo.](#68-input-recibir-informaci%C3%B3n-de-un-componente-padre-a-un-hijo)
 
 
 # Sección 1:Introducción al curso de Angular
@@ -2146,8 +2146,7 @@ export class HeroeTarjetaComponent implements OnInit {
     this.router.navigate( ['/heroe', this.index]);
   }
 }
-
-
-
 ```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
