@@ -2381,6 +2381,115 @@ Ver vídeo explicativo con el resultado de la sección.
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 75. Inicio del proyecto y la introducción a los Pipes
 
+- Se llaman así porque usan el caracter pipe "|" para poder trabajar con ellos en el HTML, también se pueden utilizar del lado de los componentes.
+
+- Únicamente funcionan para transformar los datos de manera visual, no cambian el valor, no mutan los objetos si son pasados por referencia
+
+- Ejemplos:
+  - texto = "hola mundo" -> {{ texto | uppercase }} -> HOLA MUNDO (El valor de la variable 'texto' seguiría estando en minúscula)
+  - fecha = new Date(1985,10,21) -> {{ fecha | date:"dd/MM/yy" }} -> 21/11/1985
+
+Generamos el nuevo proyecto de la sección:
+
+> ng new pipes
+
+Cuando pregunte si queremos generar las rutas le indicamos que no, y para estilos lo dejaremos en CSS
+
+Una vez generado renombraremos el directorio a 03-pipes para coherencia con el resto del curso
+
+A continuación levantamos el proyecto con:
+
+> ng serve -o
+
+Vamos a eliminar todo el contenido de app.component.html para generar nosotros ahí nuestro código, posteriormente instalaremos bootstrap.
+
+Getbootstrap.com -> get started -> copiar link de estilos y añadirlo al index.html
+
+```
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+```
+
+Añadiremos al body la class container <body class="container">
+
+El código que dejaremos definido para trabajar en el app.component.html será:
+
+```
+<h1 class="mt-3">Pipes <small>Angular</small></h1>
+<hr>
+
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th> Variable </th>
+                    <th> Pipe </th>
+                    <th> Salida </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+```
+
+En app.component.ts vamos a definir una variable tipo string para empezar a trabajar con ella:
+
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  
+  nombre: string = 'Capitán América';
+  
+}
+```
+Entonces podremos llamarla en el html, usando los primeros pipes que vamos a aprender "uppercase" y "lowercase" los cuales vienen definidos por defecto con Angular y no hay que importar nada ni hacer nada adicional para usarlo:
+
+```
+<h1 class="mt-3">Pipes <small>Angular</small></h1>
+<hr>
+
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th> Variable </th>
+                    <th> Pipe </th>
+                    <th> Salida </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> {{ nombre }} </td>
+                    <td> uppercase </td>
+                    <td> {{ nombre | uppercase }} </td>
+                </tr>
+                <tr>
+                    <td> {{ nombre }} </td>
+                    <td> lowercase </td>
+                    <td> {{ nombre | lowercase }} </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+```
+
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 76. Pipe: Slice
 
