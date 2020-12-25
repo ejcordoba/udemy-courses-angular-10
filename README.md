@@ -2376,6 +2376,8 @@ Al final de la sección tendremos una tarea para afianzar los conocimientos crea
 
 ## 74. Demostración del resultado de la sección - Pipes
 
+Ver vídeo explicativo con el resultado de la sección.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 75. Inicio del proyecto y la introducción a los Pipes
 
