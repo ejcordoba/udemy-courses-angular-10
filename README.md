@@ -2336,6 +2336,10 @@ Ya que tenemos el índice correcto tendremos que llamarlo en el buscador.compone
 
 ## 72. Introducción a la sección
 
+Básicamente un pipe es un método o una función, que recibe una serie de argumentos (como mínimo uno), los cuales los procesará y devolverá un dato que necesitemos.
+
+Esta salida no muta el objeto que estemos manipulando, el cambio será sólo visual (por ejemplo un pipe para pasar un string a mayúsculas no alteraría esa variable)
+
 ## 73. ¿Qué aprenderemos en esta sección?
 
 ## 74. Demostración del resultado de la sección - Pipes
