@@ -2340,34 +2340,82 @@ Básicamente un pipe es un método o una función, que recibe una serie de argum
 
 Esta salida no muta el objeto que estemos manipulando, el cambio será sólo visual (por ejemplo un pipe para pasar un string a mayúsculas no alteraría esa variable)
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 ## 73. ¿Qué aprenderemos en esta sección?
+
+A continuación vamos a entrar a profundidad sobre el tema de los PIPES, que no es más que una transformación visual de la data.
+
+En detalle veremos:
+
+Pipes uppercase y lowercase
+
+Pipe Slice
+
+Pice Decimal
+
+Pipe Percent
+
+Pipe Currency
+
+Pipe Json
+
+Pipe Async
+
+Pipe Date
+
+Pipes personalizados
+
+Capitalizar palabras y nombres
+
+Creación de un pipe, que permite cargar recursos externos de forma segura.
+
+Al final de la sección tendremos una tarea para afianzar los conocimientos creando un pipe personalizado que nos permitirá ocultar un texto a voluntad.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 74. Demostración del resultado de la sección - Pipes
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 75. Inicio del proyecto y la introducción a los Pipes
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 76. Pipe: Slice
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 77. Pipe: Decimal
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 78. Pipe: Percent - Porcentajes
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 79. Pipe: Currency - Moneda
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 80. Pipe: Json
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 81. Pipe: Async
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 82. Pipe: Date - Fecha
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 83. Registrar otros idiomas
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 84. Pipes personalizados: Capitalizar palabras
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 85. Pipe Personalizado: Domseguro
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 86. Tarea de Pipes
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 87. Resolución de la tarea de Pipes
 
+[Volver al Índice](#%C3%ADndice-del-curso)
 ## 88. Código fuente de la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
