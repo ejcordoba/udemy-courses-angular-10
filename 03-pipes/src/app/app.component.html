@@ -22,7 +22,27 @@
                     <td> lowercase </td>
                     <td> {{ nombre | lowercase }} </td>
                 </tr>
+                <tr>
+                    <td> {{ nombre }} </td>
+                    <td> slice:3 </td>
+                    <td> {{ nombre | slice:3 }} </td>
+                </tr>
+                <tr>
+                    <td> {{ nombre }} </td>
+                    <td> slice:0:3 </td>
+                    <td> {{ nombre | slice:0:3 }} </td>
+                </tr>
+                <tr>
+                    <td> {{ array }} </td>
+                    <td> slice:1:5 </td>
+                    <td> {{ array | slice:1:5 }} </td>
+                </tr>
             </tbody>
         </table>
+
+        <h4> Slice </h4>
+        <ul>
+            <li *ngFor="let item of array | slice:5:20"> {{ item }} </li>
+        </ul>
     </div>
 </div>

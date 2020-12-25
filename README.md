@@ -2493,6 +2493,40 @@ Entonces podremos llamarla en el html, usando los primeros pipes que vamos a apr
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 76. Pipe: Slice
 
+Para recortar cadenas o arrays, requiere al menos un parámetro, en estos dos ejemplos, cuando definimos como parámetro ":3" estamos indicando que corte a partir del tercer carácter de la cadena, si definimos como parámetro ":0:3" estamos diciendo que empiece la cadena en la posición 0 y acabe en la posición 3:
+
+```
+ <tr>
+                    <td> {{ nombre }} </td>
+                    <td> slice:3 </td>
+                    <td> {{ nombre | slice:3 }} </td>
+                </tr>
+                <tr>
+                    <td> {{ nombre }} </td>
+                    <td> slice:0:3 </td>
+                    <td> {{ nombre | slice:0:3 }} </td>
+                </tr>
+```
+
+Para probar con un array vamos a declarar uno en el archivo ts:
+
+> array: [1,2,3,4,5,6,7,8,9,10];
+
+Podemos incluso usar el pipe en un bucle para formatear el resultado, independientemente de si hay suficientes valores para cortar o no:
+
+```
+<tr>
+  <td> {{ array }} </td>
+  <td> slice:1:5 </td>
+  <td> {{ array | slice:1:5 }} </td>
+</tr>
+<h4> Slice </h4>
+<ul>
+    <li *ngFor="let item of array | slice:5:20"> {{ item }} </li>
+</ul>
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 77. Pipe: Decimal
 
