@@ -67,7 +67,26 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [68. @Input - Recibir información de un componente padre a un hijo.](#68-input-recibir-informaci%C3%B3n-de-un-componente-padre-a-un-hijo)
   - [69. @Output - Emitir un evento del hijo hacia el padre.](#69-output-emitir-un-evento-del-hijo-hacia-el-padre)
   - [70. Arreglar detalles de la búsqueda.](#70-arreglar-detalles-de-la-búsqueda)
-- [Sección 5:Pipes - Transforman los valores mostrados en pantalla]()
+- [Sección 5:Pipes - Transforman los valores mostrados en pantalla](#secci%C3%B3n-5-pipes-transforman-los-valores-mostrados-en-pantalla)
+  - [72. Introducción a la sección](#72-introducci%C3%B3n-a-la-secci%C3%B3n)
+  - [73. ¿Qué aprenderemos en esta sección?](#73-qu%C3%A9-aprenderemos-en-esta-secci%C3%B3n)
+  - [74. Demostración del resultado de la sección - Pipes](#74-demostraci%C3%B3n-del-resultado-de-la-secci%C3%B3n-pipes)
+  - [75. Inicio del proyecto y la introducción a los Pipes](#75-inicio-del-proyecto-y-la-introducci%C3%B3n-a-los-pipes)
+  - [76. Pipe: Slice](#76-pipe-slice)
+  - [77. Pipe: Decimal](#77-pipe-decimal)
+  - [78. Pipe: Percent - Porcentajes](#78-pipe-percent-porcentajes)
+  - [79. Pipe: Currency - Moneda](#79-pipe-currency-moneda)
+  - [80. Pipe: Json](#80-pipe-json)
+  - [81. Pipe: Async](#81-pipe-async)
+  - [82. Pipe: Date - Fecha](#82-pipe-date-fecha)
+  - [83. Registrar otros idiomas](#83-registrar-otros-idiomas)
+  - [84. Pipes personalizados: Capitalizar palabras](#84-pipes-personalizados-capitalizar-palabras)
+  - [85. Pipe Personalizado: Domseguro](#85-pipe-personalizado-domseguro)
+  - [86. Tarea de Pipes](#86-tarea-de-pipes)
+  - [87. Resolución de la tarea de Pipes](#87-resoluci%C3%B3n-de-la-tarea-de-pipes)
+  - [88. Código fuente de la sección](#88-c%C3%B3digo-fuente-de-la-secci%C3%B3n)
+
+
 # Sección 1:Introducción al curso de Angular
 
 ## 5. Instalaciones y configuraciones mínimas necesarias.
