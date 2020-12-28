@@ -2526,7 +2526,6 @@ Podemos incluso usar el pipe en un bucle para formatear el resultado, independie
 </ul>
 ```
 
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 77. Pipe: Decimal
 
