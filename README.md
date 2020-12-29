@@ -2548,6 +2548,27 @@ Podemos incluso usar el pipe en un bucle para formatear el resultado, independie
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 77. Pipe: Decimal
 
+Ver documentación en angular.io sobre DecimalPipe
+
+Creamos una variable numérica con decimales en app.component.ts:
+
+>PI:     number = Math.PI;
+
+El formateo visual del número decimal o entero se realiza pasando un argumento string que define el formato deseado, como ejemplos:
+
+```
+<tr>
+    <td> {{ PI }} </td>
+    <td> number:'3.0-0' </td>
+    <td> {{ PI | number:'3.0-0' }} </td>
+</tr>
+<tr>
+    <td> {{ PI }} </td>
+    <td> number:'.0-2' </td>
+    <td> {{ PI | number:'.0-2' }} </td>
+</tr>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 78. Pipe: Percent - Porcentajes
 
