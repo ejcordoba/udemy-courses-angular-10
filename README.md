@@ -2765,6 +2765,26 @@ En el html podremos usar el pipe para que lo muestre en francés de la siguiente
 </tr>
 ```
 
+Como ejercicio adicional vamos a crear una variable en el componente que registre un string, ese string lo vamos a usar como valor del locale como argumento para el pipe:
+
+```
+idioma:     string = 'es';
+```
+
+De esta manera podemos maquetar el html para que cuando se haga click en unos botones cambie el valor de dicho string y, por tanto, del argumento del locale, haciendo que el filtro del pipe cambie y pudiendo así cambiar el idioma de la fecha:
+
+```
+<tr>
+                    <td> {{ fecha }} </td>
+                    <td> date:'MMMM - dd':'':'{{ idioma }}'
+                        <br>
+                        <button (click)="idioma='en'" class="mr-1 btn btn-secondary">Inglés</button>
+                        <button (click)="idioma='es'" class="mr-1 btn btn-primary">Español</button>
+                        <button (click)="idioma='fr'" class="mr-1 btn btn-success">Francés</button>
+                    </td>
+                    <td> {{ fecha | date:'MMMM - dd':'':idioma }} </td>
+                </tr>
+```
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 84. Pipes personalizados: Capitalizar palabras
 
