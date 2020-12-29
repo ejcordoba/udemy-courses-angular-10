@@ -2648,6 +2648,29 @@ Si intentáramos llamar directamente a {{ heroe }} en nuestro html nos aparecer�
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 81. Pipe: Async
 
+Revisamos en angular.io la información sobre el pipe AsyncPipe. Vamos a crear una promesa en app.component.ts para ejemplificar:
+
+```
+valorPromesa = new Promise<string>( (resolve) => {
+
+    setTimeout(()=> {
+      resolve('llego la data');
+    }, 4500);
+
+});
+```
+
+Similar al caso del pipe de JSON, si tratamos de imprimir directamente en el html 'valorPromesa' nos mostrará [object Promise], al pasarlo por el pipe "async" nos mostrará el string que resuelve la promesa, en el html quedaría:
+
+```
+<tr>
+    <td> {{ valorPromesa }} </td>
+    <td> Async </td>
+    <td> {{ valorPromesa | async }} </td>
+</tr>
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 82. Pipe: Date - Fecha
 
