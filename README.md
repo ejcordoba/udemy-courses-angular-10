@@ -2596,6 +2596,25 @@ Y en app.component.html:
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 79. Pipe: Currency - Moneda
 
+Al igual que en lecciones anteriores, revisar angular.io para la documentación, para el ejemplo creamos una variable en app.component.ts:
+
+> salario:    number = 1234.5;
+
+En este caso para formatear podemos usar el argumento currencyCode para usar un código de país y así usar su divisa. Ejemplificado en el html quedaría:
+
+```
+<tr>
+    <td> {{ salario }} </td>
+    <td> currency:'EUR' </td>
+    <td> {{ salario | currency:'EUR' }} </td>
+</tr>
+<tr>
+    <td> {{ salario }} </td>
+    <td> currency:'CAD':'symbol-narrow':'.0-0' </td>
+    <td> {{ salario | currency:'CAD':'symbol-narrow':'.0-0' }} </td>
+</tr>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 80. Pipe: Json
 

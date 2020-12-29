@@ -57,6 +57,21 @@
                     <td> percent:'2.2-2' </td>
                     <td> {{ porcentaje | percent:'2.2-2' }} </td>
                 </tr>
+                <tr>
+                    <td> {{ salario }} </td>
+                    <td> currency </td>
+                    <td> {{ salario | currency }} </td>
+                </tr>
+                <tr>
+                    <td> {{ salario }} </td>
+                    <td> currency:'EUR' </td>
+                    <td> {{ salario | currency:'EUR' }} </td>
+                </tr>
+                <tr>
+                    <td> {{ salario }} </td>
+                    <td> currency:'CAD':'symbol-narrow':'.0-0' </td>
+                    <td> {{ salario | currency:'CAD':'symbol-narrow':'.0-0' }} </td>
+                </tr>
             </tbody>
         </table>
 
