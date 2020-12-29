@@ -2737,6 +2737,34 @@ Finalmente el código de ejemplo que usaremos en el html será el que sigue:
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 83. Registrar otros idiomas
 
+Vamos a configurar el registro de tres idiomas para testear esta posibilidad.
+
+En la lección anterior cuando hicimos esta instalación:
+
+> ng add @angular/localize
+
+Lo que hicimos fue instalar localmente todos los idiomas en nuestra máquina, pero no están en la aplicación. Hasta que no hacemos el registro usando la función registerLocaleData no formarán parte del bundle de la app.
+
+Vamos a registrar algunos idiomas adicionales al español, actualizando el archivo app.module.ts:
+
+```
+import  localEs  from '../../node_modules/@angular/common/locales/es';
+import  localFr  from '../../node_modules/@angular/common/locales/fr';
+
+registerLocaleData(localEs);
+registerLocaleData(localFr);
+```
+
+En el html podremos usar el pipe para que lo muestre en francés de la siguiente manera:
+
+```
+<tr>
+  <td> {{ fecha }} </td>
+  <td> date:'MMMM - dd':'':'fr' </td>
+  <td> {{ fecha | date:'MMMM - dd':'':'fr' }} </td>
+</tr>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 84. Pipes personalizados: Capitalizar palabras
 

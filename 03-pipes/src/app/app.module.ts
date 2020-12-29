@@ -3,7 +3,10 @@ import { NgModule, LOCALE_ID } from '@angular/core';// LOCALE_ID nos provee de u
 // Para el manejo de idiomas en el ejemplo de pipe de DatePipe
 import { registerLocaleData } from '@angular/common';
 import  localEs  from '../../node_modules/@angular/common/locales/es';
+import  localFr  from '../../node_modules/@angular/common/locales/fr';
+
 registerLocaleData(localEs);
+registerLocaleData(localFr);
 
 import { AppComponent } from './app.component';
 
