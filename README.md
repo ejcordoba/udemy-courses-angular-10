@@ -2788,6 +2788,27 @@ De esta manera podemos maquetar el html para que cuando se haga click en unos bo
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 84. Pipes personalizados: Capitalizar palabras
 
+Vamos a crear unos pipes personalizados, para empezar vamos a declarar una nueva variable en nuestro app.component.ts, para ver el efecto definiremos el string con caracteres en mayúsculas y minúsculas alternados:
+
+```
+nombre2:     string = 'eDuarDo CórDOba jOAquíN';
+```
+
+Posteriormente, para crear nuestro pipe, podemos hacerlo directamente con el angular CLI de esta manera, por convención se genera un directorio "pipes":
+
+> ng g p pipes/capitalizado
+
+Esto nos crea el directorio, el archivo spec de testeo y el archivo ts de definición del pipe, asimismo nos actualiza el app.module.ts de esta manera:
+
+```
+import { CapitalizadoPipe } from './pipes/capitalizado.pipe';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    CapitalizadoPipe
+  ],
+```
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 85. Pipe Personalizado: Domseguro
 
