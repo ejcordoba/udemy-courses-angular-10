@@ -2674,6 +2674,66 @@ Similar al caso del pipe de JSON, si tratamos de imprimir directamente en el htm
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 82. Pipe: Date - Fecha
 
+Revisamos en angular.io la documentación del pipe DatePipe que gestiona fechas.
+
+Para nuestra práctica creamos una fecha en app.component.ts:
+
+> fecha:      Date = new Date();
+
+En cuanto al "idioma" de la fecha podemos usar el argumento 'timezone' para configuararlo, nosotros vamos a hacer una configuración propia del 'locale', instalándolo globalmente para que el navegador lo detecte y esa variable tome valor en función del idioma del navegador o dónde se está ejecutando este, para ello usando el angular CLI lo instalamos de la siguiente manera:
+
+> ng add @angular/localize
+
+Esto nos prepara y actualiza el archivo src/polyfills.ts , a continuación tendremos que realizar una configuración, para eso tenemos que añadir en src/app/app.module.ts lo siguiente:
+
+```
+import { registerLocaleData } from '@angular/common';
+import  localEs  from '../../node_modules/@angular/common/locales/es';
+registerLocaleData(localEs);
+```
+
+Nótese que 'localEs' será lo que usemos para registrar/llamar al idioma en la funcion registerLocaleData(localEs);
+
+Para terminar de configurar manualmente esto deberemos añadir en app.module.ts: 
+
+```
+import { NgModule, LOCALE_ID } from '@angular/core';// LOCALE_ID nos provee de un token de localización
+
+providers: [
+    {
+      provide: LOCALE_ID,
+      useValue: 'es'
+    }
+  ],
+```
+
+Esto también cambiará la visualización de algunas cosas, por ejemplo la posición del símbolo de moneda, que en España se pone al final, en lugar de al principio.
+
+Finalmente el código de ejemplo que usaremos en el html será el que sigue:
+
+```
+<tr>
+  <td> {{ fecha }} </td>
+  <td> date </td>
+  <td> {{ fecha | date }} </td>
+</tr>
+<tr>
+  <td> {{ fecha }} </td>
+  <td> date:'medium' </td>
+  <td> {{ fecha | date:'medium' }} </td>
+</tr>
+<tr>
+  <td> {{ fecha }} </td>
+  <td> date:'short' </td>
+  <td> {{ fecha | date:'short' }} </td>
+</tr>
+<tr>
+  <td> {{ fecha }} </td>
+  <td> date:'MMMM - dd' </td>
+  <td> {{ fecha | date:'MMMM - dd' }} </td>
+</tr>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 83. Registrar otros idiomas
 
