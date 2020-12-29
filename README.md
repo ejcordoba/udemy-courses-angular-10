@@ -2552,7 +2552,7 @@ Ver documentación en angular.io sobre DecimalPipe
 
 Creamos una variable numérica con decimales en app.component.ts:
 
->PI:     number = Math.PI;
+> PI:     number = Math.PI;
 
 El formateo visual del número decimal o entero se realiza pasando un argumento string que define el formato deseado, como ejemplos:
 
@@ -2571,6 +2571,27 @@ El formateo visual del número decimal o entero se realiza pasando un argumento 
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 78. Pipe: Percent - Porcentajes
+
+Al igual que en la lección anterior, este pipe recibe un string como argumento, revisar angular.io en la documentación para más info.
+
+En app.component.ts creamos otra variable de ejemplo:
+
+> porcentaje: number = 0.234;
+
+Y en app.component.html:
+
+```
+<tr>
+    <td> {{ porcentaje }} </td>
+    <td> percent </td>
+    <td> {{ porcentaje | percent }} </td>
+</tr>
+<tr>
+    <td> {{ porcentaje }} </td>
+    <td> percent:'2.2-2' </td>
+    <td> {{ porcentaje | percent:'2.2-2' }} </td>
+</tr>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 79. Pipe: Currency - Moneda
