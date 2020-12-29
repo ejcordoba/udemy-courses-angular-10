@@ -2618,6 +2618,33 @@ En este caso para formatear podemos usar el argumento currencyCode para usar un 
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 80. Pipe: Json
 
+Como en casos anteriorer, revisar documentación de angular.io JsonPipe. Para practicar nosotros creamos en app.component.ts un nuevo objeto:
+
+```
+heroe = {
+
+    nombre: 'Logan',
+    clave: 'Wolverine',
+    edad: 500,
+    dirección: {
+      calle: 'Primera',
+      casa: 20
+    }
+  }
+```
+
+Si intentáramos llamar directamente a {{ heroe }} en nuestro html nos aparecería [object Object]. Porque estaría tratando de representar un objeto como un string, texto plano, en el HTML, para eso sirve este pipe, para formatear la información y mostrarla como un objeto JSON. Para ejemplificarlo en nuestro app.component.html:
+
+```
+<h4> JSON </h4>
+  <hr>
+  <div class="row mb-5">
+      <div class="col">
+          {{ heroe | json }}
+      </div>
+  </div>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 81. Pipe: Async
 
