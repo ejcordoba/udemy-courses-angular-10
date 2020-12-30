@@ -2931,6 +2931,29 @@ Y dejaremos el html preparado también, pasandole el argumento "true", aunque en
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 85. Pipe Personalizado: Domseguro
 
+En esta clase vamos a intentar colocar un vídeo o enlace externo en nuestra aplicación de Angular, y vamos a ver qué sucede.
+
+Para ello por ejemplo vamos a YouTube y copiamos el iframe de un video a nuestra elección y lo incluímos en nuestro html:
+
+```
+<h4 class="mt-4"> Domseguro </h4>
+<hr>
+<div class="row mb-5">
+    <div class="col">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/Brl7WmHDG-E" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+        </iframe>
+    </div>
+</div>
+```
+
+A continuación en nuestro app.component.ts definimos una variable que contenga el string del enlace del vídeo:
+
+```
+videoUrl:   string = 'https://www.youtube.com/embed/Brl7WmHDG-E';
+```
+
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 86. Tarea de Pipes
 
