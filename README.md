@@ -2809,6 +2809,125 @@ import { CapitalizadoPipe } from './pipes/capitalizado.pipe';
     CapitalizadoPipe
   ],
 ```
+
+Al haber sido añadido a "declarations" toda la aplicación sabrá de la existencia del pipe creado
+
+A continuación tenemos el código del archivo ts del pipe, vamos a describirlo posteriormente
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'capitalizado'
+})
+export class CapitalizadoPipe implements PipeTransform {
+
+  transform(value: unknown, ...args: unknown[]): unknown {
+    return null;
+  }
+
+}
+```
+
+Es como cualquier otra clase, solo que tenemos el decorador @Pipe, en el cual tenemos el nombre definido de nuestro pipe 'capitalizado', el que usaremos cuando queramos aplicar el formateo.
+
+Posteriormente tenemos la función PipeTransform que será la que se encargue de realizar la transformación en el html
+
+'value' será el valor del string (o el valor que queramos transformar, en otros casos) y 'args' serán todos los argumentos que se envíen a la función, en :unknown al final de la función definiremos el tipo de valor de salida de la función (lo que devolverá el return dentro de la función, por defecto está 'null')
+
+Vamos a realizar una primera modificación de la función para ver su efecto, como tipo de valor devuelto vamos a especificar que va a ser de tipo string, y el retorno de la función va a ser el string 'Hola Mundo'
+
+```
+transform(value: unknown, ...args: unknown[]): string {
+    return 'Hola Mundo';
+  }
+```
+
+Si ahora en nuestro html aplicamos el pipe personalizado 'capitalizado' en el html lo que aparecerá en lugar del contenido de la variable 'nombre2' será 'Hola Mundo', recordemos que el valor de la variable 'nombre2' sigue existiendo, pero el resultado visual sería el que hemos indicado.
+
+```
+<tr>
+    <td> {{ nombre2 }} </td>
+    <td> capitalizado </td>
+    <td> {{ nombre2 | capitalizado }} </td>
+</tr>
+```
+
+Vamos a definir dentro de la función del pipe un par de console log para comprender cómo funciona. Si hacemos un console.log(value) veremos en la consola del navegador que, efectivamente, el valor de la variable nombre2 sigue siendo el que era, como hemos comentado anteriormente.
+
+```
+transform(value: unknown, ...args: unknown[]): string {
+    console.log(value);
+    console.log(args);
+    return 'Hola Mundo';
+  }
+```
+
+El console.log(args) en principio nos mostrará por consola un array vacío, pero probemos a definir argumentos de prueba para ver la salida,por ejemplo un número, un booleano y un string:
+
+```
+<tr>
+    <td> {{ nombre2 }} </td>
+    <td> capitalizado </td>
+    <td> {{ nombre2 | capitalizado:1:true:'Hola' }} </td>
+</tr>
+```
+
+De tal manera podemos ver los argumentos en consola, o capturarlos, la salida por consola del console.log(args) una vez definidos esos argumentos sería:
+
+>[1, true, "Hola"]
+
+Por tanto podríamos usar la desestructuración de array en la función, o podríamos simplemente definir los argumentos de la función que queramos, por ejemplo inventemos un 'edad', 'activo' y 'mensaje', para que concuerden con los valores que hemos especificado en el ejemplo anterior, y vamos a hacer la prueba de imprimirlos por consola de nuevo:
+
+```
+transform(value: unknown, edad: number, activo: boolean, mensaje: string): string {
+    console.log(value);
+    console.log({ edad, activo, mensaje });
+    return 'Hola Mundo';
+  }
+```
+
+La salida por consola queda tal que:
+
+```
+{edad: 1, activo: true, mensaje: "Hola"}
+activo: true
+edad: 1
+mensaje: "Hola"
+```
+
+Una vez comprendido esto vamos a dejar definido de manera más útil para nosotros la función de la siguiente manera, definiremos un argumento 'todas' booleano, para controlar la capitalización de los caracteres. Definiremos el value como string para controlar que lo que se recibe en la función, el valor a modificar, es un string, lo cual también nos permitirá acceder a los métodos y funciones tipo string para trabajar. Entonces en la función recibiremos un string, este string lo pasaremos a minúscula por completo, luego cortaremos ese string y lo almacenaremos en un array de nombres, considerando un espacio en blanco como patrón de corte. Si en este punto hacemos un console.log(nombres) veremos imprime por consola ["eduardo", "córdoba", "joaquín"]. Efectivamente pasó todo a minúscula y las palabras por separado, ahora sólo necesitaríamos capitalizar el primer caracter de cada string del array y volver a unir todo el array en un solo string. Para esto primero preguntaremos, teniendo en cuenta el argumento booleano 'todas', si queremos capitalizar todas las palabras, cuando sea 'false' sólo se capitalizaría la primera palabra. Explicamos la función con comentarios dentro de la misma.
+
+```
+transform(value: string, todas: boolean = true): string {
+    
+    value = value.toLocaleLowerCase(); // Pasamos todo el string a minúscula
+
+    let nombres = value.split(' '); // definimos un array y en él guardamos las palabras que componen el string, usando los espacios en blanco como separador
+
+    if ( todas ) { // Si todas == true
+      nombres = nombres.map( nombre => { // Usamos la función map para definir una función por cada uno de los elementos del array 'nombres'
+        return nombre[0].toUpperCase() + nombre.substr(1); // Pasamos el primer caracter(posicion) de cada uno de los elementos del array (nombres[0]) a mayúscula, y le concatenamos el resto del array desde la posición 1 (subtr(1))
+      });
+    } else { // Si todas == false solamente al primer elemento del array le pasamos a mayúscula su primer caracter(posición) (nombres[0][0]) y concatenamos el resto desde la posición 1 (nombres[0].substr(1))
+      nombres[0] = nombres[0][0].toUpperCase() + nombres[0].substr(1);
+    }
+
+    return nombres.join(' '); // Devolvemos como string el array usando como unión un espacio en blanco
+
+  }
+```
+
+Y dejaremos el html preparado también, pasandole el argumento "true", aunque en la función ya habíamos definido que por defecto valdría "true"
+
+```
+<tr>
+    <td> {{ nombre2 }} </td>
+    <td> capitalizado </td>
+    <td> {{ nombre2 | capitalizado:true }} </td>
+</tr>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 85. Pipe Personalizado: Domseguro
 
