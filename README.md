@@ -2952,6 +2952,68 @@ A continuación en nuestro app.component.ts definimos una variable que contenga 
 videoUrl:   string = 'https://www.youtube.com/embed/Brl7WmHDG-E';
 ```
 
+De nuevo en nuestro html tratamos de cargar el atributo de src del enlace usando la variable de Angular:
+
+```
+<div class="row mb-5">
+            <div class="col">
+                <iframe width="560" height="315" [src]="videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+```
+
+Entonces no cargará el vídeo, y si miramos la consola nos da un aviso de que se está tratando de cargar un recurso que es potencialmente inseguro:
+
+> ERROR Error: unsafe value used in a resource URL context
+
+Esto es porque el string de la variable podría ser un script o algo que Angular considera que hay que bloquear por seguridad. Pero si nosotros confiamos en el recurso que queremos cargar entonces tendremos que realizar un pequeño trabajo.
+
+Para poder cargar recursos que vengan de fuera de nuestra aplicación, cuando nos esté dando esa indicación de unsafe value (puede suceder también con el CSS, algunas url, etc), vamos a crear un pipe domseguro.
+
+> ng g p pipes/domseguro
+
+Una vez creado el pipe, vamos a trabajar en la función, dicha función recibirá un string, y lo que haremos en nuestra función será pasarle un sanitizer a ese string, que nos permita limpiar o validar dicho string. En las librerías de Angular disponemos de dicho recurso, el cual vamos a importar en nuestro domseguro.pipe.ts:
+
+```
+import { DomSanitizer } from '@angular/platform-browser'
+```
+
+Tenemos que hacer la inyección del método en nuestra clase, para ello lo declaramos en el constructor, que definimos previamente.
+
+Lo que devolverá la función con el return será una llamada a uno de los métodos de Domsanitizer dependiendo de lo que requiramos en cada caso, en este en concreto necesitamos 'bypassSecurityTrustResourceUrl', su nombre se explica por sí mismo :) lo que recibe ese método es el value, que será el string a sanear.
+
+Si vemos el tooltip del método, vemos que retorna un tipo 'SafeResourceUrl', el cual dejaremos definido también en nuestra función del pipe. A priori no lo encontrará, así que lo definiremos también en el import anterior, puesto que se encuentra en el mismo paquete de Angular.
+
+Finalmente el código de nuestro pipe quedará de esta manera:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
+@Pipe({
+  name: 'domseguro'
+})
+export class DomseguroPipe implements PipeTransform {
+
+  constructor( private domSanitizer: DomSanitizer  ) {}
+
+  transform(value: string, ...args: unknown[]): SafeResourceUrl {
+    return this.domSanitizer.bypassSecurityTrustResourceUrl( value );
+  }
+
+}
+```
+
+Ahora ya podemos usar nuestro pipe y carga correctamente, porque aplica el pipe antes de que se termine de renderizar todo el html.
+
+```
+<div class="row mb-5">
+            <div class="col">
+                <iframe width="560" height="315" [src]="videoUrl | domseguro" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+```
 
 
 [Volver al Índice](#%C3%ADndice-del-curso)
