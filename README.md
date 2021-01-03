@@ -3399,6 +3399,17 @@ Ahora ya podemos acceder a la información en el html:
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 96. Actualización - Token para uso de servicios Spotify
+
+Para trabajar con la información o los servicios de Spotify nosotros utilizamos un token que ellos nos van a generar. Tendremos que hacer una petición para obtener un token.
+
+Nos vamos a https://developer.spotify.com/documentation/. Hay varias formas de trabajar con la API de Spotify, vía web API y otras maneras, nosotros para este caso usaremos WEB API, hacemos click ahí y nos vamos a Guides -> Autorization Guide y bajamos hasta Client Credentials Flow.
+
+Como vemos ahí el flow es sencillo, solicitamos un token proporcionando nuestros CLIENT ID y CLIENT ID SECRET, nos devuelve el token y en la solicitud a la api proporcionamos dicho token, devolviéndonos la información en formato JSON.
+
+Para obtener el token haremos una petición `POST https://accounts.spotify.com/api/token` añadiendo en el Body->x-www-form-urlencoded la key 'grant_type' y en VALUE 'client_credentials', además necesitamos darle las keys 'client_id' y 'client_secret' con los VALUE que disponemos en nuestra cuenta de developer de Spotify. Nos devolverá información con el 'access_token' que expira cada hora 'expires_in:3600'.
+
+Guardaremos esto en el Postman para tener la referencia.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 97. HTTPClient - Service: Conectándonos a Spotify
