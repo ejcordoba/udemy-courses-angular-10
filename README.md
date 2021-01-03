@@ -3413,6 +3413,108 @@ Guardaremos esto en el Postman para tener la referencia.
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 97. HTTPClient - Service: Conectándonos a Spotify
+
+Vamos a trabajar con nuestra primera interacción con Spotify. Nos dirijimos a https://developer.spotify.com/console/ -> Browse
+
+Para practicar vamos a usar la petición GET que nos da los nuevos lanzamientos de Spotify `GET	/v1/browse/new-releases` porque es lo que vamos a mostrar en el home. Si hacemos click en el enlace de esa petición nos lleva a una página donde podemos hacer pruebas. Ahí podemos definir algunas variables para definir la respuesta que queremos, como el país, la cantidad de datos que queremos que devuelva y a partir de cual registro queremos que devuelva valores (country,limit,offset). en OAuth Token podemos tocar para generar el token que utilizaríamos para dicha petición, usará nuestra cuenta de Spotify para genera el token. Si hacemos click en Try It veremos el JSON que genera. Pero todo esto es sólo para testearlo y verlo.
+
+Vamos a testearlo ahora en Postman, copiamos el endpoint `https://api.spotify.com/v1/browse/new-releases` y creamos una nueva solicitud GET en el Postman incluyendo este endpoint, en los Headers tenemos que incluir la key 'Autorization' y en value 'Bearer BQA8T9W7bdw266ilzogCBlseFNIB5yMEpZ4IQTPbRBRH51QsV2RLGwbiyaRQi6gj8X2ZdFUJ4u9A8JI6kZU' siendo la cadena larga el token que nos generamos anteriormente en la lección anterior (podemos regenerarlo si no sirve puesto que tiene una duración de 1 hora). Lo ejecutamos y nos devuelve el JSON con la información.
+
+Para tener esto del lado de Angular, puesto que es una información de una API externa lo ideal es centralizar la información, y para centralizar la información es recomendable crear un servicio, vamos a crearlo con angular CLI:
+
+> ng g s services/spotify --skipTests
+
+Anterior a la versión de Angular nos creaba también la información en el app.module.ts ahora, sin embargo, ahora en el spotify.service.ts nos encontramos:
+
+```
+@Injectable({
+  providedIn: 'root'
+})
+```
+
+Esto indica a la aplicación, al cargar el servicio, que debe ser incluído en los providers y hace que no sea necesario incluirlo en los providers dentro del app.module.ts
+
+Vamos a hacer una petición a la api de Spotify, en nuestro spotify.service.ts crearemos una función para hacer una petición http a un endpoint y que quede guardado en una variable para luego poder trabajar con ello:
+
+```
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   getNewReleases() {
+    this.http.get('https://api.spotify.com/v1/browse/new-releases')
+      .subscribe( data => {
+        console.log(data);
+      });
+   }
+}
+```
+
+Si ahora queremos hacer uso de ello por ejemplo en nuestro componente de la home de esta manera nos acabará dando un error de no token provided:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { SpotifyService } from '../../services/spotify.service';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html'
+})
+export class HomeComponent {
+
+  constructor( private spotify: SpotifyService) {
+    this.spotify.getNewReleases();
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Entonces lo que necesito es modificar los headers de la petición, regresando a spotify.service.ts en el HttpClient del import incluímos HttpHeaders que nos permitirá esas modificaciones. Con ello podremos crear una constante tipo HttpHeader que nos dejará añadir información en formato de objeto con la información que necesitemos incluir en los headers, en nuestro caso la autorización:
+
+```
+const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQA8T9W7bdw266ilzogCBlseFNIB5yMEpZ4IQTPbRBRH51QsV2RLGwbiyaRQi6gj8X2ZdFUJ4u9A8JI6kZU'
+    });
+```
+
+Además tendremos que decirle a nuestra función get que se van a usar esos headers, de tal manera que todo el código de la función quedaría así (vamos a añadir el límite en 20, aunque la verdad es que ya estaba definido así a través del token):
+
+```
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQA8T9W7bdw266ilzogCBlseFNIB5yMEpZ4IQTPbRBRH51QsV2RLGwbiyaRQi6gj8X2ZdFUJ4u9A8JI6kZU'
+    });
+    this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers })
+      .subscribe( data => {
+        console.log(data);
+      });
+   }
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 98. Consumiendo información del servicio de Spotify
