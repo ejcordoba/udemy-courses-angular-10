@@ -3141,6 +3141,19 @@ Ver vídeo mostrando el resultado de la aplicación terminada y sus funcionalida
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 92. Sitio web de developer de Spotify
+
+Sitio web de developer de Spotify
+
+Actualización del sitio de Developer de Spotify
+
+En esta sección crearemos una aplicación que consume los servicios de Spotify.
+
+Pueden ver lo servicios en esta dirección
+
+https://beta.developer.spotify.com/console/
+
+Tengan esa página a mano, la necesitaremos pronto
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 93. Iniciando el proyecto - SpotiApp
