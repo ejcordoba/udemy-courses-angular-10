@@ -6,22 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ContrasenaPipe implements PipeTransform {
 
-  transform(value: string, activar:boolean ): string[] {
-
-    let cadena = value;
-    if ( activar ) {
-let contrasena = []
-      for (let i = 0; i < cadena.length; i++) {
-        contrasena[i]= '*'
-      console.log(contrasena)     }
-   
-return contrasena
-    } else {
-
-      //return value;
-
-    }
-    
+  transform(value: string, mostrar:boolean = true ): string {
+    return ( mostrar ) ? '*'.repeat( value.length ) : value;
   }
-
 }

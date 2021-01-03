@@ -3064,7 +3064,20 @@ return contrasena
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 87. Resolución de la tarea de Pipes
 
-[Volver al Índice](#%C3%ADndice-del-curso)
-## 88. Código fuente de la sección
+Primero creamos el pipe mediante el CLI
+
+> ng g p pipes/contrasena
+
+Efectivamente el profesor resuelve la parte de la función de manera mucho más sencilla, usando métodos actualizados de ECMAScript (.repeat()), con un condicional ternario.
+
+```
+ transform(value: string, mostrar:boolean = false ): string {
+    return ( mostrar ) ? '*'.repeat( value.length ) : value;
+  }
+```
+
+De esta manera comprueba si mostrar es verdadero, en tal caso devuelve un string que será consecuencia del carácter * devuelto tantas veces como sea la longitud del string original, en caso de que sea falso simplemente devolverá el string original (value)
+
+El resto de la lógica la tenía correcta, ¡a por la siguiente sección!
 
 [Volver al Índice](#%C3%ADndice-del-curso)
