@@ -3518,6 +3518,63 @@ export class SpotifyService {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 98. Consumiendo información del servicio de Spotify
+
+Si al cargar nuestra aplicación nos diera un error de token tendremos que volver a Postman y hacer una solicitud POST de token de nuevo, y en nuestro spotify.service.ts actualizar el token en el headers.
+
+Vamos a usar unas tarjetas de bootstrap para trabajar con la información que tenemos de la función getNewReleases() que actualmente sólo la tenemos en consola.
+
+Tomaremos información de los álbumes y la mostraremos en tarjetas.
+
+Vamos a modificar de nuevo la función getNewReleases, eliminando el subscribe y que sólo nos devuelva toda la información mediante un return:
+
+```
+getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQCI4NYAn9ET-5cv61XCybtwihkcnwvPQDafccRAWCW9VpjvRQpxIIl1_rSKkQmQEKJzBvkWUk8MEkDXOeQ'
+    });
+
+    return this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers });
+    
+   }
+```
+
+De esta manera, donde yo llame a la función getNewReleases() puedo añadirle el .suscribe, por ejemplo en el home.component.ts, esto nos permitiría, por ejemplo, introducir un "loading" para manejar tiempos de carga en el constructor del componente de home. Declararemos una variable nuevasCanciones para almacenar los items de los albumes que nos devuelve la solicitud http
+
+```
+export class HomeComponent {
+
+  nuevasCanciones: any[] = [];
+
+  constructor( private spotify: SpotifyService) {
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data.albums.items;
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora podremos montar nuestro html de la home con bootstrap (cards + badges) y rellenando la información deseada:
+
+```
+<div class="row">
+    <div *ngFor="let cancion of nuevasCanciones" class="card col-3">
+        <img class="card-img-top" [src]="cancion.images[0].url">
+        <div class="card-body">
+            <h5 class="card-title">{{ cancion.name }}</h5>
+            <p class="card-text">
+                <span *ngFor="let artista of cancion.artists" class="badge rounded-pill bg-primary">{{ artista.name }}</span>
+            </p>
+        </div>
+    </div>
+</div>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 99. Componente de Búsqueda de artistas
