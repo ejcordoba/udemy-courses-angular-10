@@ -85,7 +85,31 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [86. Tarea de Pipes](#86-tarea-de-pipes)
   - [87. Resolución de la tarea de Pipes](#87-resoluci%C3%B3n-de-la-tarea-de-pipes)
   - [88. Código fuente de la sección](#88-c%C3%B3digo-fuente-de-la-secci%C3%B3n)
-
+- [Sección 6:Aplicación #3: SpotiApp]()
+  - [89. Introducción a la sección]()
+  - [90. ¿Qué aprenderemos en esta sección?]()
+  - [91. Demostración del resultado de esta sección]()
+  - [92. Sitio web de developer de Spotify]()
+  - [93. Iniciando el proyecto - SpotiApp]()
+  - [94. Creando las rutas de nuestra aplicación]()
+  - [95. Introducción a las peticiones HTTP]()
+  - [96. Actualización - Token para uso de servicios Spotify]()
+  - [97. HTTPClient - Service: Conectándonos a Spotify]()
+  - [98. Consumiendo información del servicio de Spotify]()
+  - [99. Componente de Búsqueda de artistas]()
+  - [100. Operador Map de los Observables]()
+  - [101. Centralizar las peticiones hacia Spotify]()
+  - [102. Verificación de imagen y pipe para manejar las imágenes]()
+  - [103. Componente de tarjetas]()
+  - [104. Creando un loading component]()
+  - [105. Página del artista, nueva ruta, parámetro por url y servicio]()
+  - [106. Obtener artista de Spotify]()
+  - [107. Servicio: Top-tracks]()
+  - [108. Widgets de Spotify]()
+  - [109. Manejo de errores de un observable]()
+  - [110. Generar Token de Spotify de forma automática]()
+  - [Cuestionario 3: Examen teórico: SpotiApp]()
+  - [111. Código fuente de la sección]()
 
 # Sección 1:Introducción al curso de Angular
 
@@ -3080,4 +3104,77 @@ De esta manera comprueba si mostrar es verdadero, en tal caso devuelve un string
 
 El resto de la lógica la tenía correcta, ¡a por la siguiente sección!
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+# Sección 6:Aplicación #3: SpotiApp
+## 89. Introducción a la sección
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 90. ¿Qué aprenderemos en esta sección?
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 91. Demostración del resultado de esta sección
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 92. Sitio web de developer de Spotify
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 93. Iniciando el proyecto - SpotiApp
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 94. Creando las rutas de nuestra aplicación
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 95. Introducción a las peticiones HTTP
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 96. Actualización - Token para uso de servicios Spotify
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 97. HTTPClient - Service: Conectándonos a Spotify
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 98. Consumiendo información del servicio de Spotify
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 99. Componente de Búsqueda de artistas
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 100. Operador Map de los Observables
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 101. Centralizar las peticiones hacia Spotify
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 102. Verificación de imagen y pipe para manejar las imágenes
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 103. Componente de tarjetas
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 104. Creando un loading component
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 105. Página del artista, nueva ruta, parámetro por url y servicio
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 106. Obtener artista de Spotify
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 107. Servicio: Top-tracks
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 108. Widgets de Spotify
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 109. Manejo de errores de un observable
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 110. Generar Token de Spotify de forma automática
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## Cuestionario 3: Examen teórico: SpotiApp
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 111. Código fuente de la sección
 [Volver al Índice](#%C3%ADndice-del-curso)
