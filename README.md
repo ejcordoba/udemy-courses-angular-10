@@ -3108,9 +3108,30 @@ El resto de la lógica la tenía correcta, ¡a por la siguiente sección!
 
 # Sección 6:Aplicación #3: SpotiApp
 ## 89. Introducción a la sección
+
+En esta sección aprenderemos a desarrollar un aplicación que consume recursos de la API de Spotify, así como conceptos de HTTP, haciendo peticiones GET al servidor de Spotify, usando su API. Vamos a poder obtener su música, artistas, crearnos una pantalla de interfaz, crear un slideshow. También podremos usar el widget de Spotify para poder reproducir la canción completa. Por último veremos una introducción a la transformación de los datos que viene del servicio API de Spotify, pasándolo por un método map, para de esa manera poder usar esa información como nosotros queramos, también almacenaremos información en los servicios para que la información persista a pesar de movernos de página, al usar las rutas.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 90. ¿Qué aprenderemos en esta sección?
+
+Vamos a crear una aplicación que nos ayudará a comprender sobre los siguientes temas:
+
+1. Reforzamiento de rutas y parámetros de rutas.
+2. Uso de carruseles del Bootstrap 4
+3. Uso del HTTP para obtener información
+4. Uso de la API de Spotify para obtener información de:
+- a. Artistas
+- b. Albumes
+- c. Audio
+5. Trabajo sobre el manejo de data asíncrona.
+6. ngModel para enlazar campos de texto a variables del componente.
+7. Widgets de Spotify
+8. HTML5 audio
+9. Observables
+10. Maps
+Durante la sección tendremos tareas y al final un examen teórico para reforzar los conocimientos adquiridos.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 91. Demostración del resultado de esta sección
