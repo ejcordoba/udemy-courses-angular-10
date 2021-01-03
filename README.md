@@ -3210,6 +3210,85 @@ Por último iremos a la página de getbootstrap.com / Descargas y añadir el CDN
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 94. Creando las rutas de nuestra aplicación
+
+Vamos a crear un archivo nuevo en src/app/app.routes.ts
+
+```
+import { Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { SearchComponent } from './components/search/search.component';
+
+
+
+export const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'search', component: SearchComponent },
+    { path: '', pathMatch: 'full', redirectTo: 'home'}, // Cualquier otro path no definido nos redireccionará al home
+    { path: '**', pathMatch: 'full', redirectTo: 'home'} // Cualquier otro path no definido nos redireccionará al home
+];
+```
+
+En app.module.ts es donde pondremos el módulo de rutas.
+
+Aquí en app.module.ts importaremos el módulo de rutas y lo incluiremos en los imports, asegurarnos en el imports que está cogiendo la constante del app.routes, y además definiremos que usaremos el HASH para las url (#), quedando el archivo tal que:
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router'
+
+import { AppComponent } from './app.component';
+import { HomeComponent } from './components/home/home.component';
+import { SearchComponent } from './components/search/search.component';
+import { ArtistaComponent } from './components/artista/artista.component';
+import { NavbarComponent } from './components/shared/navbar/navbar.component';
+import { ROUTES } from './app.routes';
+
+// Importación de rutas
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    SearchComponent,
+    ArtistaComponent,
+    NavbarComponent
+  ],
+  imports: [
+    BrowserModule,
+    RouterModule.forRoot( ROUTES, { useHash: true } ) // Quiero usar el hash
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+Posteriormente vaciamos el app.component.html precargado de Angular. Incluiremos el componente de navbar, un div container y el router-outlet para posibilitar la navegación entre componentes. Para el navbar vamos a coger código de bootstrap que incluiremos en el navbar.component.html.
+
+```
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="/assets/img/banner-ico.png" alt="" width="30" height="30"> Spotiapp
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" aria-current="page" routerLink="home">Home</a>
+                </li>
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" routerLink="search">Search</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 95. Introducción a las peticiones HTTP
