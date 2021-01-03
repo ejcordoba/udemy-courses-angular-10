@@ -3019,6 +3019,48 @@ Ahora ya podemos usar nuestro pipe y carga correctamente, porque aplica el pipe 
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 86. Tarea de Pipes
 
+La tarea consiste en crear un pipe que, dada una variable que contiene un string, a través de un evento click en un botón oculte o muestre la llamada en el html de dicha variable string, sustituyéndola por asteriscos o mostrando su formato original. Hasta donde llegué fue:
+
+Crear un pipe con el Angular cli
+
+> ng g p pipes/contrasena
+
+Me atasqué en la creación de la función que altera visualmente el string, no sabiendo bien qué opción elegir para checkear la cadena de caracteres y cómo sustituirla por los valores de asterisco, tenía en mente pasar la variable de string a array de string y recorrerla, etc, lo dejé hasta donde llegué porque intuía que la solución seguramente sería más sencilla. A continuación los códigos fuente del componente y del html creado para la tarea:
+
+```
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'contrasena'
+})
+export class ContrasenaPipe implements PipeTransform {
+  transform(value: string, activar:boolean ): string[] {
+    let cadena = value;
+    if ( activar ) {
+      let contrasena = []
+      for (let i = 0; i < cadena.length; i++) {
+        contrasena[i]= '*'
+        console.log(contrasena)     
+      }   
+return contrasena
+    } else {
+      //return value;
+    }    
+  }
+}
+```
+
+```
+<tr>
+  <td> {{ nombre }} </td>
+  <td> contrasena:{{ activar }}
+      <br>
+      <button (click)="activar = !activar" class="btn btn-outline-primary">Activar/Desactivar</button>
+  </td>
+  <td> {{ nombre | contrasena:activar }} </td>
+</tr>
+```
 [Volver al Índice](#%C3%ADndice-del-curso)
 ## 87. Resolución de la tarea de Pipes
 
