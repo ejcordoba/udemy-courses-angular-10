@@ -3157,6 +3157,56 @@ Tengan esa página a mano, la necesitaremos pronto
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 93. Iniciando el proyecto - SpotiApp
+
+Primeramente descargamos una serie de recursos para la sección, unas imágenes y un archivo de estilos CSS.
+
+Crearemos en nuevo proyecto yendo a la raíz del curso y usando el Angular cli:
+
+> ng new spotiapp
+
+Mientras vamos a https://developer.spotify.com/console/ porque aquí necesitamos hacer dos cosas: Crear en Spotify una aplicación y ver cómo funciona en la api de Spotify.
+
+Vamos a https://developer.spotify.com/dashboard/ y hacemos login. (Yo por suerte tengo cuenta premium)
+
+Posteriormente le damos a "CREATE A CLIENT ID"
+
+Una vez creado ya dispondremos de dos datos fundamentales que son el CLIENT ID y el CLIENT ID SECRET. Ambas van a ser necesarias para crear un token.
+
+Ya debió de terminar la creación de la app, la renombramos a 04-spotiapp
+
+Levantamos la aplicación con `ng serve` en nuestra línea de comandos previa navegación al directorio de la nueva aplicación.
+
+A continuación vamos a crear un par de componentes que vamos a necesitar para la aplicación, una página "home" `ng g c components/home --skipTests -is`, una página de "search" `ng g c components/search --skipTests -is`, una página de artista `ng g c components/artista --skipTests -is` y por último otro componente que estará en un subdirectorio compartido para el navbar `ng g c components/shared/navbar --skipTests -is` (--skipTests no genera archivos de test unitarios, -is es inline style, no genera referencias a archivos CSS externos y tampoco lo refiere dentro del archivo ts del componente). Crearemos más componentes a lo largo de la aplicación, pero de momento para empezar necesitaremos esos.
+
+Copiaremos en el directorio /src/assets/ el directorio img que habíamos descargado anteriormente del archivo comprimido de recursos de la sección.
+
+Del mismo origen copiaremos el archivo styles.css y lo sustituiremos por el que ya se encuentra en src/styles.css
+
+Por último iremos a la página de getbootstrap.com / Descargas y añadir el CDN a nuestro index.html, dejando el <link> en el <head> y el <script> al final del <body>. También copiaremos los <script> del jquery y del popper colocándolos justo antes del <script> del bootstrap.
+
+```
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Spotiapp</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+
+<body>
+    <app-root></app-root>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+</body>
+
+</html>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 94. Creando las rutas de nuestra aplicación
