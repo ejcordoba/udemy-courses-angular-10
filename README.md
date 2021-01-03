@@ -3292,6 +3292,110 @@ Posteriormente vaciamos el app.component.html precargado de Angular. Incluiremos
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 95. Introducción a las peticiones HTTP
+
+Aquí obtendremos recursos mediante peticiones HTTP o Ajax, para ello necesitaremos un sitio al que pedir dicha información, para practicar vamos a ir al sitio web http://restcountries.eu/ y buscamos una lista de países por el lenguaje (API ENDPOINTS - Language).
+
+Podemos testear con la aplicación externa Postman para hacer un get a la url: https://restcountries.eu/rest/v2/lang/es de tal manera que nos devuelve un objeto en formato JSON con la información de países que hablan español.
+
+Para poder trabajar con este tipo de solicitudes en nuestra aplicación de Angular necesitamos dos cosas:
+
+1. Importar en app.module.ts algo que nos permita hacer peticiones HTTP (`import { HttpClientModule } from '@angular/common/http';`), en HttpClientModule se incluyen una serie de herramientas que vamos a necesitar en nuestra app, entre ellas la que me permite hacer peticiones HTTP. Lo incluímos en los imports (ya que se trata de un módulo).
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+
+import { AppComponent } from './app.component';
+import { HomeComponent } from './components/home/home.component';
+import { SearchComponent } from './components/search/search.component';
+import { ArtistaComponent } from './components/artista/artista.component';
+import { NavbarComponent } from './components/shared/navbar/navbar.component';
+import { ROUTES } from './app.routes';
+
+// Importación de rutas
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    SearchComponent,
+    ArtistaComponent,
+    NavbarComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    RouterModule.forRoot( ROUTES, { useHash: true } ) // Quiero usar el hash
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+
+2. En nuestro home.component.ts vamos a incluir el código para manejar la información, en nuestro constructor declaramos `private Http: HttpClient`. De esta manera al cargar la app y, por tanto, este componente, tendré a disposicion los métodos de http, entre ellos el que nos permite hacer las peticiones.
+
+```
+constructor( private http: HttpClient ) {
+    console.log('Constructor del home cargado');
+    this.http.get('https://restcountries.eu/rest/v2/lang/es');
+  }
+```
+
+De esta manera tenemos la información hecha, pero necesitamos suscribirnos/escuchar esta petición para poder manejar los datos que devuelve. Para ello al metodo get le añadimos a continuación un submétodo 'subscribe' en el cual definiremos mediante una función de flecha una variable en la cual guardaremos la información devuelta por el get.
+
+```
+constructor( private http: HttpClient ) {
+    console.log('Constructor del home cargado');
+    this.http.get('https://restcountries.eu/rest/v2/lang/es')
+      .subscribe( respuesta => {
+        console.log(respuesta);
+      })
+  }
+```
+
+Una vez que estamos suscritos a esa información podemos llamarla, vamos a definir una variable países y en el constructor guardaremos la respuesta en dicha variable.
+
+```
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html'
+})
+export class HomeComponent implements OnInit {
+
+  paises: any[] = [];
+
+  constructor( private http: HttpClient ) {
+    console.log('Constructor del home cargado');
+    this.http.get('https://restcountries.eu/rest/v2/lang/es')
+      .subscribe( (respuesta:any) => {
+        this.paises = respuesta;
+        console.log(respuesta);
+      })
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora ya podemos acceder a la información en el html:
+
+```
+<ul>
+    <li *ngFor="let pais of paises">
+        {{ pais.name }} - {{ pais.population | number }}
+    </li>
+</ul>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 96. Actualización - Token para uso de servicios Spotify
