@@ -3803,6 +3803,79 @@ export class SpotifyService {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 102. Verificación de imagen y pipe para manejar las imágenes
+
+Toca optimizar las imágenes ahora, en nuestro componente search tenemos un problema, cuando hacemos una búsqueda de artista y ese artista no tienen una imagen asociada o bien no sale, o sale rota, tenemos error en consola de que no puede encontrarlo, etc.
+
+Podemos resolver esto de muchas maneras, con alguna función, con un operador map que verifique los datos, etc. Nosotros en este caso vamos a usar un pipe.
+
+Vamos a crearlo con el angular CLI
+
+> ng g p pipes/noimage --skipTests
+
+Vamos a search.component.html la idea es que `[src]="artista.images[0].url"` sea validado antes de ser mostrado. Vamos a configurar nuestro noimage.pipe.ts.
+
+El value que recibirá será el array de imágenes, no tendrá argumentos adicionales y devolverá un string (la url de la imagen). Haremos varias validaciones, la primera sería si el value que recibe no es válido, es decir, recibe un null, undefined o algo similar, lo que devuelva sea una imagen por defecto, en el material adjunto de la sección hay un noimage.png que usaremos para esto. La copiaremos a src/ap/assets/img/noimage.png. Nótese que la ruta relativa se considera que empieza desde el index.html, por eso para localizar la imagen por defecto que queremos devolver empezamos desde "assets".
+
+Si por contrario si viniera una imagen, es decir la longitud de esa variable es mayor de 0, devolveremos la url de la posición 0 del array de imágenes. Pero si no fuera así también devolveríamos la imagen por defecto.
+
+Para usarlo, como lo que devuelve en caso correcto es `images[0].url` tendremos que eliminarlo del html y generarlo aplicándole el pipe, de tal manera que el código html quedaría con `[src]="artista.images | noimage"`. El código tanto del pipe como del html quedarían como a continuación:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'noimage'
+})
+export class NoimagePipe implements PipeTransform {
+
+  transform( images: any[] ): string {
+    
+    if ( !images ) {
+      return 'assets/img/noimage.png'; // Se considera que los path relativos empiezan en el index.html
+    }
+    if ( images ) {
+      return images[0].url;
+    } else {
+      return 'assets/img/noimage.png';
+    }
+  }
+
+}
+```
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+
+<div class="row">
+    <div *ngFor="let artista of artistas" class="card col-3 m-2">
+        <img class="card-img-top" [src]="artista.images | noimage">
+        <div class="card-body">
+            <h5 class="card-title">{{ artista.name }}</h5>
+        </div>
+    </div>
+</div>
+```
+
+NOTA IMPORTANTE: Parece ser que de esta manera no terminaba de funcionar, otro alumno encontró una solución, dejo el código del noimage.pipe.ts modificado:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'noimage'
+})
+export class NoimagePipe implements PipeTransform {
+
+  transform( images: any[] ): string {
+    return images.length === 0 ? 'assets/img/noimage.png' : images[0].url;
+  }
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 103. Componente de tarjetas

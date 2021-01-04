@@ -8,9 +8,12 @@ import { HomeComponent } from './components/home/home.component';
 import { SearchComponent } from './components/search/search.component';
 import { ArtistaComponent } from './components/artista/artista.component';
 import { NavbarComponent } from './components/shared/navbar/navbar.component';
-import { ROUTES } from './app.routes';
-
 // Importación de rutas
+import { ROUTES } from './app.routes';
+// Pipes
+import { NoimagePipe } from './pipes/noimage.pipe';
+
+
 
 @NgModule({
   declarations: [
@@ -18,7 +21,8 @@ import { ROUTES } from './app.routes';
     HomeComponent,
     SearchComponent,
     ArtistaComponent,
-    NavbarComponent
+    NavbarComponent,
+    NoimagePipe
   ],
   imports: [
     BrowserModule,
