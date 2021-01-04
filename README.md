@@ -3734,6 +3734,72 @@ getNewReleases() {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 101. Centralizar las peticiones hacia Spotify
+
+Ahora optimizaremos el código duplicado, puesto que en el spotify.service.ts tenemos funciones prácticamente idénticas.
+
+Para empezar tenemos una "query" o condición que se distingue de un lugar a otro, pero el resto de la url es la misma (hablando de las peticiones GET). Vamos a centralizar esto, para ello vamos a realizar una función que llamaremos getQuery(), la cual recibirá el query di tipo string, que será el código exclusivamente único para las funciones getNewReleases() y getArtista(). Crearemos una constante "url" que tendrá como objetivo centralizar la petición, es decir, si cambiara la versión de v1 a v2 solo tendríamos que cambiar esa constante y se actualizaría en el resto de cadenas.
+
+Esa constante además se completará con una variable, que será la query particular de cada función. Buscamos unificar y centralizar.
+
+Ahora mediante variables podríamos tener la función definida así:
+
+```
+getQuery( query: string ) {
+
+    const url = `https://api.spotify.com/v1/${ query }`;
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQBMAjYA59yQOox2qI3E2t0BrXjObYO-00kpZNAqbRGIzBidws586Kuzpwt8kCDsusoyj82q5jU-1pcavhw'
+    });
+
+    return this.http.get(url, { headers });
+
+  }
+```
+
+Llegados a este punto es mucho más claro simplemente leer el código ya terminado, todo centralizado y unificado, el archivo spotify.service.ts queda:
+
+```
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   
+  getQuery( query: string ) {
+
+    const url = `https://api.spotify.com/v1/${ query }`;
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQBMAjYA59yQOox2qI3E2t0BrXjObYO-00kpZNAqbRGIzBidws586Kuzpwt8kCDsusoyj82q5jU-1pcavhw'
+    });
+
+    return this.http.get(url, { headers });
+
+  }
+
+  getNewReleases() {
+
+    return this.getQuery('browse/new-releases?limit=20')
+      .pipe( map( data => data['albums'].items ) );
+  }
+
+  getArtista( termino: string ) {
+
+    return this.getQuery(`search?q=${ termino }&type=artist&limit=15`)
+      .pipe( map( data => data['artists'].items ) );    
+  }
+
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 102. Verificación de imagen y pipe para manejar las imágenes
