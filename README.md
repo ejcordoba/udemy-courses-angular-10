@@ -3578,6 +3578,105 @@ Ahora podremos montar nuestro html de la home con bootstrap (cards + badges) y r
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 99. Componente de Búsqueda de artistas
+
+Ahora trabajaremos en la sección "search", la idea es crear un buscador para filtrar la búsqueda de los nuevos lanzamientos que recibimos en nuestra app.
+
+Empezamos con el html, introduciremos un input donde haremos la búsqueda, en este input estará la función que nos permitirá "buscar()" y un #termino de referencia que será lo que usemos para buscar los artistas, así que lo que la función hará será "buscar(termino.value)", al definir #termino estamos creando la posibilidad de referenciar al valor que se encuentre en el input. Esto se enviará cada vez que se suelte una tecla pulsada, debido al evento (keyup). Quedando el html y el ts, respectivamente, de esta manera:
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+```
+
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styles: []
+})
+export class SearchComponent {
+
+  constructor() { }
+
+  buscar(termino: string) {
+    console.log(termino);
+  };
+
+}
+```
+
+A continuación trabajaremos en el servicio para poder gestionar la búsqueda, para ello vamos a https://developer.spotify.com/console/ y en "search" hacemos click en el endpoint que nos ofrece `https://api.spotify.com/v1/search`, para la generación de token las variables que nos ofrece son q* (el término a buscar, por ejemplo Metallica), type* (si es una canción o artista), market (el país del mercado, de esto pasaremos), límit (límite de 15, pondremos), si damos a "try it" y da error tendremos que generar el token de nuevo en esa misma página.
+
+Regresamos a nuestro servicio de spotify spotify.service.ts y tendremos que crear un nuevo servicio getArtista(), para este servicio necesitaré el término de búsqueda. El código será prácticamente igual al que ya teníamos de getNewReleases(), cambiará el return, puesto que la url de petición get es distinta, cogeremos la url del ejemplo que teníamos en la consola de Spotify Developers, y como esa url recibe un término usaremos la variable para generar la url deseada. El string de la url la delimitaremos por backticks para poder concatenar la variable. Es decir, originalmente la cadena es: `https://api.spotify.com/v1/search?q=ed%20sheeran&type=artist&limit=15` y en lugar de eso quedaría de esta manera:
+
+```
+getArtista( termino: string ) {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQDt7vsa4s73U0L4PpmZEHm-PwckR1TWg4AP30YMDoMNB3ijj714erHbSt6mVXZaDjvLj_OBKCPqft3fgno'
+    });
+
+    return this.http.get(`https://api.spotify.com/v1/search?q=${ termino }&type=artist&limit=15`, { headers });
+
+   }  
+```
+
+Regresamos al search.component.ts puesto que para usar el servicio necesito inyectarlo en el constructor, nos aseguramos de que lo importe de nuestro servicio spotify.service.ts y así ya podemos usarlo en nuestra función buscar, con sus métodos get, etc. Entonces al llamar al servicio getArtists recibiendo el término, ya podemos suscribirnos a los datos que devuelven para manipularlos en nuestro html. 
+
+Reutilizaremos el html de la home y lo adaptaremos a lo que queremos en el search, más adelante optimizaremos todo el código porque estamoos reutilizando mucho. El html necesita ser pulido en temas de estilo, así como controlar que no reciba imágenes rotas, pero se arreglará más adelante, queda tal que así, de momento:
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+
+<div class="row">
+    <div *ngFor="let artista of artistas" class="card col-3 m-2">
+        <img class="card-img-top" [src]="artista.images[0].url">
+        <div class="card-body">
+            <h5 class="card-title">{{ artista.name }}</h5>
+        </div>
+    </div>
+</div>
+```
+
+Y el código del search.component.ts tal que así:
+
+```
+import { Component } from '@angular/core';
+import { SpotifyService } from 'src/app/services/spotify.service';
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styles: []
+})
+export class SearchComponent {
+
+  artistas: any[] = [];
+
+  constructor(private spotify: SpotifyService) { }
+
+  buscar(termino: string) {
+    console.log(termino);
+    this.spotify.getArtista( termino )
+      .subscribe( (data: any) => {
+        console.log(data);
+        this.artistas = data.artists.items;
+      });
+  };
+
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 100. Operador Map de los Observables
