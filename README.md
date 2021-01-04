@@ -3879,6 +3879,73 @@ export class NoimagePipe implements PipeTransform {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 103. Componente de tarjetas
+
+Seguimos optimizando código, en este caso tenemos duplicado el html del home y del search, son códigos prácticamente iguales.
+
+Así que vamos a centralizar el código, creándonos un nuevo componente:
+
+> ng g c components/tarjetas --skipTests
+
+Copiaremos todo el código de home.component.html y lo copiaremos en tarjetas.component.html. Entonces en home.component.html ya podemos llamar a `<app-tarjetas></app-tarjetas>`. Como anteriormente home trabajaba con las nuevasCanciones definidas en su ts, ahora deberemos pasarle esos valores a app-tarjetas `<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>`
+
+En tarjetas.component.ts tendremos que recibir esa información con un @input que deberemos importar desde @Angular/core, que hemos llamado "items", por tanto tendremos que cambiar html y adaptar de cancion como variable a items.
+
+Lo mismo para el componente search, solo que lo que le pasaremos como valor de "items" será artista en lugar de nuevasCanciones. Quedarían así entonces los archivos:
+
+tarjetas.component.ts
+
+```
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-tarjetas',
+  templateUrl: './tarjetas.component.html',
+  styleUrls: ['./tarjetas.component.css']
+})
+export class TarjetasComponent {
+
+  @Input() items: any[] = [];
+
+  constructor() { }
+
+}
+
+```
+
+tarjetas.component.html
+
+```
+<div class="row m-5">
+    <div *ngFor="let item of items" class="card col-3">
+        <img class="card-img-top" [src]="item.images | noimage">
+        <div class="card-body">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <p class="card-text">
+                <span *ngFor="let artista of item.artists" class="badge rounded-pill bg-primary">{{ artista.name }}</span>
+            </p>
+        </div>
+    </div>
+</div>
+```
+
+home.component.html
+
+```
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+search.component.html
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+
+<app-tarjetas [items]="artistas"></app-tarjetas>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 104. Creando un loading component
