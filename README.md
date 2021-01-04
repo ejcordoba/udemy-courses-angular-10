@@ -3949,6 +3949,63 @@ search.component.html
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 104. Creando un loading component
+
+En esta lección vamos a crear un loading que diga al usuario que espere por favor mientras la data viene de nuestros servicios. Esto será un nuevo componente que vamos a crear como de uso general, y que incluiremos en el directorio shared, por tanto.
+
+> ng g c components/shared/loading --skipTests
+
+Ahora podemos llamar a `<app-loading></app-loading>` en home.component.html, por ejemplo, al principio de todo antes del resto del código.
+
+Para generarl algo visualmente bonito en el html del nuevo componente loading vamos a utilizar fontawesome.com, nos vamos al sitio web y lo instalamos mediante el CDN a través de "Get Started". (Nota: ha cambiado un poco,hay que registarse y el link es tipo <script>).
+
+Incluímos el código en el index.html.
+
+A continuación crearemos el html del loading.component.html:
+
+```
+<div class="row text-center animated fadeIn">
+    <div class="col">
+        <i class="fas fa-sync fa-spin fa-5x"></i>
+    </div>
+</div>
+```
+
+La idea de este loading es que sólo aparezca cuando estamos cargando información, y cuando ya tengamos la información debería desaparecer.
+
+Esto lo vamos a controlar con un *ngIf, asi que para ello nos vamos al home.component.ts y creamos una nueva propiedad loading: boolean; la inicializaremos en el constructor como true y en la función que cargar los lanzamientos al final la definiremos como false (es decir, cuando ya haya realizado la funcion, lo que significaría que ya se cargaron todos los datos), quedaría así:
+
+```
+export class HomeComponent {
+
+  nuevasCanciones: any[] = [];
+  loading: boolean;
+
+  constructor( private spotify: SpotifyService) {
+
+    this.loading = true;
+
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data;
+      this.loading = false;
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora puedo regresar al home.component.html e implementar la condicional:
+
+```
+<app-loading *ngIf="loading"></app-loading>
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+Haremos lo mismo para el search.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 105. Página del artista, nueva ruta, parámetro por url y servicio
