@@ -3680,6 +3680,57 @@ export class SearchComponent {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 100. Operador Map de los Observables
+
+En esta lección haremos todas las optimizaciones pendientes. Vamos a comenzar con el operador map. ¿Para qué sirve?
+
+Vamos a trabajarlo en el home.component.ts. En este componente cuando llamamos a la función del servicio getNewReleases nos suscribimos a una "data" que es el resultado de la petición http GET, esto es un JSON con una gran cantidad de información por lo general. El operador map se adjuntará a nuestra petición u observable (http.get) lo va a filtrar y nos va a devolver únicamente lo que a nosotros nos sirva. Es decir, toma toda la información pero la cambia, la adapta a lo que sólo necesitamos, pero en esencia sigue estando toda la información ahí.
+
+Para implementarlo en nuestra app vamos a usarlo en nuestro home.component.ts, actualmente a la función le especificamos que queremos data.albums.items, deberíamos poder pedir simplemente la data y que nos la de ya filtrada de antemano, y como esto se define en el servicio vamos a spotify.service.ts para definir el operador map allí.
+
+Primeramente hay que importar el operador map, esto no está en las librerías de Angular, sino de Reactive Extensions (RxJS), que son unas librerías de JavaScript para manipular observables y funciones asíncronas. Nosotros necesitamos el "map" que se encuentra en la sección "operators" de rxjs `import { map } from 'rxjs/operators';`.
+
+En nuestro observable ahora podemos añadirle una función pipe que nos sirve para filtrar, y esta función recibe como argumento la función map para definir el filtrado deseado, este map recibirá la información en bruto que nos devuelve el método get previo en la "data", la cual es consecuencia de una función de flecha en la cual especificaremos el return que deseamos, en este caso queríamos solo los items que pertenecen a la propiedad albums de todo el JSON que devuelve el GET (data), resumiendo el código quedaría tal que así:
+
+```
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQDt7vsa4s73U0L4PpmZEHm-PwckR1TWg4AP30YMDoMNB3ijj714erHbSt6mVXZaDjvLj_OBKCPqft3fgno'
+    });
+
+    return this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers })
+      .pipe( map( data => {
+        return data['albums'].items;
+      }));
+   }
+```
+
+Podemos abreviar un poco más las funciones, porque cuando las funciones de flecha tienen una sóla línea, y esa línea es un return (como es nuestro caso) se pueden definir así:
+
+```
+getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQBMAjYA59yQOox2qI3E2t0BrXjObYO-00kpZNAqbRGIzBidws586Kuzpwt8kCDsusoyj82q5jU-1pcavhw'
+    });
+
+    return this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers })
+      .pipe( map( data => data['albums'].items ) );
+   }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 101. Centralizar las peticiones hacia Spotify

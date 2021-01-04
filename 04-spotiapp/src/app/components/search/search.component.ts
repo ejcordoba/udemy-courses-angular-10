@@ -16,8 +16,7 @@ export class SearchComponent {
     console.log(termino);
     this.spotify.getArtista( termino )
       .subscribe( (data: any) => {
-        console.log(data);
-        this.artistas = data.artists.items;
+        this.artistas = data;
       });
   };
 
