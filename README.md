@@ -4124,6 +4124,78 @@ export class ArtistaComponent {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 106. Obtener artista de Spotify
+
+Vamos a definir el servicio que nos permita recibir el artista, para ello antes de nada tendremo que volver a https://developer.spotify.com/console/artists/ para ver el endpoint que necesitamos, en este caso sería `https://api.spotify.com/v1/artists/{id}`
+
+Vamos a reutilizar el código de getArtista, debió ser definido en su momento como getArtistas en plural, puesto que nos devuelve uno o varios artistas, y lo que queremos generar ahora es una función que nos devuelva uno solo y la llamaremos getArtista. Que en lugar de termino recibirá un id de tipo string.
+
+Reutilizando el código lo único que deberemos modificar sería el string que recibe como argumento la función getQuery, quedando la función completada tal que:
+
+```
+getArtista( id: string ) {
+
+    return this.getQuery(`artists/${id}`)
+      .pipe( map( data => data['artists'].items ) );    
+  }
+```
+
+Lo ideal sería saber qué es lo que nos devuelve el query, para poder validarlo correctamente o aplicar el map, para esto podríamos usar Postman, por ejemplo, en nuestro caso vamos a comentar la línea del .pipe(map) y a cerrar la función this.getQuery con punto y coma. Y vamos a ver qué devuelve el getQuery directamente desde nuestra aplicación de Angular.
+
+```
+getArtista( id: string ) {
+
+    return this.getQuery(`artists/${id}`);
+      //.pipe( map( data => data['artists'].items ) );    
+  }
+```
+
+Volvemos a artista.component.ts, habíamos dejado definido que nos mostrase por consola el id de params, ya sabemos que se recibe correctamente, así que vamos a usar ese id para llamar al método getArtista y ver que información devuelve, vamos a crear un método aparte en el mismo componente que se llame también getArtista, que recibirá un id de tipo string, lo definiremos fuera del constructor para no sobrecargarlo de métodos, ese método llamará al servicio, por lo tanto necesitamos importarlo e inyectarlo en el componente, una vez hecho esto ya podemos llamar al servicio en la nueva función, el servicio llamará a la función getArtista pero a la del servicio, que recibirá el id y al cual nos suscribiremos para recibir la respuesta http.
+
+Una vez hecho esto entonces en el ActivatedRoute del constructor ya podemos usar la escucha del id para pasarselo a la función getArtista como parámetro y así poder ver toda la información que nos devuelve del artista dado ese id.
+
+Ahora en la consola tenemos toda la información relativa a ese artista, incluso una url externa que nos lleva al perfil del artista en Spotify  . Realmente ni haría falta filtrarlo por el map, puesto que ya nos devuelve un único objeto JSON muy ordenado y simple con un montón de información útil. Así que haremos un poco de maquetación html para mostrar la información de manera visualmente agradable, en lugar del "artista works!" :)
+
+Por un lado vamos a maquetar un html, y por el lado del componente vamos a declarar una variable "artista" que sea un objeto vacío que usaremos para almacenar los datos que luego querremos renderizar en el html, recordamos que esta información la podemos manejar tal cual porque ya la recibimos de manera que podemos usarla sin problemas, si fuese complicado de acceder a los datos tendríamos que aplicar el pipe/map en el servicio. Entonces hasta aquí nuestro componente quedaría de esta manera:
+
+```
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { SpotifyService } from 'src/app/services/spotify.service';
+@Component({
+  selector: 'app-artista',
+  templateUrl: './artista.component.html',
+  styles: []
+})
+export class ArtistaComponent {
+
+  artista: any = {};
+
+  constructor( private router: ActivatedRoute,
+               private spotify: SpotifyService ) {
+
+  this.router.params.subscribe( params => {
+    this.getArtista( params ['id']);
+  });
+
+  }
+
+  getArtista( id: string ) {
+
+    this.spotify.getArtista( id )
+      .subscribe( artista => {
+        console.log(artista);
+        this.artista = artista;
+      });
+  }
+}
+```
+
+
+
+
+
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 107. Servicio: Top-tracks
