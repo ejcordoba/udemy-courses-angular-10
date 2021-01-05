@@ -4009,6 +4009,118 @@ Haremos lo mismo para el search.
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 105. Página del artista, nueva ruta, parámetro por url y servicio
+
+En esta lección definiremos que en la página de search, cuando hagamos click en alguno de los artistas que busquemos nos lleve a la página del artista.
+
+En el setup inicial del proyecto ya habíamos dejado creado el componente "artista".
+
+Necesitamos el ID del artista para cuando vayamos a hacer click, porque en https://developer.spotify.com/console/artists/ el parámetro que requiere el endpoint es el ID. Este ID ya lo tenemos porque forma parte de uno de los atributos que componen el objeto de artista que recibimos con el GET en la petición http.
+
+Para comenzar necesitamos definir una nueva ruta y que esta controle el parámetro del ID que se pasa por la url.
+
+En app.routes.ts añadimos la nueva ruta indicando que recibirá el id como parámetro:
+
+```
+export const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'search', component: SearchComponent },
+    { path: 'artist/:id', component: ArtistaComponent },
+    { path: '', pathMatch: 'full', redirectTo: 'home'}, // Cualquier otro path no definido nos redireccionará al home
+    { path: '**', pathMatch: 'full', redirectTo: 'home'} // Cualquier otro path no definido nos redireccionará al home
+];
+```
+
+Ahora en tarjetas.component.html añadiremos en el html de la tarjeta una clase css llamada "puntero" que ya tenemos definida en nuestro archivo styles.css, esto hará que el puntero cambie cuando nos situemos sobre el elemento.
+
+Vamos a añadir el evento click en el elemento, pero nosotros lo que manejamos en tarjetas es un "item", este item será a veces artistas y a veces canciones, en función de en qué página se cargue el componente de la tarjeta, si en el home o en el search, pero uno de los atributos de ese objeto es "type", que define esto, o bien "album" o "single" o "artist", lo cual nos servirá para discriminar en nuestro código si se trata de un artista, y entonces poder capturar el ID de ese elemento para poder enviarlo por la url posteriormente.
+
+Así pues, en tarjetas.component.html incluiremos el evento (click) que ejecutará la funcion de verArtista( item ) al cual se le pasará el item, y posteriormente controlarermos ese item como hemos comentado.
+
+```
+<div class="row m-5 animated fadeIn">
+    <div (click)="verArtista( item )" *ngFor="let item of items" class="card col-3 puntero">
+        <img class="card-img-top" [src]="item.images | noimage">
+        <div class="card-body">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <p class="card-text">
+                <span *ngFor="let artista of item.artists" class="badge rounded-pill bg-primary">{{ artista.name }}</span>
+            </p>
+        </div>
+    </div>
+</div>
+```
+
+Ahora en tarjetas.component.ts hacemos la lógica de la función, si al hacer click es de tipo artista guardaremos su ID, por el contrario iremos al primer artista del album o la canción y cogeremos su ID (NOTA PERSONAL: lo suyo sería pulirlo y añadir la funcion a cada artista en los badges, estamos definiendo esto para que coja algo, parece ser).
+
+```
+verArtista ( item: any ) {
+    let artistaID;
+
+    if ( item.type === 'artist' ) {
+      artistaID = item.id;
+    } else {
+      artistaID = item.artists[0].id;
+    }
+    console.log(artistaID);
+
+  }
+```
+
+Ahora solo nos falta redireccionar a la página del artista cuando hagamos click (en lugar de hacer console log como estamos haciendo). Para ello necesitamos importar el Router en el componente de tarjeta e inyectarlo en el constructor. Ahora podemos usar el metodo navigate de router para navegar, como recibe un parámetro la url se pone entre []. El primer parámetro es la ruta a la que quiero navegar (/artist) y el segundo el ID que le tengo que pasar a la url, artistID. Aún no tenemos definido el html del artista, pero ya funciona puesto que si hacemos click nos llevará a una url tipo `http://localhost:4200/#/artist/7Hd38PVp634oGEb9pIDs5d`. El código quedaría así de momento:
+
+```
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-tarjetas',
+  templateUrl: './tarjetas.component.html',
+  styleUrls: ['./tarjetas.component.css']
+})
+export class TarjetasComponent {
+
+  @Input() items: any[] = [];
+
+  constructor( private router: Router ) { }
+
+  verArtista ( item: any ) {
+    let artistaID;
+
+    if ( item.type === 'artist' ) {
+      artistaID = item.id;
+    } else {
+      artistaID = item.artists[0].id;
+    }
+    
+    this.router.navigate(['/artist', artistaID]);
+
+  }
+
+}
+```
+
+Vamos a definir la recepción del ID en el componente del artista, para así luego poder usarlo para ver su página. En artista.component.ts importamos ActivatedRoute de @angular/router y lo inyectamos en el constructor, esto nos permite que en el constructor podamos usar ActivatedRoute para suscribirnos/escuchar si hay cambios en la url, si se añaden parámetros, en este caso detectar si se está pasando el ID. De momento lo dejaremos para que podamos verlo por consola, el código quedaría tal que:
+
+```
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+@Component({
+  selector: 'app-artista',
+  templateUrl: './artista.component.html',
+  styles: []
+})
+export class ArtistaComponent {
+
+  constructor( private router: ActivatedRoute ) {
+
+  this.router.params.subscribe( params => {
+    console.log(params['id']);
+  });
+
+  }
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 106. Obtener artista de Spotify
