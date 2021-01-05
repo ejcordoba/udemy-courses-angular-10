@@ -1,5 +1,5 @@
 <app-loading *ngIf="loadingArtist" class="m-5"></app-loading>
-<div class="row" *ngIf="!loadingArtist">
+<div class="row animated fadeIn" *ngIf="!loadingArtist">
 
     <div class="col-2">
         <img [src]="artista.images | noimage" class="img-thumbnail img-circle" alt="">

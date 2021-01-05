@@ -4190,6 +4190,68 @@ export class ArtistaComponent {
 }
 ```
 
+Vamos a realizar una maquetación de la información. Incluiremos también el loading para que no nos tire un error de que tratar de cargar variables que aun no se encuentran cargadas, es decir, cuando se aplica el pipe en la imagen da error de que no encuentra dicha imagen, para ello declaramos una variable loadingArtist que haga de bandera y la incluimos en el constructor y en el observador de tal manera que obligamos a una pre-carga de los datos, a continuación, respectivamente, el código del componente actualizado y del html, respectivamente.
+
+```
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { SpotifyService } from 'src/app/services/spotify.service';
+@Component({
+  selector: 'app-artista',
+  templateUrl: './artista.component.html',
+  styles: []
+})
+export class ArtistaComponent {
+
+  artista: any = {};
+  loadingArtist: boolean;
+  constructor( private router: ActivatedRoute,
+               private spotify: SpotifyService ) {
+                 this.loadingArtist = true;
+  this.router.params.subscribe( params => {
+    this.getArtista( params ['id']);
+    
+  });
+
+  }
+
+  getArtista( id: string ) {
+    this.loadingArtist = true;
+    this.spotify.getArtista( id )
+      .subscribe( artista => {
+        console.log(artista);
+        this.artista = artista;
+        this.loadingArtist = false;
+        
+      });
+  }
+}
+
+```
+
+```
+<app-loading *ngIf="loadingArtist" class="m-5"></app-loading>
+<div class="row animated fadeIn" *ngIf="!loadingArtist">
+
+    <div class="col-2">
+        <img [src]="artista.images | noimage" class="img-thumbnail img-circle" alt="">
+    </div>
+
+    <div class="col">
+        <h3>{{ artista.name}}</h3>
+        <p>
+            <a [href]="artista.external_urls.spotify" target="_blank">Ir a la página del artista</a>
+        </p>
+    </div>
+
+    <div class="col-4 text-right">
+        <button routerLink="/search" class="btn btn-outline-danger">
+            Regresar
+        </button>
+    </div>
+
+</div>
+```
 
 
 
