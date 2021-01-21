@@ -85,7 +85,31 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [86. Tarea de Pipes](#86-tarea-de-pipes)
   - [87. Resolución de la tarea de Pipes](#87-resoluci%C3%B3n-de-la-tarea-de-pipes)
   - [88. Código fuente de la sección](#88-c%C3%B3digo-fuente-de-la-secci%C3%B3n)
-
+- [Sección 6:Aplicación #3: SpotiApp](#secci%C3%B3n-6aplicaci%C3%B3n-3-spotiapp)
+  - [89. Introducción a la sección](#89-introducci%C3%B3n-a-la-secci%C3%B3n)
+  - [90. ¿Qué aprenderemos en esta sección?](#90-qu%C3%A9-aprenderemos-en-esta-secci%C3%B3n)
+  - [91. Demostración del resultado de esta sección](#91-demostraci%C3%B3n-del-resultado-de-esta-secci%C3%B3n)
+  - [92. Sitio web de developer de Spotify](#92-sitio-web-de-developer-de-spotify)
+  - [93. Iniciando el proyecto - SpotiApp](#93-iniciando-el-proyecto-spotiapp)
+  - [94. Creando las rutas de nuestra aplicación](#94-creando-las-rutas-de-nuestra-aplicaci%C3%B3n)
+  - [95. Introducción a las peticiones HTTP](#95-introducci%C3%B3n-a-las-peticiones-http)
+  - [96. Actualización - Token para uso de servicios Spotify](#96-actualizaci%C3%B3n-token-para-uso-de-servicios-spotify)
+  - [97. HTTPClient - Service: Conectándonos a Spotify](#97-httpclient-service-conect%C3%A1ndonos-a-spotify)
+  - [98. Consumiendo información del servicio de Spotify](#98-consumiendo-informaci%C3%B3n-del-servicio-de-spotify)
+  - [99. Componente de Búsqueda de artistas](#99-componente-de-b%C3%BAsqueda-de-artistas)
+  - [100. Operador Map de los Observables](#100-operador-map-de-los-observables)
+  - [101. Centralizar las peticiones hacia Spotify](#101-centralizar-las-peticiones-hacia-spotify)
+  - [102. Verificación de imagen y pipe para manejar las imágenes](#102-verificaci%C3%B3n-de-imagen-y-pipe-para-manejar-las-im%C3%A1genes)
+  - [103. Componente de tarjetas](#103-componente-de-tarjetas)
+  - [104. Creando un loading component](#104-creando-un-loading-component)
+  - [105. Página del artista, nueva ruta, parámetro por url y servicio](#105-p%C3%A1gina-del-artista-nueva-ruta-par%C3%A1metro-por-url-y-servicio)
+  - [106. Obtener artista de Spotify](#106-obtener-artista-de-spotify)
+  - [107. Servicio: Top-tracks](#107-servicio-top-tracks)
+  - [108. Widgets de Spotify](#108-widgets-de-spotify)
+  - [109. Manejo de errores de un observable](#109-manejo-de-errores-de-un-observable)
+  - [110. Generar Token de Spotify de forma automática](#110-generar-token-de-spotify-de-forma-autom%C3%A1tica)
+  - [Cuestionario 3: Examen teórico: SpotiApp](#cuestionario-3-examen-te%C3%B3rico-spotiapp)
+  - [111. Código fuente de la sección](#111-c%C3%B3digo-fuente-de-la-secci%C3%B3n)
 
 # Sección 1:Introducción al curso de Angular
 
@@ -3079,5 +3103,1454 @@ Efectivamente el profesor resuelve la parte de la función de manera mucho más 
 De esta manera comprueba si mostrar es verdadero, en tal caso devuelve un string que será consecuencia del carácter * devuelto tantas veces como sea la longitud del string original, en caso de que sea falso simplemente devolverá el string original (value)
 
 El resto de la lógica la tenía correcta, ¡a por la siguiente sección!
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+# Sección 6:Aplicación #3: SpotiApp
+## 89. Introducción a la sección
+
+En esta sección aprenderemos a desarrollar un aplicación que consume recursos de la API de Spotify, así como conceptos de HTTP, haciendo peticiones GET al servidor de Spotify, usando su API. Vamos a poder obtener su música, artistas, crearnos una pantalla de interfaz, crear un slideshow. También podremos usar el widget de Spotify para poder reproducir la canción completa. Por último veremos una introducción a la transformación de los datos que viene del servicio API de Spotify, pasándolo por un método map, para de esa manera poder usar esa información como nosotros queramos, también almacenaremos información en los servicios para que la información persista a pesar de movernos de página, al usar las rutas.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 90. ¿Qué aprenderemos en esta sección?
+
+Vamos a crear una aplicación que nos ayudará a comprender sobre los siguientes temas:
+
+1. Reforzamiento de rutas y parámetros de rutas.
+2. Uso de carruseles del Bootstrap 4
+3. Uso del HTTP para obtener información
+4. Uso de la API de Spotify para obtener información de:
+- a. Artistas
+- b. Albumes
+- c. Audio
+5. Trabajo sobre el manejo de data asíncrona.
+6. ngModel para enlazar campos de texto a variables del componente.
+7. Widgets de Spotify
+8. HTML5 audio
+9. Observables
+10. Maps
+Durante la sección tendremos tareas y al final un examen teórico para reforzar los conocimientos adquiridos.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 91. Demostración del resultado de esta sección
+
+Ver vídeo mostrando el resultado de la aplicación terminada y sus funcionalidades y conceptos aprendidos en ella.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 92. Sitio web de developer de Spotify
+
+Sitio web de developer de Spotify
+
+Actualización del sitio de Developer de Spotify
+
+En esta sección crearemos una aplicación que consume los servicios de Spotify.
+
+Pueden ver lo servicios en esta dirección
+
+https://beta.developer.spotify.com/console/
+
+Tengan esa página a mano, la necesitaremos pronto
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 93. Iniciando el proyecto - SpotiApp
+
+Primeramente descargamos una serie de recursos para la sección, unas imágenes y un archivo de estilos CSS.
+
+Crearemos en nuevo proyecto yendo a la raíz del curso y usando el Angular cli:
+
+> ng new spotiapp
+
+Mientras vamos a https://developer.spotify.com/console/ porque aquí necesitamos hacer dos cosas: Crear en Spotify una aplicación y ver cómo funciona en la api de Spotify.
+
+Vamos a https://developer.spotify.com/dashboard/ y hacemos login. (Yo por suerte tengo cuenta premium)
+
+Posteriormente le damos a "CREATE A CLIENT ID"
+
+Una vez creado ya dispondremos de dos datos fundamentales que son el CLIENT ID y el CLIENT ID SECRET. Ambas van a ser necesarias para crear un token.
+
+Ya debió de terminar la creación de la app, la renombramos a 04-spotiapp
+
+Levantamos la aplicación con `ng serve` en nuestra línea de comandos previa navegación al directorio de la nueva aplicación.
+
+A continuación vamos a crear un par de componentes que vamos a necesitar para la aplicación, una página "home" `ng g c components/home --skipTests -is`, una página de "search" `ng g c components/search --skipTests -is`, una página de artista `ng g c components/artista --skipTests -is` y por último otro componente que estará en un subdirectorio compartido para el navbar `ng g c components/shared/navbar --skipTests -is` (--skipTests no genera archivos de test unitarios, -is es inline style, no genera referencias a archivos CSS externos y tampoco lo refiere dentro del archivo ts del componente). Crearemos más componentes a lo largo de la aplicación, pero de momento para empezar necesitaremos esos.
+
+Copiaremos en el directorio /src/assets/ el directorio img que habíamos descargado anteriormente del archivo comprimido de recursos de la sección.
+
+Del mismo origen copiaremos el archivo styles.css y lo sustituiremos por el que ya se encuentra en src/styles.css
+
+Por último iremos a la página de getbootstrap.com / Descargas y añadir el CDN a nuestro index.html, dejando el <link> en el <head> y el <script> al final del <body>. También copiaremos los <script> del jquery y del popper colocándolos justo antes del <script> del bootstrap.
+
+```
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Spotiapp</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+
+<body>
+    <app-root></app-root>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+</body>
+
+</html>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 94. Creando las rutas de nuestra aplicación
+
+Vamos a crear un archivo nuevo en src/app/app.routes.ts
+
+```
+import { Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { SearchComponent } from './components/search/search.component';
+
+
+
+export const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'search', component: SearchComponent },
+    { path: '', pathMatch: 'full', redirectTo: 'home'}, // Cualquier otro path no definido nos redireccionará al home
+    { path: '**', pathMatch: 'full', redirectTo: 'home'} // Cualquier otro path no definido nos redireccionará al home
+];
+```
+
+En app.module.ts es donde pondremos el módulo de rutas.
+
+Aquí en app.module.ts importaremos el módulo de rutas y lo incluiremos en los imports, asegurarnos en el imports que está cogiendo la constante del app.routes, y además definiremos que usaremos el HASH para las url (#), quedando el archivo tal que:
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router'
+
+import { AppComponent } from './app.component';
+import { HomeComponent } from './components/home/home.component';
+import { SearchComponent } from './components/search/search.component';
+import { ArtistaComponent } from './components/artista/artista.component';
+import { NavbarComponent } from './components/shared/navbar/navbar.component';
+import { ROUTES } from './app.routes';
+
+// Importación de rutas
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    SearchComponent,
+    ArtistaComponent,
+    NavbarComponent
+  ],
+  imports: [
+    BrowserModule,
+    RouterModule.forRoot( ROUTES, { useHash: true } ) // Quiero usar el hash
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+Posteriormente vaciamos el app.component.html precargado de Angular. Incluiremos el componente de navbar, un div container y el router-outlet para posibilitar la navegación entre componentes. Para el navbar vamos a coger código de bootstrap que incluiremos en el navbar.component.html.
+
+```
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="/assets/img/banner-ico.png" alt="" width="30" height="30"> Spotiapp
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" aria-current="page" routerLink="home">Home</a>
+                </li>
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" routerLink="search">Search</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 95. Introducción a las peticiones HTTP
+
+Aquí obtendremos recursos mediante peticiones HTTP o Ajax, para ello necesitaremos un sitio al que pedir dicha información, para practicar vamos a ir al sitio web http://restcountries.eu/ y buscamos una lista de países por el lenguaje (API ENDPOINTS - Language).
+
+Podemos testear con la aplicación externa Postman para hacer un get a la url: https://restcountries.eu/rest/v2/lang/es de tal manera que nos devuelve un objeto en formato JSON con la información de países que hablan español.
+
+Para poder trabajar con este tipo de solicitudes en nuestra aplicación de Angular necesitamos dos cosas:
+
+1. Importar en app.module.ts algo que nos permita hacer peticiones HTTP (`import { HttpClientModule } from '@angular/common/http';`), en HttpClientModule se incluyen una serie de herramientas que vamos a necesitar en nuestra app, entre ellas la que me permite hacer peticiones HTTP. Lo incluímos en los imports (ya que se trata de un módulo).
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+
+import { AppComponent } from './app.component';
+import { HomeComponent } from './components/home/home.component';
+import { SearchComponent } from './components/search/search.component';
+import { ArtistaComponent } from './components/artista/artista.component';
+import { NavbarComponent } from './components/shared/navbar/navbar.component';
+import { ROUTES } from './app.routes';
+
+// Importación de rutas
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    SearchComponent,
+    ArtistaComponent,
+    NavbarComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    RouterModule.forRoot( ROUTES, { useHash: true } ) // Quiero usar el hash
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+
+2. En nuestro home.component.ts vamos a incluir el código para manejar la información, en nuestro constructor declaramos `private Http: HttpClient`. De esta manera al cargar la app y, por tanto, este componente, tendré a disposicion los métodos de http, entre ellos el que nos permite hacer las peticiones.
+
+```
+constructor( private http: HttpClient ) {
+    console.log('Constructor del home cargado');
+    this.http.get('https://restcountries.eu/rest/v2/lang/es');
+  }
+```
+
+De esta manera tenemos la información hecha, pero necesitamos suscribirnos/escuchar esta petición para poder manejar los datos que devuelve. Para ello al metodo get le añadimos a continuación un submétodo 'subscribe' en el cual definiremos mediante una función de flecha una variable en la cual guardaremos la información devuelta por el get.
+
+```
+constructor( private http: HttpClient ) {
+    console.log('Constructor del home cargado');
+    this.http.get('https://restcountries.eu/rest/v2/lang/es')
+      .subscribe( respuesta => {
+        console.log(respuesta);
+      })
+  }
+```
+
+Una vez que estamos suscritos a esa información podemos llamarla, vamos a definir una variable países y en el constructor guardaremos la respuesta en dicha variable.
+
+```
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html'
+})
+export class HomeComponent implements OnInit {
+
+  paises: any[] = [];
+
+  constructor( private http: HttpClient ) {
+    console.log('Constructor del home cargado');
+    this.http.get('https://restcountries.eu/rest/v2/lang/es')
+      .subscribe( (respuesta:any) => {
+        this.paises = respuesta;
+        console.log(respuesta);
+      })
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora ya podemos acceder a la información en el html:
+
+```
+<ul>
+    <li *ngFor="let pais of paises">
+        {{ pais.name }} - {{ pais.population | number }}
+    </li>
+</ul>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 96. Actualización - Token para uso de servicios Spotify
+
+Para trabajar con la información o los servicios de Spotify nosotros utilizamos un token que ellos nos van a generar. Tendremos que hacer una petición para obtener un token.
+
+Nos vamos a https://developer.spotify.com/documentation/. Hay varias formas de trabajar con la API de Spotify, vía web API y otras maneras, nosotros para este caso usaremos WEB API, hacemos click ahí y nos vamos a Guides -> Autorization Guide y bajamos hasta Client Credentials Flow.
+
+Como vemos ahí el flow es sencillo, solicitamos un token proporcionando nuestros CLIENT ID y CLIENT ID SECRET, nos devuelve el token y en la solicitud a la api proporcionamos dicho token, devolviéndonos la información en formato JSON.
+
+Para obtener el token haremos una petición `POST https://accounts.spotify.com/api/token` añadiendo en el Body->x-www-form-urlencoded la key 'grant_type' y en VALUE 'client_credentials', además necesitamos darle las keys 'client_id' y 'client_secret' con los VALUE que disponemos en nuestra cuenta de developer de Spotify. Nos devolverá información con el 'access_token' que expira cada hora 'expires_in:3600'.
+
+Guardaremos esto en el Postman para tener la referencia.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 97. HTTPClient - Service: Conectándonos a Spotify
+
+Vamos a trabajar con nuestra primera interacción con Spotify. Nos dirijimos a https://developer.spotify.com/console/ -> Browse
+
+Para practicar vamos a usar la petición GET que nos da los nuevos lanzamientos de Spotify `GET	/v1/browse/new-releases` porque es lo que vamos a mostrar en el home. Si hacemos click en el enlace de esa petición nos lleva a una página donde podemos hacer pruebas. Ahí podemos definir algunas variables para definir la respuesta que queremos, como el país, la cantidad de datos que queremos que devuelva y a partir de cual registro queremos que devuelva valores (country,limit,offset). en OAuth Token podemos tocar para generar el token que utilizaríamos para dicha petición, usará nuestra cuenta de Spotify para genera el token. Si hacemos click en Try It veremos el JSON que genera. Pero todo esto es sólo para testearlo y verlo.
+
+Vamos a testearlo ahora en Postman, copiamos el endpoint `https://api.spotify.com/v1/browse/new-releases` y creamos una nueva solicitud GET en el Postman incluyendo este endpoint, en los Headers tenemos que incluir la key 'Autorization' y en value 'Bearer BQA8T9W7bdw266ilzogCBlseFNIB5yMEpZ4IQTPbRBRH51QsV2RLGwbiyaRQi6gj8X2ZdFUJ4u9A8JI6kZU' siendo la cadena larga el token que nos generamos anteriormente en la lección anterior (podemos regenerarlo si no sirve puesto que tiene una duración de 1 hora). Lo ejecutamos y nos devuelve el JSON con la información.
+
+Para tener esto del lado de Angular, puesto que es una información de una API externa lo ideal es centralizar la información, y para centralizar la información es recomendable crear un servicio, vamos a crearlo con angular CLI:
+
+> ng g s services/spotify --skipTests
+
+Anterior a la versión de Angular nos creaba también la información en el app.module.ts ahora, sin embargo, ahora en el spotify.service.ts nos encontramos:
+
+```
+@Injectable({
+  providedIn: 'root'
+})
+```
+
+Esto indica a la aplicación, al cargar el servicio, que debe ser incluído en los providers y hace que no sea necesario incluirlo en los providers dentro del app.module.ts
+
+Vamos a hacer una petición a la api de Spotify, en nuestro spotify.service.ts crearemos una función para hacer una petición http a un endpoint y que quede guardado en una variable para luego poder trabajar con ello:
+
+```
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   getNewReleases() {
+    this.http.get('https://api.spotify.com/v1/browse/new-releases')
+      .subscribe( data => {
+        console.log(data);
+      });
+   }
+}
+```
+
+Si ahora queremos hacer uso de ello por ejemplo en nuestro componente de la home de esta manera nos acabará dando un error de no token provided:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { SpotifyService } from '../../services/spotify.service';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html'
+})
+export class HomeComponent {
+
+  constructor( private spotify: SpotifyService) {
+    this.spotify.getNewReleases();
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Entonces lo que necesito es modificar los headers de la petición, regresando a spotify.service.ts en el HttpClient del import incluímos HttpHeaders que nos permitirá esas modificaciones. Con ello podremos crear una constante tipo HttpHeader que nos dejará añadir información en formato de objeto con la información que necesitemos incluir en los headers, en nuestro caso la autorización:
+
+```
+const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQA8T9W7bdw266ilzogCBlseFNIB5yMEpZ4IQTPbRBRH51QsV2RLGwbiyaRQi6gj8X2ZdFUJ4u9A8JI6kZU'
+    });
+```
+
+Además tendremos que decirle a nuestra función get que se van a usar esos headers, de tal manera que todo el código de la función quedaría así (vamos a añadir el límite en 20, aunque la verdad es que ya estaba definido así a través del token):
+
+```
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQA8T9W7bdw266ilzogCBlseFNIB5yMEpZ4IQTPbRBRH51QsV2RLGwbiyaRQi6gj8X2ZdFUJ4u9A8JI6kZU'
+    });
+    this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers })
+      .subscribe( data => {
+        console.log(data);
+      });
+   }
+}
+
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 98. Consumiendo información del servicio de Spotify
+
+Si al cargar nuestra aplicación nos diera un error de token tendremos que volver a Postman y hacer una solicitud POST de token de nuevo, y en nuestro spotify.service.ts actualizar el token en el headers.
+
+Vamos a usar unas tarjetas de bootstrap para trabajar con la información que tenemos de la función getNewReleases() que actualmente sólo la tenemos en consola.
+
+Tomaremos información de los álbumes y la mostraremos en tarjetas.
+
+Vamos a modificar de nuevo la función getNewReleases, eliminando el subscribe y que sólo nos devuelva toda la información mediante un return:
+
+```
+getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQCI4NYAn9ET-5cv61XCybtwihkcnwvPQDafccRAWCW9VpjvRQpxIIl1_rSKkQmQEKJzBvkWUk8MEkDXOeQ'
+    });
+
+    return this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers });
+    
+   }
+```
+
+De esta manera, donde yo llame a la función getNewReleases() puedo añadirle el .suscribe, por ejemplo en el home.component.ts, esto nos permitiría, por ejemplo, introducir un "loading" para manejar tiempos de carga en el constructor del componente de home. Declararemos una variable nuevasCanciones para almacenar los items de los albumes que nos devuelve la solicitud http
+
+```
+export class HomeComponent {
+
+  nuevasCanciones: any[] = [];
+
+  constructor( private spotify: SpotifyService) {
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data.albums.items;
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora podremos montar nuestro html de la home con bootstrap (cards + badges) y rellenando la información deseada:
+
+```
+<div class="row">
+    <div *ngFor="let cancion of nuevasCanciones" class="card col-3">
+        <img class="card-img-top" [src]="cancion.images[0].url">
+        <div class="card-body">
+            <h5 class="card-title">{{ cancion.name }}</h5>
+            <p class="card-text">
+                <span *ngFor="let artista of cancion.artists" class="badge rounded-pill bg-primary">{{ artista.name }}</span>
+            </p>
+        </div>
+    </div>
+</div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 99. Componente de Búsqueda de artistas
+
+Ahora trabajaremos en la sección "search", la idea es crear un buscador para filtrar la búsqueda de los nuevos lanzamientos que recibimos en nuestra app.
+
+Empezamos con el html, introduciremos un input donde haremos la búsqueda, en este input estará la función que nos permitirá "buscar()" y un #termino de referencia que será lo que usemos para buscar los artistas, así que lo que la función hará será "buscar(termino.value)", al definir #termino estamos creando la posibilidad de referenciar al valor que se encuentre en el input. Esto se enviará cada vez que se suelte una tecla pulsada, debido al evento (keyup). Quedando el html y el ts, respectivamente, de esta manera:
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+```
+
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styles: []
+})
+export class SearchComponent {
+
+  constructor() { }
+
+  buscar(termino: string) {
+    console.log(termino);
+  };
+
+}
+```
+
+A continuación trabajaremos en el servicio para poder gestionar la búsqueda, para ello vamos a https://developer.spotify.com/console/ y en "search" hacemos click en el endpoint que nos ofrece `https://api.spotify.com/v1/search`, para la generación de token las variables que nos ofrece son q* (el término a buscar, por ejemplo Metallica), type* (si es una canción o artista), market (el país del mercado, de esto pasaremos), límit (límite de 15, pondremos), si damos a "try it" y da error tendremos que generar el token de nuevo en esa misma página.
+
+Regresamos a nuestro servicio de spotify spotify.service.ts y tendremos que crear un nuevo servicio getArtista(), para este servicio necesitaré el término de búsqueda. El código será prácticamente igual al que ya teníamos de getNewReleases(), cambiará el return, puesto que la url de petición get es distinta, cogeremos la url del ejemplo que teníamos en la consola de Spotify Developers, y como esa url recibe un término usaremos la variable para generar la url deseada. El string de la url la delimitaremos por backticks para poder concatenar la variable. Es decir, originalmente la cadena es: `https://api.spotify.com/v1/search?q=ed%20sheeran&type=artist&limit=15` y en lugar de eso quedaría de esta manera:
+
+```
+getArtista( termino: string ) {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQDt7vsa4s73U0L4PpmZEHm-PwckR1TWg4AP30YMDoMNB3ijj714erHbSt6mVXZaDjvLj_OBKCPqft3fgno'
+    });
+
+    return this.http.get(`https://api.spotify.com/v1/search?q=${ termino }&type=artist&limit=15`, { headers });
+
+   }  
+```
+
+Regresamos al search.component.ts puesto que para usar el servicio necesito inyectarlo en el constructor, nos aseguramos de que lo importe de nuestro servicio spotify.service.ts y así ya podemos usarlo en nuestra función buscar, con sus métodos get, etc. Entonces al llamar al servicio getArtists recibiendo el término, ya podemos suscribirnos a los datos que devuelven para manipularlos en nuestro html. 
+
+Reutilizaremos el html de la home y lo adaptaremos a lo que queremos en el search, más adelante optimizaremos todo el código porque estamoos reutilizando mucho. El html necesita ser pulido en temas de estilo, así como controlar que no reciba imágenes rotas, pero se arreglará más adelante, queda tal que así, de momento:
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+
+<div class="row">
+    <div *ngFor="let artista of artistas" class="card col-3 m-2">
+        <img class="card-img-top" [src]="artista.images[0].url">
+        <div class="card-body">
+            <h5 class="card-title">{{ artista.name }}</h5>
+        </div>
+    </div>
+</div>
+```
+
+Y el código del search.component.ts tal que así:
+
+```
+import { Component } from '@angular/core';
+import { SpotifyService } from 'src/app/services/spotify.service';
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styles: []
+})
+export class SearchComponent {
+
+  artistas: any[] = [];
+
+  constructor(private spotify: SpotifyService) { }
+
+  buscar(termino: string) {
+    console.log(termino);
+    this.spotify.getArtista( termino )
+      .subscribe( (data: any) => {
+        console.log(data);
+        this.artistas = data.artists.items;
+      });
+  };
+
+}
+
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 100. Operador Map de los Observables
+
+En esta lección haremos todas las optimizaciones pendientes. Vamos a comenzar con el operador map. ¿Para qué sirve?
+
+Vamos a trabajarlo en el home.component.ts. En este componente cuando llamamos a la función del servicio getNewReleases nos suscribimos a una "data" que es el resultado de la petición http GET, esto es un JSON con una gran cantidad de información por lo general. El operador map se adjuntará a nuestra petición u observable (http.get) lo va a filtrar y nos va a devolver únicamente lo que a nosotros nos sirva. Es decir, toma toda la información pero la cambia, la adapta a lo que sólo necesitamos, pero en esencia sigue estando toda la información ahí.
+
+Para implementarlo en nuestra app vamos a usarlo en nuestro home.component.ts, actualmente a la función le especificamos que queremos data.albums.items, deberíamos poder pedir simplemente la data y que nos la de ya filtrada de antemano, y como esto se define en el servicio vamos a spotify.service.ts para definir el operador map allí.
+
+Primeramente hay que importar el operador map, esto no está en las librerías de Angular, sino de Reactive Extensions (RxJS), que son unas librerías de JavaScript para manipular observables y funciones asíncronas. Nosotros necesitamos el "map" que se encuentra en la sección "operators" de rxjs `import { map } from 'rxjs/operators';`.
+
+En nuestro observable ahora podemos añadirle una función pipe que nos sirve para filtrar, y esta función recibe como argumento la función map para definir el filtrado deseado, este map recibirá la información en bruto que nos devuelve el método get previo en la "data", la cual es consecuencia de una función de flecha en la cual especificaremos el return que deseamos, en este caso queríamos solo los items que pertenecen a la propiedad albums de todo el JSON que devuelve el GET (data), resumiendo el código quedaría tal que así:
+
+```
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQDt7vsa4s73U0L4PpmZEHm-PwckR1TWg4AP30YMDoMNB3ijj714erHbSt6mVXZaDjvLj_OBKCPqft3fgno'
+    });
+
+    return this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers })
+      .pipe( map( data => {
+        return data['albums'].items;
+      }));
+   }
+```
+
+Podemos abreviar un poco más las funciones, porque cuando las funciones de flecha tienen una sóla línea, y esa línea es un return (como es nuestro caso) se pueden definir así:
+
+```
+getNewReleases() {
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQBMAjYA59yQOox2qI3E2t0BrXjObYO-00kpZNAqbRGIzBidws586Kuzpwt8kCDsusoyj82q5jU-1pcavhw'
+    });
+
+    return this.http.get('https://api.spotify.com/v1/browse/new-releases?limit=20', { headers })
+      .pipe( map( data => data['albums'].items ) );
+   }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 101. Centralizar las peticiones hacia Spotify
+
+Ahora optimizaremos el código duplicado, puesto que en el spotify.service.ts tenemos funciones prácticamente idénticas.
+
+Para empezar tenemos una "query" o condición que se distingue de un lugar a otro, pero el resto de la url es la misma (hablando de las peticiones GET). Vamos a centralizar esto, para ello vamos a realizar una función que llamaremos getQuery(), la cual recibirá el query di tipo string, que será el código exclusivamente único para las funciones getNewReleases() y getArtista(). Crearemos una constante "url" que tendrá como objetivo centralizar la petición, es decir, si cambiara la versión de v1 a v2 solo tendríamos que cambiar esa constante y se actualizaría en el resto de cadenas.
+
+Esa constante además se completará con una variable, que será la query particular de cada función. Buscamos unificar y centralizar.
+
+Ahora mediante variables podríamos tener la función definida así:
+
+```
+getQuery( query: string ) {
+
+    const url = `https://api.spotify.com/v1/${ query }`;
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQBMAjYA59yQOox2qI3E2t0BrXjObYO-00kpZNAqbRGIzBidws586Kuzpwt8kCDsusoyj82q5jU-1pcavhw'
+    });
+
+    return this.http.get(url, { headers });
+
+  }
+```
+
+Llegados a este punto es mucho más claro simplemente leer el código ya terminado, todo centralizado y unificado, el archivo spotify.service.ts queda:
+
+```
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SpotifyService {
+
+  constructor( private http: HttpClient) {
+    console.log('Spotify Service Listo');
+   }
+   
+  getQuery( query: string ) {
+
+    const url = `https://api.spotify.com/v1/${ query }`;
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer BQBMAjYA59yQOox2qI3E2t0BrXjObYO-00kpZNAqbRGIzBidws586Kuzpwt8kCDsusoyj82q5jU-1pcavhw'
+    });
+
+    return this.http.get(url, { headers });
+
+  }
+
+  getNewReleases() {
+
+    return this.getQuery('browse/new-releases?limit=20')
+      .pipe( map( data => data['albums'].items ) );
+  }
+
+  getArtista( termino: string ) {
+
+    return this.getQuery(`search?q=${ termino }&type=artist&limit=15`)
+      .pipe( map( data => data['artists'].items ) );    
+  }
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 102. Verificación de imagen y pipe para manejar las imágenes
+
+Toca optimizar las imágenes ahora, en nuestro componente search tenemos un problema, cuando hacemos una búsqueda de artista y ese artista no tienen una imagen asociada o bien no sale, o sale rota, tenemos error en consola de que no puede encontrarlo, etc.
+
+Podemos resolver esto de muchas maneras, con alguna función, con un operador map que verifique los datos, etc. Nosotros en este caso vamos a usar un pipe.
+
+Vamos a crearlo con el angular CLI
+
+> ng g p pipes/noimage --skipTests
+
+Vamos a search.component.html la idea es que `[src]="artista.images[0].url"` sea validado antes de ser mostrado. Vamos a configurar nuestro noimage.pipe.ts.
+
+El value que recibirá será el array de imágenes, no tendrá argumentos adicionales y devolverá un string (la url de la imagen). Haremos varias validaciones, la primera sería si el value que recibe no es válido, es decir, recibe un null, undefined o algo similar, lo que devuelva sea una imagen por defecto, en el material adjunto de la sección hay un noimage.png que usaremos para esto. La copiaremos a src/ap/assets/img/noimage.png. Nótese que la ruta relativa se considera que empieza desde el index.html, por eso para localizar la imagen por defecto que queremos devolver empezamos desde "assets".
+
+Si por contrario si viniera una imagen, es decir la longitud de esa variable es mayor de 0, devolveremos la url de la posición 0 del array de imágenes. Pero si no fuera así también devolveríamos la imagen por defecto.
+
+Para usarlo, como lo que devuelve en caso correcto es `images[0].url` tendremos que eliminarlo del html y generarlo aplicándole el pipe, de tal manera que el código html quedaría con `[src]="artista.images | noimage"`. El código tanto del pipe como del html quedarían como a continuación:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'noimage'
+})
+export class NoimagePipe implements PipeTransform {
+
+  transform( images: any[] ): string {
+    
+    if ( !images ) {
+      return 'assets/img/noimage.png'; // Se considera que los path relativos empiezan en el index.html
+    }
+    if ( images ) {
+      return images[0].url;
+    } else {
+      return 'assets/img/noimage.png';
+    }
+  }
+
+}
+```
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+
+<div class="row">
+    <div *ngFor="let artista of artistas" class="card col-3 m-2">
+        <img class="card-img-top" [src]="artista.images | noimage">
+        <div class="card-body">
+            <h5 class="card-title">{{ artista.name }}</h5>
+        </div>
+    </div>
+</div>
+```
+
+NOTA IMPORTANTE: Parece ser que de esta manera no terminaba de funcionar, otro alumno encontró una solución, dejo el código del noimage.pipe.ts modificado:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'noimage'
+})
+export class NoimagePipe implements PipeTransform {
+
+  transform( images: any[] ): string {
+    return images.length === 0 ? 'assets/img/noimage.png' : images[0].url;
+  }
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 103. Componente de tarjetas
+
+Seguimos optimizando código, en este caso tenemos duplicado el html del home y del search, son códigos prácticamente iguales.
+
+Así que vamos a centralizar el código, creándonos un nuevo componente:
+
+> ng g c components/tarjetas --skipTests
+
+Copiaremos todo el código de home.component.html y lo copiaremos en tarjetas.component.html. Entonces en home.component.html ya podemos llamar a `<app-tarjetas></app-tarjetas>`. Como anteriormente home trabajaba con las nuevasCanciones definidas en su ts, ahora deberemos pasarle esos valores a app-tarjetas `<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>`
+
+En tarjetas.component.ts tendremos que recibir esa información con un @input que deberemos importar desde @Angular/core, que hemos llamado "items", por tanto tendremos que cambiar html y adaptar de cancion como variable a items.
+
+Lo mismo para el componente search, solo que lo que le pasaremos como valor de "items" será artista en lugar de nuevasCanciones. Quedarían así entonces los archivos:
+
+tarjetas.component.ts
+
+```
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-tarjetas',
+  templateUrl: './tarjetas.component.html',
+  styleUrls: ['./tarjetas.component.css']
+})
+export class TarjetasComponent {
+
+  @Input() items: any[] = [];
+
+  constructor() { }
+
+}
+
+```
+
+tarjetas.component.html
+
+```
+<div class="row m-5">
+    <div *ngFor="let item of items" class="card col-3">
+        <img class="card-img-top" [src]="item.images | noimage">
+        <div class="card-body">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <p class="card-text">
+                <span *ngFor="let artista of item.artists" class="badge rounded-pill bg-primary">{{ artista.name }}</span>
+            </p>
+        </div>
+    </div>
+</div>
+```
+
+home.component.html
+
+```
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+search.component.html
+
+```
+<div class="row">
+    <div class="col">
+        <input #termino type="text" (keyup)="buscar(termino.value)" class="form-control" placeholder="Buscar artista..." name="" id="">
+    </div>
+</div>
+
+<app-tarjetas [items]="artistas"></app-tarjetas>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 104. Creando un loading component
+
+En esta lección vamos a crear un loading que diga al usuario que espere por favor mientras la data viene de nuestros servicios. Esto será un nuevo componente que vamos a crear como de uso general, y que incluiremos en el directorio shared, por tanto.
+
+> ng g c components/shared/loading --skipTests
+
+Ahora podemos llamar a `<app-loading></app-loading>` en home.component.html, por ejemplo, al principio de todo antes del resto del código.
+
+Para generarl algo visualmente bonito en el html del nuevo componente loading vamos a utilizar fontawesome.com, nos vamos al sitio web y lo instalamos mediante el CDN a través de "Get Started". (Nota: ha cambiado un poco,hay que registarse y el link es tipo <script>).
+
+Incluímos el código en el index.html.
+
+A continuación crearemos el html del loading.component.html:
+
+```
+<div class="row text-center animated fadeIn">
+    <div class="col">
+        <i class="fas fa-sync fa-spin fa-5x"></i>
+    </div>
+</div>
+```
+
+La idea de este loading es que sólo aparezca cuando estamos cargando información, y cuando ya tengamos la información debería desaparecer.
+
+Esto lo vamos a controlar con un *ngIf, asi que para ello nos vamos al home.component.ts y creamos una nueva propiedad loading: boolean; la inicializaremos en el constructor como true y en la función que cargar los lanzamientos al final la definiremos como false (es decir, cuando ya haya realizado la funcion, lo que significaría que ya se cargaron todos los datos), quedaría así:
+
+```
+export class HomeComponent {
+
+  nuevasCanciones: any[] = [];
+  loading: boolean;
+
+  constructor( private spotify: SpotifyService) {
+
+    this.loading = true;
+
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data;
+      this.loading = false;
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora puedo regresar al home.component.html e implementar la condicional:
+
+```
+<app-loading *ngIf="loading"></app-loading>
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+Haremos lo mismo para el search.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 105. Página del artista, nueva ruta, parámetro por url y servicio
+
+En esta lección definiremos que en la página de search, cuando hagamos click en alguno de los artistas que busquemos nos lleve a la página del artista.
+
+En el setup inicial del proyecto ya habíamos dejado creado el componente "artista".
+
+Necesitamos el ID del artista para cuando vayamos a hacer click, porque en https://developer.spotify.com/console/artists/ el parámetro que requiere el endpoint es el ID. Este ID ya lo tenemos porque forma parte de uno de los atributos que componen el objeto de artista que recibimos con el GET en la petición http.
+
+Para comenzar necesitamos definir una nueva ruta y que esta controle el parámetro del ID que se pasa por la url.
+
+En app.routes.ts añadimos la nueva ruta indicando que recibirá el id como parámetro:
+
+```
+export const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'search', component: SearchComponent },
+    { path: 'artist/:id', component: ArtistaComponent },
+    { path: '', pathMatch: 'full', redirectTo: 'home'}, // Cualquier otro path no definido nos redireccionará al home
+    { path: '**', pathMatch: 'full', redirectTo: 'home'} // Cualquier otro path no definido nos redireccionará al home
+];
+```
+
+Ahora en tarjetas.component.html añadiremos en el html de la tarjeta una clase css llamada "puntero" que ya tenemos definida en nuestro archivo styles.css, esto hará que el puntero cambie cuando nos situemos sobre el elemento.
+
+Vamos a añadir el evento click en el elemento, pero nosotros lo que manejamos en tarjetas es un "item", este item será a veces artistas y a veces canciones, en función de en qué página se cargue el componente de la tarjeta, si en el home o en el search, pero uno de los atributos de ese objeto es "type", que define esto, o bien "album" o "single" o "artist", lo cual nos servirá para discriminar en nuestro código si se trata de un artista, y entonces poder capturar el ID de ese elemento para poder enviarlo por la url posteriormente.
+
+Así pues, en tarjetas.component.html incluiremos el evento (click) que ejecutará la funcion de verArtista( item ) al cual se le pasará el item, y posteriormente controlarermos ese item como hemos comentado.
+
+```
+<div class="row m-5 animated fadeIn">
+    <div (click)="verArtista( item )" *ngFor="let item of items" class="card col-3 puntero">
+        <img class="card-img-top" [src]="item.images | noimage">
+        <div class="card-body">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <p class="card-text">
+                <span *ngFor="let artista of item.artists" class="badge rounded-pill bg-primary">{{ artista.name }}</span>
+            </p>
+        </div>
+    </div>
+</div>
+```
+
+Ahora en tarjetas.component.ts hacemos la lógica de la función, si al hacer click es de tipo artista guardaremos su ID, por el contrario iremos al primer artista del album o la canción y cogeremos su ID (NOTA PERSONAL: lo suyo sería pulirlo y añadir la funcion a cada artista en los badges, estamos definiendo esto para que coja algo, parece ser).
+
+```
+verArtista ( item: any ) {
+    let artistaID;
+
+    if ( item.type === 'artist' ) {
+      artistaID = item.id;
+    } else {
+      artistaID = item.artists[0].id;
+    }
+    console.log(artistaID);
+
+  }
+```
+
+Ahora solo nos falta redireccionar a la página del artista cuando hagamos click (en lugar de hacer console log como estamos haciendo). Para ello necesitamos importar el Router en el componente de tarjeta e inyectarlo en el constructor. Ahora podemos usar el metodo navigate de router para navegar, como recibe un parámetro la url se pone entre []. El primer parámetro es la ruta a la que quiero navegar (/artist) y el segundo el ID que le tengo que pasar a la url, artistID. Aún no tenemos definido el html del artista, pero ya funciona puesto que si hacemos click nos llevará a una url tipo `http://localhost:4200/#/artist/7Hd38PVp634oGEb9pIDs5d`. El código quedaría así de momento:
+
+```
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-tarjetas',
+  templateUrl: './tarjetas.component.html',
+  styleUrls: ['./tarjetas.component.css']
+})
+export class TarjetasComponent {
+
+  @Input() items: any[] = [];
+
+  constructor( private router: Router ) { }
+
+  verArtista ( item: any ) {
+    let artistaID;
+
+    if ( item.type === 'artist' ) {
+      artistaID = item.id;
+    } else {
+      artistaID = item.artists[0].id;
+    }
+    
+    this.router.navigate(['/artist', artistaID]);
+
+  }
+
+}
+```
+
+Vamos a definir la recepción del ID en el componente del artista, para así luego poder usarlo para ver su página. En artista.component.ts importamos ActivatedRoute de @angular/router y lo inyectamos en el constructor, esto nos permite que en el constructor podamos usar ActivatedRoute para suscribirnos/escuchar si hay cambios en la url, si se añaden parámetros, en este caso detectar si se está pasando el ID. De momento lo dejaremos para que podamos verlo por consola, el código quedaría tal que:
+
+```
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+@Component({
+  selector: 'app-artista',
+  templateUrl: './artista.component.html',
+  styles: []
+})
+export class ArtistaComponent {
+
+  constructor( private router: ActivatedRoute ) {
+
+  this.router.params.subscribe( params => {
+    console.log(params['id']);
+  });
+
+  }
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 106. Obtener artista de Spotify
+
+Vamos a definir el servicio que nos permita recibir el artista, para ello antes de nada tendremo que volver a https://developer.spotify.com/console/artists/ para ver el endpoint que necesitamos, en este caso sería `https://api.spotify.com/v1/artists/{id}`
+
+Vamos a reutilizar el código de getArtista, debió ser definido en su momento como getArtistas en plural, puesto que nos devuelve uno o varios artistas, y lo que queremos generar ahora es una función que nos devuelva uno solo y la llamaremos getArtista. Que en lugar de termino recibirá un id de tipo string.
+
+Reutilizando el código lo único que deberemos modificar sería el string que recibe como argumento la función getQuery, quedando la función completada tal que:
+
+```
+getArtista( id: string ) {
+
+    return this.getQuery(`artists/${id}`)
+      .pipe( map( data => data['artists'].items ) );    
+  }
+```
+
+Lo ideal sería saber qué es lo que nos devuelve el query, para poder validarlo correctamente o aplicar el map, para esto podríamos usar Postman, por ejemplo, en nuestro caso vamos a comentar la línea del .pipe(map) y a cerrar la función this.getQuery con punto y coma. Y vamos a ver qué devuelve el getQuery directamente desde nuestra aplicación de Angular.
+
+```
+getArtista( id: string ) {
+
+    return this.getQuery(`artists/${id}`);
+      //.pipe( map( data => data['artists'].items ) );    
+  }
+```
+
+Volvemos a artista.component.ts, habíamos dejado definido que nos mostrase por consola el id de params, ya sabemos que se recibe correctamente, así que vamos a usar ese id para llamar al método getArtista y ver que información devuelve, vamos a crear un método aparte en el mismo componente que se llame también getArtista, que recibirá un id de tipo string, lo definiremos fuera del constructor para no sobrecargarlo de métodos, ese método llamará al servicio, por lo tanto necesitamos importarlo e inyectarlo en el componente, una vez hecho esto ya podemos llamar al servicio en la nueva función, el servicio llamará a la función getArtista pero a la del servicio, que recibirá el id y al cual nos suscribiremos para recibir la respuesta http.
+
+Una vez hecho esto entonces en el ActivatedRoute del constructor ya podemos usar la escucha del id para pasarselo a la función getArtista como parámetro y así poder ver toda la información que nos devuelve del artista dado ese id.
+
+Ahora en la consola tenemos toda la información relativa a ese artista, incluso una url externa que nos lleva al perfil del artista en Spotify  . Realmente ni haría falta filtrarlo por el map, puesto que ya nos devuelve un único objeto JSON muy ordenado y simple con un montón de información útil. Así que haremos un poco de maquetación html para mostrar la información de manera visualmente agradable, en lugar del "artista works!" :)
+
+Por un lado vamos a maquetar un html, y por el lado del componente vamos a declarar una variable "artista" que sea un objeto vacío que usaremos para almacenar los datos que luego querremos renderizar en el html, recordamos que esta información la podemos manejar tal cual porque ya la recibimos de manera que podemos usarla sin problemas, si fuese complicado de acceder a los datos tendríamos que aplicar el pipe/map en el servicio. Entonces hasta aquí nuestro componente quedaría de esta manera:
+
+```
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { SpotifyService } from 'src/app/services/spotify.service';
+@Component({
+  selector: 'app-artista',
+  templateUrl: './artista.component.html',
+  styles: []
+})
+export class ArtistaComponent {
+
+  artista: any = {};
+
+  constructor( private router: ActivatedRoute,
+               private spotify: SpotifyService ) {
+
+  this.router.params.subscribe( params => {
+    this.getArtista( params ['id']);
+  });
+
+  }
+
+  getArtista( id: string ) {
+
+    this.spotify.getArtista( id )
+      .subscribe( artista => {
+        console.log(artista);
+        this.artista = artista;
+      });
+  }
+}
+```
+
+Vamos a realizar una maquetación de la información. Incluiremos también el loading para que no nos tire un error de que tratar de cargar variables que aun no se encuentran cargadas, es decir, cuando se aplica el pipe en la imagen da error de que no encuentra dicha imagen, para ello declaramos una variable loadingArtist que haga de bandera y la incluimos en el constructor y en el observador de tal manera que obligamos a una pre-carga de los datos, a continuación, respectivamente, el código del componente actualizado y del html, respectivamente.
+
+```
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { SpotifyService } from 'src/app/services/spotify.service';
+@Component({
+  selector: 'app-artista',
+  templateUrl: './artista.component.html',
+  styles: []
+})
+export class ArtistaComponent {
+
+  artista: any = {};
+  loadingArtist: boolean;
+  constructor( private router: ActivatedRoute,
+               private spotify: SpotifyService ) {
+                 this.loadingArtist = true;
+  this.router.params.subscribe( params => {
+    this.getArtista( params ['id']);
+    
+  });
+
+  }
+
+  getArtista( id: string ) {
+    this.loadingArtist = true;
+    this.spotify.getArtista( id )
+      .subscribe( artista => {
+        console.log(artista);
+        this.artista = artista;
+        this.loadingArtist = false;
+        
+      });
+  }
+}
+
+```
+
+```
+<app-loading *ngIf="loadingArtist" class="m-5"></app-loading>
+<div class="row animated fadeIn" *ngIf="!loadingArtist">
+
+    <div class="col-2">
+        <img [src]="artista.images | noimage" class="img-thumbnail img-circle" alt="">
+    </div>
+
+    <div class="col">
+        <h3>{{ artista.name}}</h3>
+        <p>
+            <a [href]="artista.external_urls.spotify" target="_blank">Ir a la página del artista</a>
+        </p>
+    </div>
+
+    <div class="col-4 text-right">
+        <button routerLink="/search" class="btn btn-outline-danger">
+            Regresar
+        </button>
+    </div>
+
+</div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 107. Servicio: Top-tracks
+
+En esta sección vamos a trabajar usando las canciones más exitosas de un artista en particular. Usando el método `GET	/v1/artists/{id}/top-tracks` de la consola de Spotify for Developers, como hemos visto en otros ejemplos anteriores. Hasta ahora hemos hecho pruebas para ver cómo devuelve los datos el endpoint, para luego mapearlo o no, podemos usar Postman para esto también.
+
+Primero vamos a crear un nuevo servicio para obtener esa información, vamos a usar como base uno de los que teníamos previamente, getArtista(). Recibirá un ID y actualizamos la parte del query para definir la cadena de endpoint que necesitamos en este caso. Lo útil de la función getQuery es que así podemos centralizar todas las peticiones al mismo servicio.
+
+```
+getTopTracks( id: string ) {
+
+    return this.getQuery(`artists/${ id }/top-tracks`);
+      //.pipe( map( data => data['artists'].items ) );    
+  }
+```
+
+Guardamos cambios y vamos a artista.component.ts y creamos un método para llamar a ese servicio para obtener esa información, asimismo llamamos a la función en el constructor del componente para poder luego suscribirnos a él con el método.
+
+```
+                  this.getTopTracks( params ['id']);
+```
+
+```
+getTopTracks( id: string ) {
+
+    this.spotify.getTopTracks( id )
+      .subscribe( topTracks => {
+        console.log(topTracks)
+      });
+  }
+```
+
+Guardamos cambios y vemos que nos da un error, porque ese endpoint necesita como campo obligatorio el país, esto podríamos haberlo sabido antes si hubieramos hecho pruebas con Postman, como hemos mencionado anteriormente. Haciendo uso de la consola de Spotify Developer podemos deducir y ver que la url que requiere tiene como argumento el país, de tal manera que lo actualizamos en nuestro getQuery del servicio quedando `return this.getQuery(`artists/${ id }/top-tracks?country=us`);`
+
+Ahora ya no nos da error y por el console.log que hicimos de los datos podemos ver que devuelve un objeto "tracks".
+
+Nosotros en realidad queremos un array limpio con sólo las canciones, así que en este caso vamos a volver a utilizar el pipe map. Descomentamos el ejemplo que teníamos comentado resultado de haber copiado el método de getArtista, adaptándolo para que en lugar del objeto 'artist' filtre el objeto 'tracks'.
+
+```
+getTopTracks( id: string ) {
+
+    return this.getQuery(`artists/${ id }/top-tracks?country=us`)
+      .pipe( map( data => data['tracks'] ) );    
+  }
+```
+
+Ahora podemos usar esos datos en nuestro componente, declaramos una nueva variable array que haga de contenedor `topTracks: any[] = [];` y podemos almacenar los datos suscritos en ella.
+
+```
+getTopTracks( id: string ) {
+
+    this.spotify.getTopTracks( id )
+      .subscribe( topTracks => {
+        console.log(topTracks);
+        this.topTracks = topTracks;
+      });
+  }
+```
+
+Aquí se nos pide una tarea, y es que en el artista.component.html se añada una maquetación con este esqueleto:
+
+```
+<div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Album</th>
+                        <th>Canción</th>
+                        <th>Vista Previa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+```
+
+La tarea consiste en tomar la información de los toptracks y llenar los campos de las celdas de la tabla (excepto foto y vista previa que se resolverá más adelante). Bastante sencillo, la solución era:
+
+```
+<tr *ngFor="let track of topTracks">
+  <td></td>
+  <td>{{ track.album.name }}</td>
+  <td>{{ track.name }}</td>
+  <td></td>
+</tr>
+```
+
+Ahora vamos a trabajar con la fotografía, que es como hemos hecho anteriormente, [src] dinámico al que le pasamos la url de la imagen que es uno de los argumentos del array, le pasaremos el pipe personalizado no-image por si hubiera algún problema. También añadiremos una clase css img-thumb que ya viene definida en el archivo styles.css de la lección, que lo reduce a 50px de alto y ancho, porque del servicio vienen con mucha resolución.
+
+```
+<img [src]="track.album.images | noimage" [alt]="track.album.name" class="img-thumb">
+```
+
+Por último vamos a añadir una vista previa, en el array ya hay una propiedad que es "preview-url" que usaremos para esto.
+
+NOTA: por un lado he descubierto que el endpoint está obsoleto aunque sigue funcionando, ahora es "markets" en lugar de "country", siendo la query así: `return this.getQuery(`artists/${ id }/top-tracks?market=US`)` por otro lado hay mucho casos en el que no hay preview_url y devuelve null, así que añadiré yo un arreglo a la maquetación para controlar que no de error con un *ngIf, nótese en el código html final del ejercicio. Realmente no da error interno de la app ese null, pero añadí información con un span.
+
+Así pues, con una etiqueta de HTML5 que se llama audio haremos la llamada a la url de la canción para el reproductor. El atributo de la etiqueta 'controls' incluye los controles de play, descargar, etc.
+
+El código final, hasta el momento, sería:
+
+```
+<div class="row m-5">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Album</th>
+                        <th>Canción</th>
+                        <th>Vista Previa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let track of topTracks">
+                        <td>
+                            <img [src]="track.album.images | noimage" [alt]="track.album.name" class="img-thumb">
+                        </td>
+                        <td>{{ track.album.name }}</td>
+                        <td>{{ track.name }}</td>
+                        <td>
+                            <audio [src]="track.preview_url" controls></audio><br>
+                            <span *ngIf="!track.preview_url">Vista previa no disponible</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 108. Widgets de Spotify
+
+En esta sección cambiaremos la etiqueta audio del ejercicio anterior por un widget de Spotify. El widget necesita una app de Spotify conectada y funcionando, para poder funcionar en la app. Tiramos de documentación: `https://developer.spotify.com/documentation/widgets/` Adding a Widget -> Standard HTML Pages -> Embed `https://developer.spotify.com/documentation/widgets/generate/embed/` , es incluir un iframe... no tiene mucho más, selecionamos modo compacto y poco más, usamos el iframe de ejemplo que viene y lo ponemos tal cual en nuestro html para ver el efecto.
+
+`<iframe src="https://open.spotify.com/embed/album/1DFixLWuPkv3KT3TnV35m3" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+
+`<iframe src="https://open.spotify.com/embed?uri=spotify:album:1DFixLWuPkv3KT3TnV35m3" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+
+NOTA: Se ve que se actualizó la manera y el endpoint puede ser de distintas maneras, seguiré la del profesor, aunque se puede hacer como la primera versión que puse, la segunda también funciona.
+
+Como vimos en la sección de pipes, es posible que nos de error al tratar de generar la url dinámicamente, tratándola como no segura, en los recursos de esta sección se añadió el archivo typescript del pipe para incluirlo (o cogerlo de la versión anterior del proyecto.) Lo copiamos al directorio pipes del proyecto y lo importamos en el app.module.ts para que funcione (import y declaración).
+
+Ahora podemos filtrar con el pipe la url de esta manera:`<iframe [src]="track.uri | domseguro:'https://open.spotify.com/embed?uri=' " width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+
+El problema es que se ve muy engorroso, porque el pipe original customizado lo que hacía era componer la cadena de url cogiendo un valor y la propia cadena y concatenándolos, pero como ese pipe lo vamos a usar para este proyecto lo vamos a personalizar, alterando el pipe y definiendo la cadena que no cambia (el principio de la url) como constante, de esa manera quedará mucho más limpio, en el domseguro.pipe.ts:
+
+```
+transform( value: string): any {
+    const url = 'https://open.spotify.com/embed?uri=';
+    return this.domSanitizer.bypassSecurityTrustResourceUrl( url + value );
+  }
+```
+
+Y ahora en el html queda mucho más sencillo:
+
+```
+<td>
+    <!-- <audio [src]="track.preview_url" controls></audio><br> -->
+    <iframe [src]="track.uri | domseguro" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    <span *ngIf="!track.preview_url">Vista previa no disponible</span>
+</td>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 109. Manejo de errores de un observable
+
+En esta clase manejaremos algunos errores, supongamos que el token de Spotify expira, se hace una petición mal, cualquier cosa.
+
+Vamos a poner una caja de texto en el home para simular un error.(home.component.html). Lo dejaremos así, pero podríamos crear un componente sólo para esto y otros métodos de control de errores.
+
+```
+<app-loading *ngIf="loading"></app-loading>
+<div class="alert alert-danger">
+    <h3>Error</h3>
+    <p>Hola Mundo</p>
+</div>
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+La idea es declarar en el componente home una variable booleana 'error' para luego mediante un *ngIf en el frontal poder controlar la bandera.
+
+En el componente temenos la función getNewReleases() la cual tiene un subscribe, le podemos pasar una nueva funcion de flecha como argumento para que reciba esa variable de error (es un argumento opcional del método subscribe). Así podremos identificar que tipo de error nos devuelve la API (en este caso la de Spotify, pero cambiará para las distintas API que usemos en el futuro.)Con los console log podemos ver el objeto de error y que parámetros tiene para así poder acceder a la info que nos interese, por ejemplo el mensaje de error "errorServicio.error.error.message"
+
+```
+constructor( private spotify: SpotifyService) {
+
+    this.loading = true;
+
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data;
+      this.loading = false;
+    }, (errorServicio) => {
+      this.loading = false;
+      this.error = true;
+      console.log(errorServicio.error.error.message);
+    });
+  }
+```
+
+Podemos declarar en el componente una variable string que nos sirva para almacenar ese mensaje de error mensajeError: string;
+
+Quedando el html:
+
+```
+<app-loading *ngIf="loading"></app-loading>
+<div *ngIf="error" class="alert alert-danger animated fadeIn">
+    <h3>Error</h3>
+    <p>{{ mensajeError }}</p>
+</div>
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+Y el componente:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { SpotifyService } from '../../services/spotify.service';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html'
+})
+export class HomeComponent {
+
+  nuevasCanciones: any[] = [];
+  loading: boolean;
+  error: boolean = false;
+  mensajeError: string;
+
+  constructor( private spotify: SpotifyService) {
+
+    this.loading = true;
+
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data;
+      this.loading = false;
+    }, (errorServicio) => {
+      this.loading = false;
+      this.error = true;
+      this.mensajeError = errorServicio.error.error.message;
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 110. Generar Token de Spotify de forma automática
+
+La API de Spotify solo permite peticiones POST desde un servidor, por eso podemos hacerla desde Postman (que monta su propio servidor) y luego nos hemos visto obligados a añadirla manualmente como una constante.
+
+En el curso no se da detalle, probaré a hacerlo personalmente, pero básicamente monta en un servidor cloud (Heroku) una app que genera el token. Lo probaré.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## Cuestionario 3: Examen teórico: SpotiApp
+
+8 de 8 Acertadas! :D
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 111. Código fuente de la sección
+
+Código fuente:
+
+Pueden descargar el código fuente de la sección del material adjunto.
+
+Si tienen curiosidad de como hice el backend para obtener el token, puede descargar el código aquí
+
+https://github.com/Klerith/spotify-get-token
+
+Nota:
+
+Tengo un curso de Node que puede ser un excelente complemento para este curso de Angular, si lo desean, aquí les dejo el enlace
+
+Curso de Node - Descuento para estudiantes
+
+Espero que esta aplicación les gustara mucho!, los veo en el siguiente video
 
 [Volver al Índice](#%C3%ADndice-del-curso)
