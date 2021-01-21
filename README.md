@@ -4530,7 +4530,27 @@ En el curso no se da detalle, probaré a hacerlo personalmente, pero básicament
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## Cuestionario 3: Examen teórico: SpotiApp
+
+8 de 8 Acertadas! :D
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 111. Código fuente de la sección
+
+Código fuente:
+
+Pueden descargar el código fuente de la sección del material adjunto.
+
+Si tienen curiosidad de como hice el backend para obtener el token, puede descargar el código aquí
+
+https://github.com/Klerith/spotify-get-token
+
+Nota:
+
+Tengo un curso de Node que puede ser un excelente complemento para este curso de Angular, si lo desean, aquí les dejo el enlace
+
+Curso de Node - Descuento para estudiantes
+
+Espero que esta aplicación les gustara mucho!, los veo en el siguiente video
+
 [Volver al Índice](#%C3%ADndice-del-curso)
