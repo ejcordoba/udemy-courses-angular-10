@@ -4432,6 +4432,93 @@ Y ahora en el html queda mucho más sencillo:
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 109. Manejo de errores de un observable
+
+En esta clase manejaremos algunos errores, supongamos que el token de Spotify expira, se hace una petición mal, cualquier cosa.
+
+Vamos a poner una caja de texto en el home para simular un error.(home.component.html). Lo dejaremos así, pero podríamos crear un componente sólo para esto y otros métodos de control de errores.
+
+```
+<app-loading *ngIf="loading"></app-loading>
+<div class="alert alert-danger">
+    <h3>Error</h3>
+    <p>Hola Mundo</p>
+</div>
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+La idea es declarar en el componente home una variable booleana 'error' para luego mediante un *ngIf en el frontal poder controlar la bandera.
+
+En el componente temenos la función getNewReleases() la cual tiene un subscribe, le podemos pasar una nueva funcion de flecha como argumento para que reciba esa variable de error (es un argumento opcional del método subscribe). Así podremos identificar que tipo de error nos devuelve la API (en este caso la de Spotify, pero cambiará para las distintas API que usemos en el futuro.)Con los console log podemos ver el objeto de error y que parámetros tiene para así poder acceder a la info que nos interese, por ejemplo el mensaje de error "errorServicio.error.error.message"
+
+```
+constructor( private spotify: SpotifyService) {
+
+    this.loading = true;
+
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data;
+      this.loading = false;
+    }, (errorServicio) => {
+      this.loading = false;
+      this.error = true;
+      console.log(errorServicio.error.error.message);
+    });
+  }
+```
+
+Podemos declarar en el componente una variable string que nos sirva para almacenar ese mensaje de error mensajeError: string;
+
+Quedando el html:
+
+```
+<app-loading *ngIf="loading"></app-loading>
+<div *ngIf="error" class="alert alert-danger animated fadeIn">
+    <h3>Error</h3>
+    <p>{{ mensajeError }}</p>
+</div>
+<app-tarjetas [items]="nuevasCanciones"></app-tarjetas>
+```
+
+Y el componente:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { SpotifyService } from '../../services/spotify.service';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html'
+})
+export class HomeComponent {
+
+  nuevasCanciones: any[] = [];
+  loading: boolean;
+  error: boolean = false;
+  mensajeError: string;
+
+  constructor( private spotify: SpotifyService) {
+
+    this.loading = true;
+
+    this.spotify.getNewReleases()
+    .subscribe( (data: any) => {
+      this.nuevasCanciones = data;
+      this.loading = false;
+    }, (errorServicio) => {
+      this.loading = false;
+      this.error = true;
+      this.mensajeError = errorServicio.error.error.message;
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 110. Generar Token de Spotify de forma automática
