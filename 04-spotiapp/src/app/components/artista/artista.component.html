@@ -6,7 +6,7 @@
     </div>
 
     <div class="col">
-        <h3>{{ artista.name}}</h3>
+        <h3>{{ artista.name }}</h3>
         <p>
             <a [href]="artista.external_urls.spotify" target="_blank">Ir a la página del artista</a>
         </p>
@@ -16,6 +16,34 @@
         <button routerLink="/search" class="btn btn-outline-danger">
             Regresar
         </button>
+    </div>
+
+    <div class="row m-5">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Album</th>
+                        <th>Canción</th>
+                        <th>Vista Previa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let track of topTracks">
+                        <td>
+                            <img [src]="track.album.images | noimage" [alt]="track.album.name" class="img-thumb">
+                        </td>
+                        <td>{{ track.album.name }}</td>
+                        <td>{{ track.name }}</td>
+                        <td>
+                            <audio [src]="track.preview_url" controls></audio><br>
+                            <span *ngIf="!track.preview_url">Vista previa no disponible</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </div>

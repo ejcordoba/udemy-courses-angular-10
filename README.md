@@ -4253,14 +4253,147 @@ export class ArtistaComponent {
 </div>
 ```
 
-
-
-
-
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 107. Servicio: Top-tracks
+
+En esta sección vamos a trabajar usando las canciones más exitosas de un artista en particular. Usando el método `GET	/v1/artists/{id}/top-tracks` de la consola de Spotify for Developers, como hemos visto en otros ejemplos anteriores. Hasta ahora hemos hecho pruebas para ver cómo devuelve los datos el endpoint, para luego mapearlo o no, podemos usar Postman para esto también.
+
+Primero vamos a crear un nuevo servicio para obtener esa información, vamos a usar como base uno de los que teníamos previamente, getArtista(). Recibirá un ID y actualizamos la parte del query para definir la cadena de endpoint que necesitamos en este caso. Lo útil de la función getQuery es que así podemos centralizar todas las peticiones al mismo servicio.
+
+```
+getTopTracks( id: string ) {
+
+    return this.getQuery(`artists/${ id }/top-tracks`);
+      //.pipe( map( data => data['artists'].items ) );    
+  }
+```
+
+Guardamos cambios y vamos a artista.component.ts y creamos un método para llamar a ese servicio para obtener esa información, asimismo llamamos a la función en el constructor del componente para poder luego suscribirnos a él con el método.
+
+```
+                  this.getTopTracks( params ['id']);
+```
+
+```
+getTopTracks( id: string ) {
+
+    this.spotify.getTopTracks( id )
+      .subscribe( topTracks => {
+        console.log(topTracks)
+      });
+  }
+```
+
+Guardamos cambios y vemos que nos da un error, porque ese endpoint necesita como campo obligatorio el país, esto podríamos haberlo sabido antes si hubieramos hecho pruebas con Postman, como hemos mencionado anteriormente. Haciendo uso de la consola de Spotify Developer podemos deducir y ver que la url que requiere tiene como argumento el país, de tal manera que lo actualizamos en nuestro getQuery del servicio quedando `return this.getQuery(`artists/${ id }/top-tracks?country=us`);`
+
+Ahora ya no nos da error y por el console.log que hicimos de los datos podemos ver que devuelve un objeto "tracks".
+
+Nosotros en realidad queremos un array limpio con sólo las canciones, así que en este caso vamos a volver a utilizar el pipe map. Descomentamos el ejemplo que teníamos comentado resultado de haber copiado el método de getArtista, adaptándolo para que en lugar del objeto 'artist' filtre el objeto 'tracks'.
+
+```
+getTopTracks( id: string ) {
+
+    return this.getQuery(`artists/${ id }/top-tracks?country=us`)
+      .pipe( map( data => data['tracks'] ) );    
+  }
+```
+
+Ahora podemos usar esos datos en nuestro componente, declaramos una nueva variable array que haga de contenedor `topTracks: any[] = [];` y podemos almacenar los datos suscritos en ella.
+
+```
+getTopTracks( id: string ) {
+
+    this.spotify.getTopTracks( id )
+      .subscribe( topTracks => {
+        console.log(topTracks);
+        this.topTracks = topTracks;
+      });
+  }
+```
+
+Aquí se nos pide una tarea, y es que en el artista.component.html se añada una maquetación con este esqueleto:
+
+```
+<div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Album</th>
+                        <th>Canción</th>
+                        <th>Vista Previa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+```
+
+La tarea consiste en tomar la información de los toptracks y llenar los campos de las celdas de la tabla (excepto foto y vista previa que se resolverá más adelante). Bastante sencillo, la solución era:
+
+```
+<tr *ngFor="let track of topTracks">
+  <td></td>
+  <td>{{ track.album.name }}</td>
+  <td>{{ track.name }}</td>
+  <td></td>
+</tr>
+```
+
+Ahora vamos a trabajar con la fotografía, que es como hemos hecho anteriormente, [src] dinámico al que le pasamos la url de la imagen que es uno de los argumentos del array, le pasaremos el pipe personalizado no-image por si hubiera algún problema. También añadiremos una clase css img-thumb que ya viene definida en el archivo styles.css de la lección, que lo reduce a 50px de alto y ancho, porque del servicio vienen con mucha resolución.
+
+```
+<img [src]="track.album.images | noimage" [alt]="track.album.name" class="img-thumb">
+```
+
+Por último vamos a añadir una vista previa, en el array ya hay una propiedad que es "preview-url" que usaremos para esto.
+
+NOTA: por un lado he descubierto que el endpoint está obsoleto aunque sigue funcionando, ahora es "markets" en lugar de "country", siendo la query así: `return this.getQuery(`artists/${ id }/top-tracks?market=US`)` por otro lado hay mucho casos en el que no hay preview_url y devuelve null, así que añadiré yo un arreglo a la maquetación para controlar que no de error con un *ngIf, nótese en el código html final del ejercicio. Realmente no da error interno de la app ese null, pero añadí información con un span.
+
+Así pues, con una etiqueta de HTML5 que se llama audio haremos la llamada a la url de la canción para el reproductor. El atributo de la etiqueta 'controls' incluye los controles de play, descargar, etc.
+
+El código final, hasta el momento, sería:
+
+```
+<div class="row m-5">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Album</th>
+                        <th>Canción</th>
+                        <th>Vista Previa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let track of topTracks">
+                        <td>
+                            <img [src]="track.album.images | noimage" [alt]="track.album.name" class="img-thumb">
+                        </td>
+                        <td>{{ track.album.name }}</td>
+                        <td>{{ track.name }}</td>
+                        <td>
+                            <audio [src]="track.preview_url" controls></audio><br>
+                            <span *ngIf="!track.preview_url">Vista previa no disponible</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 108. Widgets de Spotify
