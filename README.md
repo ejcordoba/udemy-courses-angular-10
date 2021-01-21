@@ -4397,6 +4397,38 @@ El código final, hasta el momento, sería:
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 108. Widgets de Spotify
+
+En esta sección cambiaremos la etiqueta audio del ejercicio anterior por un widget de Spotify. El widget necesita una app de Spotify conectada y funcionando, para poder funcionar en la app. Tiramos de documentación: `https://developer.spotify.com/documentation/widgets/` Adding a Widget -> Standard HTML Pages -> Embed `https://developer.spotify.com/documentation/widgets/generate/embed/` , es incluir un iframe... no tiene mucho más, selecionamos modo compacto y poco más, usamos el iframe de ejemplo que viene y lo ponemos tal cual en nuestro html para ver el efecto.
+
+`<iframe src="https://open.spotify.com/embed/album/1DFixLWuPkv3KT3TnV35m3" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+
+`<iframe src="https://open.spotify.com/embed?uri=spotify:album:1DFixLWuPkv3KT3TnV35m3" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+
+NOTA: Se ve que se actualizó la manera y el endpoint puede ser de distintas maneras, seguiré la del profesor, aunque se puede hacer como la primera versión que puse, la segunda también funciona.
+
+Como vimos en la sección de pipes, es posible que nos de error al tratar de generar la url dinámicamente, tratándola como no segura, en los recursos de esta sección se añadió el archivo typescript del pipe para incluirlo (o cogerlo de la versión anterior del proyecto.) Lo copiamos al directorio pipes del proyecto y lo importamos en el app.module.ts para que funcione (import y declaración).
+
+Ahora podemos filtrar con el pipe la url de esta manera:`<iframe [src]="track.uri | domseguro:'https://open.spotify.com/embed?uri=' " width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+
+El problema es que se ve muy engorroso, porque el pipe original customizado lo que hacía era componer la cadena de url cogiendo un valor y la propia cadena y concatenándolos, pero como ese pipe lo vamos a usar para este proyecto lo vamos a personalizar, alterando el pipe y definiendo la cadena que no cambia (el principio de la url) como constante, de esa manera quedará mucho más limpio, en el domseguro.pipe.ts:
+
+```
+transform( value: string): any {
+    const url = 'https://open.spotify.com/embed?uri=';
+    return this.domSanitizer.bypassSecurityTrustResourceUrl( url + value );
+  }
+```
+
+Y ahora en el html queda mucho más sencillo:
+
+```
+<td>
+    <!-- <audio [src]="track.preview_url" controls></audio><br> -->
+    <iframe [src]="track.uri | domseguro" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    <span *ngIf="!track.preview_url">Vista previa no disponible</span>
+</td>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 109. Manejo de errores de un observable
