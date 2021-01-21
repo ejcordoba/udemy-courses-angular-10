@@ -4522,6 +4522,11 @@ export class HomeComponent {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 110. Generar Token de Spotify de forma automática
+
+La API de Spotify solo permite peticiones POST desde un servidor, por eso podemos hacerla desde Postman (que monta su propio servidor) y luego nos hemos visto obligados a añadirla manualmente como una constante.
+
+En el curso no se da detalle, probaré a hacerlo personalmente, pero básicamente monta en un servidor cloud (Heroku) una app que genera el token. Lo probaré.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## Cuestionario 3: Examen teórico: SpotiApp
