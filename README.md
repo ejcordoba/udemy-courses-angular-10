@@ -4587,15 +4587,27 @@ En esta sección vamos a trabajar con el framework IONIC que usa Angular 2 como 
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 112. Introducción a la sección
-
-[Volver al Índice](#%C3%ADndice-del-curso)
-
 ## 113. ¿Qué aprenderemos en esta sección?
+
+A lo largo de esta sección crearemos una aplicación que correrá en nuestro dispositivo Android o IOS, y con ello aprenderemos sobre:
+
+1. Uso del local storage guardar localmente información para nuestras aplicaciones.
+2. Introducción a ionic.
+3. Uso del framework de ionic.
+4. Uso de servicios que afectan el local storage.
+5. Uso de ionic DevApp para desplegar nuestra aplicación
+6. Aprenderemos a controlar estilos usando Angular.
+7. Manejo de la información a través de servicios ( update, delete, insert y select ) al local storage.
+8. Aprenderemos a utilizar pipes impuros para realizar filtros.
+9. Entre otras cosas interesantes.
+
+Mientras se avanza en la sección, tendremos tareas y ejercicios prácticos que nos ayudarán a afianzar los conocimientos que iremos adquiriendo clase tras clase.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 114. Demostración del resultado de esta sección
+
+Ver video con el proyecto terminado.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
