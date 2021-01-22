@@ -4613,9 +4613,21 @@ Ver video con el proyecto terminado.
 
 ## 115. ¿Qué es ionic?
 
+Si nosotros quisieramos desarrollar aplicaciones para iOS o Android tendríamos que aprender a programar en Java para Android y Swift u Objetive-C para iOS. Nosotros usaremos Angular y algo que nos permita dar forma como venimos haciendo con Bootstrap, IONIC nos permitirá esto y para poder pasar luego la aplicación a esas plataforma tenemos el Apache Cordova, el cual es el encargado de tomar el código de HTML, CSS y JavaScript y generar aplicaciones que se instalan directamente en el dispositivo móvil y se ejecutan como si fueran aplicaciones nativas.
+
+Resumiendo, con nuestros conocimientos en Angular más las directrices para diseño que nos proporciona IONIC (componentes especializados y estilizados), y pasando esto por el Apache Cordova, nos permitirá desplegar nuestras aplicaciones en las diferentes plataformas de aplicaciones (Google PlayStore, la appstore en la web, generar una PWA (página web progresiva)).
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 116. Nota de actualización
+
+Nota importante:
+
+ionic removió la aplicación llamada ionic DevApp, la cual funcionaba para probar ciertas cosas rápidamente en el dispositivo móvil.
+
+Esta sección no necesita dicha aplicación, eso era un extra para que fuera más divertida, pero desafortunadamente la removieron por lo que les pido que simplemente sigan la sección normalmente pero todo en el navegador web como lo verán en los videos.
+
+Si ionic vuelve a crear una aplicación para hacer pruebas rápidas en el dispositivo, lo añadiré al curso :)
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
