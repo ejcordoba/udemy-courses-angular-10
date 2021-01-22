@@ -4633,6 +4633,20 @@ Si ionic vuelve a crear una aplicación para hacer pruebas rápidas en el dispos
 
 ## 117. Creando el esqueleto de nuestra aplicación
 
+Antes de nada vamos a https://ionicframework.com/ y nos creamos una cuenta gratuita. Esto servía para poder acceder a la aplicación de prueba que se menciona en la sección anterior y que, lamentablemente, ya no está disponible.
+
+Posteriormente instalamos ionic de manera global, al ser de manera global necesitaremos permisos de administrador o superusuario, actualmente lo estoy instalando en linux por tanto sería:
+
+>sudo npm install -g ionic
+
+En la web podemos ver en la sección de Get Started diferentes plantillas iniciales, en blanco, con menú lateral, con tabs... nosotros vamos a usar la de tabs, asi que vamos a nuestro directorio raiz de los proyectos y ejecutamos:
+
+>ionic start deseos tabs
+
+En esta versión de ionic que estoy usando (superior a la del curso) me pregunta en primer lugar que framework quiero usar, me da a elegir entre Angular y React, así que elegiremos Angular (obviamente xD).
+
+Una vez terminada la instalación renombraremos el directorio a 05-deseos.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 118. Material de la sección - DeseosApp
