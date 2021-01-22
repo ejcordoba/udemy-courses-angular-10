@@ -4862,6 +4862,94 @@ Y posteriormente fue inyectado en los constructores de las páginas, el servicio
 
 ## 121. Pantalla de pendientes - diseño y documentación de ionic
 
+Regresamos a deseos.service.ts y eliminamos el console log, vamos a crear dos listas para hacer todas las pruebas visuales.
+
+En el constructor declararemos dos constantes que serán instancias de la clase Lista, como requieren el titulo obligatorio se lo definiremos ya. Esas dos listas las meteremos en la propiedad lista del servicio que ya teniamos declarado anteriormente. Podemos incluir un console log para ver dichas listas.
+
+```
+constructor() { 
+    
+    const lista1 = new Lista('Recolectar piedras del infinito');
+    const lista2 = new Lista('Héroes a desaparecer');
+
+    this.listas.push(lista1,lista2);
+
+    console.log(this.listas);
+  }
+```
+
+Estas dos listas las vamos a mostrar en el tab1.page.html. Vamos a usar componentes de ionic, vamos a ionicframework.com, a su documentación. En componentes podemos ver todos los componentes que hay. Básicamente estos componentes son servicios que se deben de importar para luego trabajar con ellos. Nosotros empezaremos con ion-list. Una de las ventajas de usar todos los componentes, como puede ser el ion-label es que nos controlará el responsive (gloria bendita).
+
+Como ya tenemos en el componente inyectado el servicio en el constructor (el cual, a su vez, en el constructor definió las listas), podemos llamarlo directamente en el html y con un bucle for acceder a los títulos.
+
+Como esperamos que hagamos click en esas listas para manipularlas le podemos agregar al ion-item  "detail" que añade la flecha que nos indica que podemos hacer click en esos elementos. De momento queda el html así:
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar>
+        <ion-title>
+            Pendientes
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+    <ion-list>
+        <ion-item *ngFor="let lista of deseosService.listas" detail>
+            <ion-label>{{ lista.titulo }}</ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>
+```
+
+A continuación vamos a editar un poco la apariencia de la app. Ionic tiene una serie de colores predefinidos que se pueden cambiar.
+
+src/themes/variables.scss Aquí podemos ver por ejemplo `--ion-color-dark: #222428;`
+
+Añadiremos la clase color="dark" a todos los componentes que nos interesan, ion-toolbar, ion-content, ion-item, etc.
+
+Para algunos elementos como el ion-list que sale con unos bordes blancos tendremos que ir al archivo src/global.scss y crear una clase para ion-list con background-color y el hexadecimal que mencionamos anteriormente en variables.scss. Tambien cambiaremos el color de los iconos tomando como referencia el terciary de las variables.scss, previa inspección del elemento y viendo que su clase es .tab-selected
+
+```
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+
+/* Core CSS required for Ionic components to work properly */
+
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+ion-list {
+    background-color: #222428!important;
+}
+.tab-selected {
+    color: #7044ff;
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 122. Navegación entre pantallas
