@@ -110,6 +110,31 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [110. Generar Token de Spotify de forma automática](#110-generar-token-de-spotify-de-forma-autom%C3%A1tica)
   - [Cuestionario 3: Examen teórico: SpotiApp](#cuestionario-3-examen-te%C3%B3rico-spotiapp)
   - [111. Código fuente de la sección](#111-c%C3%B3digo-fuente-de-la-secci%C3%B3n)
+- [Sección 7:Aplicación #4: Lista de deseos - IONIC App]()
+  - [112. Introducción a la sección]()
+  - [113. ¿Qué aprenderemos en esta sección?]()
+  - [114. Demostración del resultado de esta sección]()
+  - [115. ¿Qué es ionic?]()
+  - [116. Nota de actualización]()
+  - [117. Creando el esqueleto de nuestra aplicación]()
+  - [118. Material de la sección - DeseosApp]()
+  - [119. Componente de Pendientes, estructura y tabs]()
+  - [120. Servicio y clases de nuestra lista de deseos]()
+  - [121. Pantalla de pendientes - diseño y documentación de ionic]()
+  - [122. Navegación entre pantallas]()
+  - [123. Diseño de la página de agregar]()
+  - [124. Alert Controller - Agregar una lista a nuestro servicio]()
+  - [125. Localstorage - Hacer persistente la información]()
+  - [126. Funcionalidad de la pantalla para agregar tareas a la lista]()
+  - [127. Detalles estéticos de la pantalla agregar]()
+  - [128. Eliminar items de la lista de deseos]()
+  - [129. Editar elementos de otras listas]()
+  - [130. Módulo de componentes y listas component]()
+  - [131. Componente listas]()
+  - [132. Eliminar una lista]()
+  - [133. Pipes impuros]()
+  - [134. Editar el título de la lista]()
+  - [135. Código fuente de la sección]()
 
 # Sección 1:Introducción al curso de Angular
 
@@ -4552,5 +4577,106 @@ Tengo un curso de Node que puede ser un excelente complemento para este curso de
 Curso de Node - Descuento para estudiantes
 
 Espero que esta aplicación les gustara mucho!, los veo en el siguiente video
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+# Sección 7:Aplicación #4: Lista de deseos - IONIC App
+## 112. Introducción a la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 112. Introducción a la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 113. ¿Qué aprenderemos en esta sección?
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 114. Demostración del resultado de esta sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 115. ¿Qué es ionic?
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 116. Nota de actualización
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 117. Creando el esqueleto de nuestra aplicación
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 118. Material de la sección - DeseosApp
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 119. Componente de Pendientes, estructura y tabs
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 120. Servicio y clases de nuestra lista de deseos
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 121. Pantalla de pendientes - diseño y documentación de ionic
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 122. Navegación entre pantallas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 123. Diseño de la página de agregar
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 124. Alert Controller - Agregar una lista a nuestro servicio
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 125. Localstorage - Hacer persistente la información
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 126. Funcionalidad de la pantalla para agregar tareas a la lista
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 127. Detalles estéticos de la pantalla agregar
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 128. Eliminar items de la lista de deseos
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 129. Editar elementos de otras listas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 130. Módulo de componentes y listas component
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 131. Componente listas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 132. Eliminar una lista
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 133. Pipes impuros
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 134. Editar el título de la lista
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 135. Código fuente de la sección
 
 [Volver al Índice](#%C3%ADndice-del-curso)
