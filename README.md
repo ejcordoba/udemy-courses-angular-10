@@ -4647,6 +4647,40 @@ En esta versión de ionic que estoy usando (superior a la del curso) me pregunta
 
 Una vez terminada la instalación renombraremos el directorio a 05-deseos.
 
+Para levantar el proyecto es tan sencillo como situarnos en el directorio del proyecto y en la terminar llamar a:
+
+>ionic serve
+
+Tras arreglar un montón de fallos de dependencias por diferencias de versiones ya tenemos desplegada la aplicación, será buena la práctica de usar el inspector del navegador en modo desarrollador con la opción de visualizar como dispositivo móvil, pues esta es nuestra finalidad.
+
+Vamos a realizar una pequeña modificación sólo para ver el resultado, si vamos a src/app y ahí tenemos varios directorios, a simple vista vemos los distintos tabs, vamos a src/app/tab1/tab1.page.html por ejemplo.
+
+```
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Tab 1
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tab 1</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <app-explore-container name="Tab 1 page"></app-explore-container>
+</ion-content>
+```
+
+Cambiaremos el texto Tab 1 por Pendientes y todo lo que hay dentro de ion-content lo eliminaremos.
+
+También para VS Code instalaremos el Ionic Snippets para tener accesos directos a la generación de etiquetas.
+
+Y Auto Close Tag también lo instalaremos, que no falte la ayuda!
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 118. Material de la sección - DeseosApp
