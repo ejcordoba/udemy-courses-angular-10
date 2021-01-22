@@ -4583,6 +4583,8 @@ Espero que esta aplicación les gustara mucho!, los veo en el siguiente video
 # Sección 7:Aplicación #4: Lista de deseos - IONIC App
 ## 112. Introducción a la sección
 
+En esta sección vamos a trabajar con el framework IONIC que usa Angular 2 como corazón para construir una aplicación (en este punto las versiones, seguramente, hayan cambiado) para móviles, que podremos usar en nuestro teléfono móvil. Aprenderemos lo que es el local storage para poder almacenar información (algo similar a las cookies,para persistir información), crearemos la aplicación y la probaremos en nuestro teléfono móvil.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 112. Introducción a la sección
