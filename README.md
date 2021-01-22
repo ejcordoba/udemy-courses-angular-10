@@ -4695,6 +4695,84 @@ Simplemente descárguenlo y ténganlo a mano.
 
 ## 119. Componente de Pendientes, estructura y tabs
 
+Con la aplicación desplegada y en modo responsive de desarrollador podemos ver en consola una serie de warnings:
+
+```
+Native: tried calling StatusBar.styleDefault, but Cordova is not available. Make sure to include cordova.js or run in a device/simulator
+```
+
+Esto significa que normalmente cuando ejecutemos esta aplicación en un dispositivo móvil hay una libreria llamada Cordova que va a estar ejecutándose en el dispositivo móvil, cuando estamos en el escritorio esa librería no existe, por lo cual cualquier cosa que use Cordova no va a funcionar en el escritorio, podríamos decir que Cordova nos sirve para usar funcionalidades nativas del dispositivo propiamente dicho. Son normales cuando estamos desarrollando la aplicación.
+
+Vamos a hacer algunos cambios, para nuestra aplicación sólo vamos a necesitar dos tabs, que serán el de Pendientes y el de Terminados.
+
+Nos vamos a src/app/tabs/tabs.page.html vemos que este es el html inferior de la aplicación donde se agrupan los tabs, dejaremos la maquetación así:
+
+```
+<ion-tabs>
+
+    <ion-tab-bar slot="bottom">
+        <ion-tab-button tab="tab1">
+            <ion-icon name="clipboard"></ion-icon>
+            <ion-label>Pendientes</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="tab2">
+            <ion-icon name="ellipse"></ion-icon>
+            <ion-label>Terminados</ion-label>
+        </ion-tab-button>
+    </ion-tab-bar>
+
+</ion-tabs>
+```
+
+Podemos ver que dentro de los componentes predeterminados de ionic tenemos ion-icon, podemos buscar los iconos disponibles de ionic en https://ionicons.com/ y elegimos unos adecuados a la lógica, quedando:
+
+```
+<ion-icon name="clipboard"></ion-icon>
+<ion-icon name="checkmark-done-outline"></ion-icon>
+```
+
+En cuestion de estilos, en el ion-header tiene como un box-shadow-bottom, que vamos a eliminar para que se vea como una sola página. Para esto ionic tiene unos estilos propios, vamos a los diferentes ion-header y lo dejamos así:
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+```
+
+Vamos a considerar algunas cosas más antes de terminar esta sección. Vamos a redistribuir los directorios, actualmente todas las páginas estan en el raíz del proyecto (app), así que vamos a crear un subdirectorio "pages" dentro de app para colocar los tabs (páginas) allí.
+
+Como lo hice desde VSCode me preguntó si quería actualizar las rutas a los archivos, me lo hizo automáticamente, sino tendríamos que hacerlo manualmente actualizando los datos en app-routing.module.ts:
+
+```
+const routes: Routes = [
+  {
+    path: '',
+    loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
+  }
+];
+```
+
+El código anterior significa que solicita importar el archivo de módulos y una vez hecho esto le pasará al loadChildre el módulo TabsPageModule
+
+Otra parte del código, que incluyo a continuación, define un preloadingStrategy, que es una configuración por defecto para decirle al router de Angular que cargue o pre-cargue ciertos módulos que se encuentran aquí.
+
+```
+  @NgModule({
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, relativeLinkResolution: 'legacy' })
+  ],
+  exports: [RouterModule]
+})
+```
+
+Finalmente eliminaremos el directorio tabs3 porque no le vamos a dar uso en esta aplicación. Pero existe una referencia a este tab que tendremos que eliminar también, esto se encuentra en src/app/pages/tabs/tabs-routing.module.ts
+
+```
+{
+  path: 'tab3',
+  loadChildren: () => import('../tab3/tab3.module').then(m => m.Tab3PageModule)
+},
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 120. Servicio y clases de nuestra lista de deseos
