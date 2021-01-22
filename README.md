@@ -4685,6 +4685,12 @@ Y Auto Close Tag también lo instalaremos, que no falte la ayuda!
 
 ## 118. Material de la sección - DeseosApp
 
+Material de la sección
+
+Necesito que descarguen el material adjunto que usaremos en la próxima clase, básicamente es la configuración del Animate.css para hacer que se vea un poco mejor nuestra aplicación.
+
+Simplemente descárguenlo y ténganlo a mano.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 119. Componente de Pendientes, estructura y tabs
