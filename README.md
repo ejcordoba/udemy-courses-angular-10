@@ -4777,6 +4777,87 @@ Finalmente eliminaremos el directorio tabs3 porque no le vamos a dar uso en esta
 
 ## 120. Servicio y clases de nuestra lista de deseos
 
+Vamos a usar los ya conocidos servicios para centralizar la lógica del manejo de nuestra aplicación. Lo vamos a crear mediante la línea de comandos. Muy parecido a lo que ya hacíamos con Angular (ng)
+
+>ionic g s services/deseos
+
+Ahora en deseos.service.ts vamos a definir una propiedad "listas" que será un array, lo definimos de momento como tipo any, pero para poder manejar bien la información mediante métodos vamos a trabajar los modelos para ello. Podríamos generarlo con el cli de ionic, pero en este caso lo vamos a hacer de manera manual.
+
+Creamos un directorio nuevo dentro de app llamado "models" y dentro de ese directorio un nuevo archivo de typescript "lista-item.model.ts" esto será una clase común y corriente. Comenzaremos declarándola con "export" para indicar que será usada y llamada desde fuera de este archivo. Ahora definimos este objeto que será nuestro item de la lista. Tendrá una descripción de tipo string, un estado completado de tipo boolean. Posteriormente crearemos el constructor del objeto, que solo pedirá la descripción, porque el estado completado será de inicio "false" (por lógica), quedando, de momento:
+
+```
+export class ListaItem {
+
+    desc: string;
+    completado: boolean;
+
+    constructor( desc: string ) {
+
+        this.desc = desc;
+        this.completado = false;
+    }
+}
+```
+
+Dentro del directorio models vamos a crear otro archivo de typescript que definirá la lista como tal. lista.model.ts. Esta clase será exportada también y tendrá como propiedades un id de tipo number, un titulo de tipo string, fecha de creación creadaEn de tipo date, fecha de terminación terminadaEn de tipo date, una bandera de tipo boolean que llamaremos "terminada" que nos servirá para saber cuando todos los items de la lista han sido completados, y por último tendré los items, que será un array del tipo ListaItem creado anteriormente (hay que asegurarse de que queda importada la clase ListaItem).
+
+Lo siguiente será crear el constructor de esta nueva clase, que como mínimo vamos a definir que reciba el título de la lista, por tanto el título será el recibido, creadaEn será la fecha actual, la lista no se creará terminada (lógico) e inicializaremos el valor a falso y los items será un array vacío. Para el id lo ideal sería gestionarlo a través de una base de dato o similar, un número autoincrementable o similar, pero para nuestra app de aprendizaje vamos a usar una función de Date para tomar un número que será único. La clase queda, de momento, así:
+
+```
+import { ListaItem } from "./lista-item.model";
+
+export class Lista {
+
+    id: number;
+    titulo: string;
+    creadaEn: Date;
+    terminadaEn: Date;
+    terminada: boolean;
+    items: ListaItem[];
+
+    constructor( titulo: string ) {
+
+        this.titulo = titulo;
+        this.creadaEn = new Date();
+        this.terminada = false;
+        this.items = [];
+        this.id = new Date().getTime();
+    }
+
+}
+```
+
+Como ya tenemos el tipo, volvemos al servicio y a la propiedad "listas" ya podemos definirle el tipo Lista (hay que asegurarse que se importa la clase correcta de models/lista.model.ts)
+
+Importante: El objetivo del servicio es manejar una única instancia en toda la aplicación, por tanto debe ser siempre accesible. Así que por ejemplo si queremos disponer de él en una de las páginas, nos vamos la página, digamos la tab1 (tab1.page.ts) y en el constructor le pasamos el servicio previamente importado. Lo haremos igual para el tab2. Quedando tipo:
+
+```
+import { DeseosService } from 'src/app/services/deseos.service';
+
+constructor( public deseosService: DeseosService) {}
+```
+
+Por tanto como el servicio lo tenemos definido así:
+
+```
+import { Injectable } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DeseosService {
+
+  listas: Lista[] = [];
+
+  constructor() { 
+    console.log('Servicio inicializado');
+  }
+}
+```
+
+Y posteriormente fue inyectado en los constructores de las páginas, el servicio queda instanciado una sola vez de forma global y siempre estará accesible. (Se puede notar que el console log del Servicio inicializado aparece solo una vez aunque navegemos entre páginas)
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 121. Pantalla de pendientes - diseño y documentación de ionic
