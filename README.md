@@ -4954,6 +4954,94 @@ ion-list {
 
 ## 122. Navegación entre pantallas
 
+Vamos a crear una nueva pantalla/página que nos permitirá agregar nuevas listas, la crearemos con el CLI:
+
+>ionic g page pages/agregar
+
+Editamos un poco de texto en la plantilla html creada para poder ver los cambios posteriormente.
+
+Ahora tenemos que definir la navegación a esta página, ionic desde la versión 4 en adelante trabaja directamente con el Router de Angular, por lo que si queremos llegar a la página tendremos que navegar simplemente utilizando el Router de Angular.
+
+Vamos a ver el app-routing.module.ts, y veremos que automaticamente agregó el path 'agregar' a las rutas. Por tanto si en el navegador escribimos directamente la url `http://localhost:8100/agregar` nos llevará a la página correctamente, pero perdimos nuestros tabs, porque en app-routing.module.ts está definido que está fuera del módulo de los tabs, así que vamos a comentar la línea que define el path, para tenerlo como referencia.
+
+Pero antes de la documentación de ionic vamos a coger un botón para usarlo de navegación a la página. Y lo añadiremos al html del tab1:
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar color="dark">
+        <ion-title>
+            Pendientes
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" color="dark">
+
+    <ion-list color="dark">
+        <ion-item *ngFor="let lista of deseosService.listas" detail color="dark">
+            <ion-label>{{ lista.titulo }}</ion-label>
+        </ion-item>
+    </ion-list>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="tertiary" (click)="agregarLista()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>
+```
+
+Necesitamos inyectar el Router de Angular en el componente de tab1 para poder navegar (asegurarnos de que es importado de @angular/router). Posteriormente vamos a crear en el ts de tab1 un método llamado agregarLista que, temporalmente, lo que hará será navegar hacia esa ruta (posteriormente controlaremos la información a manejar). Y en el html definir en el botón un evento click que ejecute el método agregarLista. Asi funcionaría pero estamos perdiendo los tabs.
+
+```
+agregarLista() {
+
+  this.router.navigateByUrl('/agregar');
+}
+```
+
+Para tener esos tabs, debemos eliminar el path de app-routing.module.ts
+
+```
+/* {
+    path: 'agregar',
+    loadChildren: () => import('./pages/agregar/agregar.module').then( m => m.AgregarPageModule)
+  } */
+```
+
+Ahora en las nuevas versiones de ionic cada tab tiene su propio modulo de rutas, así que vamos a tab1-routing.module.ts y añadimos la ruta:
+
+```
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { Tab1Page } from './tab1.page';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: Tab1Page,
+  },
+  {
+    path: 'agregar',
+    loadChildren: () => import('../agregar/agregar.module').then( m => m.AgregarPageModule)
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class Tab1PageRoutingModule {}
+```
+
+Lo que pasará ahora al pulsar el botón es darnos un error, porque la función del boton busca navegar a la url '/agregar' que ya no está definida. Por lo que regresamos al ts de tab1 para definir la ruta correctamente, como ahora es una ruta hija (como hemos definido en tabs1-routing.module.ts) sería:
+
+```
+agregarLista() {
+
+    this.router.navigateByUrl('/tabs/tab1/agregar');
+  }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 123. Diseño de la página de agregar
