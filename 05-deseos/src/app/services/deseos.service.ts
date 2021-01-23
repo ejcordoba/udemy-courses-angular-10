@@ -8,20 +8,38 @@ export class DeseosService {
 
   listas: Lista[] = [];
 
-  constructor() { 
-    
-    const lista1 = new Lista('Recolectar piedras del infinito');
-    const lista2 = new Lista('Héroes a desaparecer');
-   
-    this.listas.push(lista1,lista2);
+  constructor() {
 
-    console.log(this.listas);
+    this.cargarStorage();
+    
+    //const lista1 = new Lista('Recolectar piedras del infinito');
+    //const lista2 = new Lista('Héroes a desaparecer');
+   
+    //this.listas.push(lista1,lista2);
+
+    //console.log(this.listas);
   }
 
   crearLista( titulo: string ){
 
     const nuevaLista = new Lista( titulo );
     this.listas.push( nuevaLista );
+    this.guardarStorage();
 
   }
+
+  guardarStorage() {
+
+    localStorage.setItem('data',JSON.stringify(this.listas));
+  }
+
+  cargarStorage() {
+
+    if ( localStorage.getItem('data') ){
+      this.listas = JSON.parse( localStorage.getItem('data') );
+    } else {
+      this.listas = []; // Realmente esto se podría obviar porque al iniciar el servicio ya tenemos inicializado el array vacío
+    }
+  }
+
 }

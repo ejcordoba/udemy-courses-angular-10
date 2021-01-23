@@ -5183,6 +5183,63 @@ buttons: [{
 
 ## 125. Localstorage - Hacer persistente la información
 
+Dejamos la aplicación que tras tocar el botón agregar se añadía la nueva lista en el inicio, pero si refrescamos la información se pierde, en el punto en el que estamos, así que tendremos que almacenarla, existen distintos lugares para hacer esto, lo podemos ver con facilidad en las herramientas del navegador, Application->Storage (o similar dependiendo del navegador), tenemos Local Storage, Session Storage, etc. El Local Storage guarda la información como string, pero no la encripta y es de fácil acceso, por lo que no deberíamos guardar información sensible aquí, Session Storage guarda la información también en string pero en lo que dure la sesión, es decir, cuando se cierre el navegador se perderá la información, por último tendríamos las cookies, cada vez más en desuso en detrimento de las otras dos mencionadas anteriormente.
+
+Nosotros para esta aplicación vamos a usar el Local Storage, se recomienda usar un plugin de ionic llamado "Storage" que podemos ver en las guias de la documentación para desarrollar aplicaciones con ionic. El problema con el local storage es que los datos ocuparán espacio en nuestro dispositivo, y algunas aplicaciones de limpieza de móvil pueden borrar estos datos.
+
+Vamos a crear un par de métodos nuevos en el deseos.service.ts, guardarStorage() y cargarStorage(), para guardar la información y para cargarla cuando se abra la aplicación, respectivamente. No necesitamos importar ninguna libreria para usar el método localStorage y la función setItem, que nos permite guardar información en forma de key->value, pero el value tiene que ser un string, y como nosotros lo que tenemos es un array lo que haremos será convertirlo a un json de tipo string con el método JSON.stringify.
+
+el método guardarStorage() lo tendremos que llamar cuando hagamos el push de los datos en el array lista[], y para cargarlo tendremos que hacer en cargarStorage() el paso inverso, getItem y convertir de string a array de nuevo, previamente tendremos que validar si hay datos en el storage, porque si tratamos de convertir a array un string null, dado ese caso, nos daría error, para llamar al cargarStorage() lo podemos hacer en el constructor, aprovecharemos para comentar/quitar las constantes de prueba, el código queda así:
+
+```
+import { Injectable } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DeseosService {
+
+  listas: Lista[] = [];
+
+  constructor() {
+
+    this.cargarStorage();
+    
+    //const lista1 = new Lista('Recolectar piedras del infinito');
+    //const lista2 = new Lista('Héroes a desaparecer');
+   
+    //this.listas.push(lista1,lista2);
+
+    //console.log(this.listas);
+  }
+
+  crearLista( titulo: string ){
+
+    const nuevaLista = new Lista( titulo );
+    this.listas.push( nuevaLista );
+    this.guardarStorage();
+
+  }
+
+  guardarStorage() {
+
+    localStorage.setItem('data',JSON.stringify(this.listas));
+  }
+
+  cargarStorage() {
+
+    if ( localStorage.getItem('data') ){
+      this.listas = JSON.parse( localStorage.getItem('data') );
+    } else {
+      this.listas = []; // Realmente esto se podría obviar porque al iniciar el servicio ya tenemos inicializado el array vacío
+    }
+  }
+
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 126. Funcionalidad de la pantalla para agregar tareas a la lista
