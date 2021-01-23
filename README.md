@@ -5046,6 +5046,45 @@ agregarLista() {
 
 ## 123. Diseño de la página de agregar
 
+Pese a que nativamente se puede cambiar de pantalla en distintos dispositivos, botón atrás de Android o slide en la pantalla de iOS, vamos a añadir un botón para ir hacia atrás en la pantalla de Agregar.
+
+Vamos a empezar con algunos cambios en el agregar.page.html, como eliminar el sombreado del header y a añadir el estilo oscuro con `class="ion-no-border"` y `color="dark"`
+
+Para el botón vamos a usar componentes de ionic, `<ion-buttons> </ion-buttons>` para crear un pack de botones, y dentro de él `<ion-back-button></ion-back-button>` para el botón de regresar atrás. Como ionic detecta que no hay una página anterior no lo renderizará, para evitar esto hay que definir el parámetro `defaultHref="/"` para decirle que por defecto vaya a la raíz de la app. Para posicionar el botón al principio (esquina superior izquierda) tendremos que añadirle el parámetro `slot="start"` a ion-buttons.
+
+Ahora para el html de la lista vamos a la documentación de ionic, normalmente podríamos usar aquí ion-input para introducir datos, en nuestro caso vamos a usar ion-item dentro de ion-list (esta manera se define en la documentación dentro de la sección ion-input como una de las opciones a poder usar). Se acostumbra a poner el ion-item dentro de un ion-list, y es que el ion-list por defecto permite hacer scroll (por ejemplo para formularios muy largos). Con esto tendríamos el input para agregar nuevos items a la lista.
+
+Ahora para crear dicha lista vamos a usar otro ion-list con un ion-list-header y un ion-label para indicar que será "Tareas por hacer" y un ion-item que tendrá un checkbox, ionic tiene los suyos propios: ion-checkbox, que también tiene un parámetro `slot="start"` para colocarlo al inicio, incluiremos un ion-label que será el texto de la tarea. La maquetación queda así:
+
+```
+<ion-header class="ion-no-border">
+    <ion-toolbar color="dark">
+        <ion-buttons slot="start">
+            <ion-back-button text="" color="tertiary" defaultHref="/"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Nombre de la lista</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+    <ion-list>
+        <ion-item color="dark">
+            <ion-label position="floating">Nuevo item</ion-label>
+            <ion-input type="text"></ion-input>
+        </ion-item>
+    </ion-list>
+    <ion-list>
+        <ion-list-header color="dark">
+            <ion-label>Tareas por hacer</ion-label>
+        </ion-list-header>
+        <ion-item color="dark">
+            <ion-checkbox slot="start" color="tertiary"></ion-checkbox>
+            <ion-label>Recordar comer hoy</ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 124. Alert Controller - Agregar una lista a nuestro servicio
