@@ -5089,6 +5089,96 @@ Ahora para crear dicha lista vamos a usar otro ion-list con un ion-list-header y
 
 ## 124. Alert Controller - Agregar una lista a nuestro servicio
 
+Lo que vamos a hacer en esta sección es que en lugar de navegar a la página "Agregar" al pulsar el botón de Agregar en el inicio, no salga una pantalla donde yo pueda escribir el nombre o título de la lista y agregarla a mi servicio. Para que aparezca esa ventana vamos a usar el Alert Controller de ionic (ion-alert). En principio es sólo un Alert pop-up, pero si le defino los inputs podemos usarlo para introducir datos como si fuera un formulario.
+
+Para poder usarlo hay que inyectarlo en el constructor del componente, asegurándonos de que se importa la librería correcta. Lo tendremos que hacer en el ts del tab1 que es donde está el botón de agregar.
+
+Una vez inyectado llamaremos en el método del botón agregarLista al AlertController, de momento dejamos comentada la navegación. En la documentación de ionic tenemos como defifinir las funciones de AlertController, el código que necesitamos es el siguiente:
+
+```
+const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Alert',
+      subHeader: 'Subtitle',
+      message: 'This is an alert message.',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+```
+
+Explicamos el código. Lo que hace el alertController es trabajar con una promesa, pero al usar "await" le indicamos que hasta que no se cree la constante no ejecute la promesa, pero la expresión await solo se puede usar con una función asíncrona, así que tendremos que definir la función como `async agregarLista()`, de esta manera la función pasa a ser una promesa.
+
+Entonces lo que hará la función será ejecutar el método create y cuando esté terminado lo almacenará en la constante alert.
+
+El método .present de alert lo que hará será renderizar el resultado, pero quitaremos el await que lleva delante porque para nuestro caso no es necesario.
+
+Para convertir el alert en lo que el profesor llama un "prompt" (no me parece exacto este término,pero bueno), sería cuestión de definir los inputs y la acción de los botones. Para los inputs tendremos que definir el 'name', que lo usaremos para tomar referencia del input (como en cualquier formulario), el type para el tipo de input, en nuestro caso 'text' y el placeholder para dar información sobre el input al usuario.
+
+```
+inputs:[{
+        name: 'titulo',
+        type: 'text',
+        placeholder: 'Nombre de la lista',
+      }],
+```
+
+Para los botones definiremos el 'text' que será el texto del botón, 'role' que define el comportamiento del botón, si lo definimos como 'cancel' esto hará que si pulsamos fuera del alert se cierre la pantalla, el 'handler' definirá una función a ejecutar al pulsar el botón, para muestra haremos con el botón crear un console log de los datos del formulario 'alert' y otro indicando que se pulsó el botón cancelar al pulsar este otro botón. También haremos una validación para que el título no esté vacío a la hora de crear la lista.
+
+```
+buttons: [{
+        text: 'Cancelar',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancelar');
+        }
+      },
+      {
+        text: 'Crear',
+        handler: ( data ) => {
+          console.log( data );
+          if ( data.titulo.length === 0 ) {
+            return;
+          }
+          // Si no es 0 tengo que crear la lista
+        }
+      }]
+```
+
+El método para crear la lista debería estar centralizado en nuestro servicio, y para eso vamos a deseos.service.ts y creamos un método llamado crearLista que necesitará el título como argumento (recordemos que en el modelo lista.model.ts definimos como es ese tipo de objeto, y en el constructor definimos que necesitaba, como mínimo, el título.), y creará una nueva instancia del objeto Lista con dicho título y la introducirá en el array de listas que tenemos en el servicio.
+
+```
+crearLista( titulo: string ){
+
+    const nuevaLista = new Lista( titulo );
+    this.listas.push( nuevaLista );
+
+  }
+```
+
+Ahora ya podemos llamar al método crearLista del servicio deseosService en el handler del boton crear. Cuando ejecutemos la función se refrescará automaticamente las listas, porque en el html lo que hacemos es listar directamente del servicio.
+
+```
+buttons: [{
+        text: 'Cancelar',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancelar');
+        }
+      },
+      {
+        text: 'Crear',
+        handler: ( data ) => {
+          console.log( data );
+          if ( data.titulo.length === 0 ) {
+            return;
+          }
+          // Si no es 0 tengo que crear la lista
+          this.deseosService.crearLista( data.titulo );
+        }
+      }]
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 125. Localstorage - Hacer persistente la información
