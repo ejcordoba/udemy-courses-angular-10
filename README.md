@@ -5447,6 +5447,102 @@ También vamos a añadir que en la pantalla principal de pendientes se muestre e
 
 ## 130. Módulo de componentes y listas component
 
+Vamos a explicar que son los módulos, algo con lo que trabaja mucho ionic desde la versión 4 en adelante.
+
+En el caso que nos ocupa, podríamos decir que Angular es una colección de módulos, cuando necesitamos incorporar nuevas funcionalidades en la aplicación las implementamos en el app.module.ts o en el app-routing.module.ts.
+
+Actualmente tenemos una pantalla de Pendientes, y la pantalla que nos queda por hacer, la de terminadas, será en esencia exactamente igual que la anterior, con las diferencias obvias.
+
+Entonces lo interesante sería poder reutilizar todo el html, pero copiar y pegar todo el código sería complicado y podría dar muchos errores en el proceso.
+
+Vamos a crear un módulo de componentes con el ionic cli:
+
+>ionic g m components
+
+Una vez creado si vamos al archivo components.module.ts vemos en primer lugar las importaciones que hace, NgModule siempre estará, es la base, el componente nuclear de Angular, el CommonModule trae los ngIf, ngFor etc. Dentro de las declaraciones irían los componentes que va a usar ese módulo.
+
+La idea de esto es poder centralizar y en este módulo poner toda la lógica referente a los componentes de la aplicación, así sólo tendríamos que llamar al módulo cuando queramos usarlo y este ya traerá todos los pipes, componentes, métodos, etc que albergue.
+
+Lo siguiente será crear un componente llamado listas, que me permitirá reutilizar todo el html que teníamos hasta ahora referente a las listas.
+
+>ionic g c components/listas
+
+Lo siguiente será revisar si el componente se importó o no automáticamente. En nuestro caso no lo hizo, así que nos vamos a components.module.ts para importarlo en las declaraciones, también tendremos que declararlo en los exports, si queremos llamar al componente desde fuera del módulo
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+```
+
+En listas.component.ts podemos ver el nombre del selector para usar el componente `app-listas`. Pero para poder usarlo sin errores hay que importar el módulo de componentes que hemos creado en los distintos lugares donde se va a usar el componente. Para que quede más claro: Cada página (tab1 y tab2) tiene su propio archivo de módulos, si importamos ahí el modulo que hemos creado de componentes ya tendríamos acceso directo a los componentes de ese módulo, si por otro lado tratásemos de importar en cada una de las páginas, directamente, el componente nuevo (en lugar del módulo al que pertenece) nos daría error porque estaría tratando de importar dos veces el mismo componente .....
+
+components.module.ts:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+```
+
+tab2.module.ts:
+
+```
+import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Tab2Page } from './tab2.page';
+import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
+
+import { Tab2PageRoutingModule } from './tab2-routing.module';
+import { ComponentsModule } from 'src/app/components/components.module';
+
+@NgModule({
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    ExploreContainerComponentModule,
+    Tab2PageRoutingModule,
+    ComponentsModule
+  ],
+  declarations: [Tab2Page]
+})
+export class Tab2PageModule {}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 131. Componente listas
