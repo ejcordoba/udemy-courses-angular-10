@@ -5373,6 +5373,34 @@ cambioCheck( item: ListaItem ) {
 
 ## 128. Eliminar items de la lista de deseos
 
+Para añadir la funcionalidad de eliminar vamos a usar un componente de ionic llamado ion-item-sliding, que nos permitirá deslizar el item para eliminarlo. Sería tan sencillo como englobar el item en este componente y luego añadir el ion-item-options que nos mostrará los distintos botones que queramos incluir, eliminar o cualquier otro que quisiéremos, ver la documentación de ionic para todo esto. Tambien tendremos que cambiar el bucle for y la animación al wrapper de ion-item-sliding, que será el elemento padre ahora. Para la función de borrar necesitaremos el id del item que queremos borrar, así que añadiremos la generación de índices en el bucle for. El html quedaría así:
+
+```
+<ion-item-sliding *ngFor="let item of lista.items;let i = index;" class="animated fadeInDown">
+            <ion-item color="dark">
+                <ion-checkbox slot="start" color="tertiary" [(ngModel)]="item.completado" (ionChange)="cambioCheck(item)"></ion-checkbox>
+                <ion-label>{{item.desc}}</ion-label>
+            </ion-item>
+            <ion-item-options side="end">
+                <ion-item-option (click)="borrar(item)" color="danger">
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+```
+
+La función para borrar usará el método splice al que le pasamos por argumentos la posición desde la que queremos borrar (i) y cuantos elementos queremos borrar del array (1), despues guardaremos los cambios en nuestro servicio.
+
+```
+borrar ( i: number ) {
+
+    this.lista.items.splice( i, 1);
+    this.deseosService.guardarStorage();
+
+  }
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 129. Editar elementos de otras listas
