@@ -5648,15 +5648,166 @@ export class ListasComponent implements OnInit {
 
 Como tenemos el input ya listo vamos a cada uno de las llamadas al componente y definimos la variable en verdadero o falso en función de en qué página se esté llamando al selector `<app-listas [terminada]="false">`
 
-
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 132. Eliminar una lista
 
+Para eliminar una lista lo haremos con ion-item-sliding de nuevo. La diferencia es que aquí no podremos usar el índice para definir que elemento se va a eliminar, porque el orden de listas puede cambiar debido a que pasen de Pendientes a Terminadas en distinto orden.
+
+Vamos a listas.component.html y maquetamos los componentes de ionic ion-item-sliding, definiendo correctamente el bucle for y dejando lista una función de borrar en el botón de eliminar del sliding, la función la declararemos en listas.component.ts, pero para que esté todo centralizado la funcionalidad deberá estar definida en el servicio. A continuación listas.component.html:
+
+```
+<ion-list color="dark">
+    <ion-item-sliding *ngFor="let lista of deseosService.listas">
+        <ion-item detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+        <ion-item-options side="end">
+            <ion-item-option (click)="borrarLista(lista)" color="danger">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+    </ion-item-sliding>
+
+</ion-list>
+```
+
+Tenemos por tanto que ir a deseos.service.ts y tras crearLista vamos a definir el método borrarLista(), en el cual vamos a hacer un filtrado de todos los elementos cuyo id sea diferente al de la lista, y esto lo sobreescribiremos en nuestro array de listas, es decir, recorreremos el array de lista comparando con el id de la lista que queremos borrar y reescribiremos todos las listas exceptuando esa, quedando borrada (o excluída, a efectos prácticos), para hacer persistente el cambio deberemos guardarlo en el localStorage al final.
+
+```
+borrarLista( lista: Lista ) {
+
+    this.listas = this.listas.filter( listaData => listaData.id !== lista.id );
+    this.guardarStorage();
+
+  }
+```
+
+Ya podemos llamar al método del servicio en listas.component.ts
+
+```
+borrarLista( lista: Lista ) {
+
+  this.deseosService.borrarLista( lista );
+
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 133. Pipes impuros
+
+Ahora toca discriminar entre las listas terminadas y las que no, pues ahora mismo muestra la mismas listas en los dos tabs, estén terminadas o no. Para esto vamos a crearnos un pipe, que no sólo sirven para modificar los datos visualmente, también los podemos usar como filtro, pondremos ese filtro en el ngFor de la lista de listas y mostrará una lista u otra en función de unas condiciones.
+
+Al igual que con los componentes, vamos a crear un módulo para los pipes, por el mismo tema de centralización y reutilización, sobre todo pensando en ionic y en su enfoque de cara a los módulos para funcionar.
+
+>ionic g m pipes
+
+Una vez creado podemos eliminar de pipes.module.ts el CommonModule porque no vamos a usar ngIf, ngFor, etc, sólo vamos a usarlo este módulo para la gestión de los pipes.
+
+Lo siguiente es crear el pipe con el ionic cli:
+
+>ionic g pipe pipes/filtroCompletado
+
+Nótese que actualizó el pipes.module.ts y lo importó y declaró. Como lo usaremos fuera necesitamos exportarlo aquí en pipes.module.ts, si creamos más pipes deberíamos controlarlos aquí. Ahora vamos a la lógica de filtro-completado.pipe.ts. Deberíamos recibir como valor el array con todas las listas, y como argumento si estan completadas o no, y lo que devolverá será otro array con la lista filtrada, el pipe lo que hará será devolver un array filtrando por la propiedad "terminada" que tienen las listas, quedando el pipe así:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+
+@Pipe({
+  name: 'filtroCompletado'
+})
+export class FiltroCompletadoPipe implements PipeTransform {
+
+  transform(listas: Lista[], completada: boolean = true): Lista[] {
+
+    return listas.filter( lista => lista.terminada === completada );
+    
+  }
+
+}
+```
+
+Para poder usar el pipe en el listas.component.html hay que importarlo en compoments.module.ts, porque hay que recordar que ese html es de un componente que forma parte de un módulo de componentes, y al definir el pipe en el módulo todos los componentes que formen parte de ese módulo podrán hacer uso de él.
+
+Como habíamos definido un @Input terminada que nos hacía de bandera podemos usarlo como argumento para pasarselo al pipe y que lo use como criterio de filtrado.
+
+Pero falta un detalle, y es que hasta que no se recarga la aplicacion no se actualizan las listas, es decir, no se vuelve a aplicar el filtro del pipe, esto es porque como la alteración de los datos no se está dando dentro del mismo componente, sino fuera (en su propio módulo) el pipe no está escuchando atento a esos cambios, para que esté atento a los cambios en todo momento en el pipe debemos incluir, en el decorador, tras el name, pure: false, y ya renderizará en todo momento pese a que los cambios se estén dando fuera, por tanto queda así el código:
+
+filtro-completado.pipe.ts:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+
+@Pipe({
+  name: 'filtroCompletado',
+  pure: false
+})
+export class FiltroCompletadoPipe implements PipeTransform {
+
+  transform(listas: Lista[], completada: boolean = true): Lista[] {
+
+    return listas.filter( lista => lista.terminada === completada );
+
+  }
+
+}
+
+```
+
+components.module.ts:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+import { IonicModule } from '@ionic/angular';
+import { PipesModule } from '../pipes/pipes.module';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule,
+    IonicModule,
+    PipesModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+
+```
+
+listas.component.html:
+
+```
+<ion-list color="dark">
+    <ion-item-sliding *ngFor="let lista of deseosService.listas | filtroCompletado:terminada">
+        <ion-item detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+        <ion-item-options side="end">
+            <ion-item-option (click)="borrarLista(lista)" color="danger">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+    </ion-item-sliding>
+
+</ion-list>
+```
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
