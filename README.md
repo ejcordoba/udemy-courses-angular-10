@@ -5547,6 +5547,109 @@ export class Tab2PageModule {}
 
 ## 131. Componente listas
 
+Vamos a mover la lógica del html de las listas al componente. Para poder usar etiquetas html de ionic en nuestro nuevo componente tenemos que importarlo en el components.module.ts, hablamos de IonicModule:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+import { IonicModule } from '@ionic/angular';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule,
+    IonicModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+
+```
+
+Para poder usar el servicio y las funciones debemos importar primero en el constructor de listas.component.ts el servicio. Tambien quitaremos la función de listaSeleccionada del tab1 y la pondremos en el listas.component.ts, porque ahora es de uso común. Para esto necesitaremos, además, importar en el constructor el router y el modelo de Lista, y en el tab1 ya no necesitaremos ni el router ni el modelo de Lista. El servicio DeseosService tendremos que declararlo en el constructor como público, pues se está accediendo desde fuera a él.
+
+listas.component.ts:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Lista } from 'src/app/models/lista.model';
+import { DeseosService } from 'src/app/services/deseos.service';
+
+@Component({
+  selector: 'app-listas',
+  templateUrl: './listas.component.html',
+  styleUrls: ['./listas.component.scss'],
+})
+export class ListasComponent implements OnInit {
+
+  constructor(public deseosService: DeseosService,
+              private router: Router) { }
+
+  ngOnInit() {}
+
+  listaSeleccionada (lista: Lista) {
+
+    this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    
+  }
+}
+```
+
+Pero aun nos falta que nos redirija correctamente cuando intentemos hacer click en uno de las listas de Terminados, por tanto primero tenemos que agregar el path hijo correspondiente en tab2-routing.module.ts
+
+```
+{
+  path: 'agregar/:listaId',
+  loadChildren: () => import('../agregar/agregar.module').then( m => m.AgregarPageModule)
+}
+```
+
+Y después tendremos que verificar en listas.component.ts si estamos en la página de terminados o de pendientes (tab1 ó tab2). Para ello vamos a declarar un @Input (importado de @Angular/core) que tenga una variable que haga de bandera, para saber en qué página estamos, en función de si es verdadero o falso llevará a una url u otra
+
+```
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Lista } from 'src/app/models/lista.model';
+import { DeseosService } from 'src/app/services/deseos.service';
+
+@Component({
+  selector: 'app-listas',
+  templateUrl: './listas.component.html',
+  styleUrls: ['./listas.component.scss'],
+})
+export class ListasComponent implements OnInit {
+
+  @Input() terminada = true;
+
+  constructor(public deseosService: DeseosService,
+              private router: Router) { }
+
+  ngOnInit() {}
+
+  listaSeleccionada (lista: Lista) {
+
+    if (this.terminada) {
+      this.router.navigateByUrl(`/tabs/tab2/agregar/${ lista.id }`);  
+    } else {
+      this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    }
+    
+  }
+}
+```
+
+Como tenemos el input ya listo vamos a cada uno de las llamadas al componente y definimos la variable en verdadero o falso en función de en qué página se esté llamando al selector `<app-listas [terminada]="false">`
+
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 132. Eliminar una lista
