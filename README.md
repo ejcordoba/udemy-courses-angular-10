@@ -5338,6 +5338,37 @@ agregarItem( ) {
 
 ## 127. Detalles estéticos de la pantalla agregar
 
+En esta sección vamos a limar temas de apariencia y funcionalidad, como que persista el estado de los checkbox de los items de la lista. Recurrimos en primer lugar al archivo de texto adjunto en la sección animate.txt que es un extracto de animaciones css (muy útil, por cierto, esta fuente https://daneden.github.io/animate.css/). Añadiremos el código del txt al global.scss
+
+Ya podemos llamarlo en nuestro agregar.page.html:
+
+```
+<ion-item color="dark" *ngFor="let item of lista.items" class="animated fadeInDown">
+```
+
+Para el tema de la persistencia de los checkbox, la mayoria de los elementos en ionic tienen posibilidad de asociar un evento (ionChange) que se dispara cuando cambia el elemento, y lo añadiremos al elemento definiendo que dispare una función que reciba ese item del checkbox como argumento (recordemos que el item tiene como propiedad un booleano, además de la descripción.). Cada vez que llamemos a esta función se llamará a la función guardarStorage para guardarlo en nuestro servicio, asímismo vamos a aprovechar para controlar las dos propiedades de la lista que son terminadaEn y terminada, para cuando se hayan marcado todos los items darla por terminada, cosa que luego será usado en la segunda parte de la aplicación.
+
+Hacemos un return de los items que no estan completados. Para ello declaramos una constante que almacenará el resultado de la función filter sobre el array de items de la lista, dicho resultado será la longitud de ese array. Cuando sea 0 será que está completa la lista.
+
+```
+cambioCheck( item: ListaItem ) {
+    
+    const pendientes = this.lista.items
+                        .filter( itemData => !itemData.completado)
+                        .length;
+    
+    if ( pendientes === 0 ) {
+      this.lista.terminada = true;
+      this.lista.terminadaEn = new Date();
+    } else {
+      this.lista.terminada = false;
+      this.lista.terminadaEn = null;
+    }
+
+    this.deseosService.guardarStorage();
+  }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 128. Eliminar items de la lista de deseos
