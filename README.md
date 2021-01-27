@@ -5405,6 +5405,44 @@ borrar ( i: number ) {
 
 ## 129. Editar elementos de otras listas
 
+Ahora en la sección principal de listas pendientes vamos a agregar la funcionalidad de tocar una lista para editarla, será igual a lo que hacía el botón de añadir (+), haremos el elemento clickable y le añadiremos que dispare una función tipo listaSeleccionada(lista) que navegará a la pantalla de edición usando el id de esa lista como parámetro `<ion-item *ngFor="let lista of deseosService.listas" detail color="dark" (click)="listaSeleccionada(lista)">`
+
+```
+listaSeleccionada (lista: Lista) {
+
+    this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    
+}
+```
+
+También vamos a añadir que en la pantalla principal de pendientes se muestre el número de items de esa lista, por dar más información, usando un componente de ionic llamado ion-note.
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar color="dark">
+        <ion-title>
+            Pendientes
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" color="dark">
+
+    <ion-list color="dark">
+        <ion-item *ngFor="let lista of deseosService.listas" detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+    </ion-list>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="tertiary" (click)="agregarLista()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 130. Módulo de componentes y listas component

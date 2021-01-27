@@ -15,7 +15,7 @@
         </ion-item>
     </ion-list>
     <ion-list>
-        <ion-list-header color="dark">
+        <ion-list-header color="dark" *ngIf="lista.items.length > 0">
             <ion-label>Tareas por hacer</ion-label>
         </ion-list-header>
         <ion-item-sliding *ngFor="let item of lista.items;let i = index" class="animated fadeInDown">
