@@ -5244,6 +5244,96 @@ export class DeseosService {
 
 ## 126. Funcionalidad de la pantalla para agregar tareas a la lista
 
+Vamos a trabajar en la funcionalidad de poder agregar items a esas listas. Recordemos que todas las listas tienen un id único (que habíamos creado usando la función Date()), vamos a usarlo como argumento para navegar a la pantalla de Agregar y modificar la información relevante a los items de esa lista.
+
+Para ello vamos a tab1-routing.module.ts para definir que la ruta puede recibir un parámetro por url.
+
+```
+const routes: Routes = [
+  {
+    path: '',
+    component: Tab1Page,
+  },
+  {
+    path: 'agregar/:listaId',
+    loadChildren: () => import('../agregar/agregar.module').then( m => m.AgregarPageModule)
+  }
+];
+```
+
+Regresamos al typescript del componente tab1. Cuando en el método agregarLista() estamos agregando la nueva lista mediante la función crearLista() necesitamos saber el id de esa lista para poder llamar a la redirección que teníamos comentada `//this.router.navigateByUrl('/tabs/tab1/agregar');`
+
+En deseos.service.ts vamos al método crearLista(), allí podemos hacer un `return nuevaLista.id;` y será el id que necesitamos. De esta manera ahora ademas de crear la lista devolvemos su id, entonces el resultado de la función lo podemos almacenar en esa variable que necesitamos (tab1.page.ts `const listaId = this.deseosService.crearLista( data.titulo );`), y mediante backticks alterar la url de navegación añadiendo ese id como argumento: `this.router.navigateByUrl(`/tabs/tab1/agregar/${listaId}`);`
+
+Lo siguiente que haremos en el servicio será crear un método obtenerLista para poder acceder a todas las propiedades de esa lista y sus datos. El método como argumento para trabajar necesitará el id de la lista, lo definiremos como string o number, pero posteriormente haremos la comprobación y transformación a number para poder trabajar con él `id = Number(id);`(cuando se crea es number, pero en la url es tipo string, dependiendo de donde quisieramos llegar a usar el método). Después usaremos el método find() de los array para devolver la lista que coincida con la buscada mediante el método con el id coincidente de la función principal.
+
+```
+obtenerLista( id: string | number ) {
+
+    id = Number(id);
+
+    return this.listas.find( listaData => listaData.id === id );// Versión corta de función de flecha, un solo "return" implícito
+
+  }
+```
+
+Esto deberá ser cargado en la página Agregar, así que en agregar.page.ts importamos el servicio DeseosService en el constructor, también tendremos que importar el ActivatedRoute para recoger el parámetro de la url, y lo que se hará en el método de constructor es ejecutar la función obtenerLista pasándole el id conseguido mediante el ActivatedRoute para tener disponibles los datos. Así que guardamos en una constante el id, sin recurrir a observables, de esta manera: `const listaId = this.route.snapshot.paramMap.get('listaId');`, definiendo un nuevo objeto de tipo Lista de nuestro modelo ahora podemos almacenar ahí la información:
+
+```
+lista: Lista;
+
+  constructor(private deseosService: DeseosService,
+              private route: ActivatedRoute) {
+
+    const listaId = this.route.snapshot.paramMap.get('listaId');
+
+    this.lista = this.deseosService.obtenerLista(listaId);
+    
+   }
+```
+
+Lo siguiente será crear la función que permita agregar items a la lista agregarItem() así como una variable nombreItem de tipo string, si vamos al html tendremos que relacionar esa variable con el input donde escribimos el nuevo item y así poder agregarlo a la lista `<ion-input type="text" [(ngModel)]="nombreItem"></ion-input>` recordar que ngModel tiene paréntesis porque emite un evento y las llaves cuadradas es porque escucha un evento.
+
+En agregarItem() haremos una primera validación de que se escriba un nombre para el item y no esté en blanco. La función creará un nuevo item de lista que instanciaremos del modelo ListaItem, y añadiremos el item al array de items de esa lista. Finalmente limpiaremos la variable nombreItem para que sea posible usarla de nuevo.
+
+```
+agregarItem( ) {
+
+    if ( this.nombreItem.length ===0 ){
+      return;
+    }
+
+    const nuevoItem = new ListaItem(this.nombreItem);
+    this.lista.items.push( nuevoItem );
+    this.nombreItem = '';
+  }
+```
+
+Añadiremos la función cuando se pulse intro en el input del agregar.page.html mencionado anteriormente. Y crearemos un bucle que nos muestre todos los items de la lista que se vayan agregando:
+
+```
+ <ion-item color="dark" *ngFor="let item of lista.items">
+    <ion-checkbox slot="start" color="tertiary"></ion-checkbox>
+    <ion-label>{{item.desc}}</ion-label>
+</ion-item>
+```
+
+Para que la información sea persistente, como el objeto Lista con el que estamos trabajando realmente es una instanciación del objeto de listas que tenemos en el servicio, es como si trabajásemos directamente con el objeto del servicio, por lo tanto podemos llamar a la función que guarda toda la info en el local storage
+
+```
+agregarItem( ) {
+
+    if ( this.nombreItem.length ===0 ){
+      return;
+    }
+
+    const nuevoItem = new ListaItem(this.nombreItem);
+    this.lista.items.push( nuevoItem );
+    this.nombreItem = '';
+    this.deseosService.guardarStorage();
+  }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 127. Detalles estéticos de la pantalla agregar
