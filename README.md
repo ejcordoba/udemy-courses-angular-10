@@ -110,6 +110,31 @@ Udemy Angular course: From zero to expert (Angular 10+)
   - [110. Generar Token de Spotify de forma automática](#110-generar-token-de-spotify-de-forma-autom%C3%A1tica)
   - [Cuestionario 3: Examen teórico: SpotiApp](#cuestionario-3-examen-te%C3%B3rico-spotiapp)
   - [111. Código fuente de la sección](#111-c%C3%B3digo-fuente-de-la-secci%C3%B3n)
+- [Sección 7:Aplicación #4: Lista de deseos - IONIC App]()
+  - [112. Introducción a la sección]()
+  - [113. ¿Qué aprenderemos en esta sección?]()
+  - [114. Demostración del resultado de esta sección]()
+  - [115. ¿Qué es ionic?]()
+  - [116. Nota de actualización]()
+  - [117. Creando el esqueleto de nuestra aplicación]()
+  - [118. Material de la sección - DeseosApp]()
+  - [119. Componente de Pendientes, estructura y tabs]()
+  - [120. Servicio y clases de nuestra lista de deseos]()
+  - [121. Pantalla de pendientes - diseño y documentación de ionic]()
+  - [122. Navegación entre pantallas]()
+  - [123. Diseño de la página de agregar]()
+  - [124. Alert Controller - Agregar una lista a nuestro servicio]()
+  - [125. Localstorage - Hacer persistente la información]()
+  - [126. Funcionalidad de la pantalla para agregar tareas a la lista]()
+  - [127. Detalles estéticos de la pantalla agregar]()
+  - [128. Eliminar items de la lista de deseos]()
+  - [129. Editar elementos de otras listas]()
+  - [130. Módulo de componentes y listas component]()
+  - [131. Componente listas]()
+  - [132. Eliminar una lista]()
+  - [133. Pipes impuros]()
+  - [134. Editar el título de la lista]()
+  - [135. Código fuente de la sección]()
 
 # Sección 1:Introducción al curso de Angular
 
@@ -4552,5 +4577,1367 @@ Tengo un curso de Node que puede ser un excelente complemento para este curso de
 Curso de Node - Descuento para estudiantes
 
 Espero que esta aplicación les gustara mucho!, los veo en el siguiente video
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+# Sección 7:Aplicación #4: Lista de deseos - IONIC App
+## 112. Introducción a la sección
+
+En esta sección vamos a trabajar con el framework IONIC que usa Angular 2 como corazón para construir una aplicación (en este punto las versiones, seguramente, hayan cambiado) para móviles, que podremos usar en nuestro teléfono móvil. Aprenderemos lo que es el local storage para poder almacenar información (algo similar a las cookies,para persistir información), crearemos la aplicación y la probaremos en nuestro teléfono móvil.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 113. ¿Qué aprenderemos en esta sección?
+
+A lo largo de esta sección crearemos una aplicación que correrá en nuestro dispositivo Android o IOS, y con ello aprenderemos sobre:
+
+1. Uso del local storage guardar localmente información para nuestras aplicaciones.
+2. Introducción a ionic.
+3. Uso del framework de ionic.
+4. Uso de servicios que afectan el local storage.
+5. Uso de ionic DevApp para desplegar nuestra aplicación
+6. Aprenderemos a controlar estilos usando Angular.
+7. Manejo de la información a través de servicios ( update, delete, insert y select ) al local storage.
+8. Aprenderemos a utilizar pipes impuros para realizar filtros.
+9. Entre otras cosas interesantes.
+
+Mientras se avanza en la sección, tendremos tareas y ejercicios prácticos que nos ayudarán a afianzar los conocimientos que iremos adquiriendo clase tras clase.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 114. Demostración del resultado de esta sección
+
+Ver video con el proyecto terminado.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 115. ¿Qué es ionic?
+
+Si nosotros quisieramos desarrollar aplicaciones para iOS o Android tendríamos que aprender a programar en Java para Android y Swift u Objetive-C para iOS. Nosotros usaremos Angular y algo que nos permita dar forma como venimos haciendo con Bootstrap, IONIC nos permitirá esto y para poder pasar luego la aplicación a esas plataforma tenemos el Apache Cordova, el cual es el encargado de tomar el código de HTML, CSS y JavaScript y generar aplicaciones que se instalan directamente en el dispositivo móvil y se ejecutan como si fueran aplicaciones nativas.
+
+Resumiendo, con nuestros conocimientos en Angular más las directrices para diseño que nos proporciona IONIC (componentes especializados y estilizados), y pasando esto por el Apache Cordova, nos permitirá desplegar nuestras aplicaciones en las diferentes plataformas de aplicaciones (Google PlayStore, la appstore en la web, generar una PWA (página web progresiva)).
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 116. Nota de actualización
+
+Nota importante:
+
+ionic removió la aplicación llamada ionic DevApp, la cual funcionaba para probar ciertas cosas rápidamente en el dispositivo móvil.
+
+Esta sección no necesita dicha aplicación, eso era un extra para que fuera más divertida, pero desafortunadamente la removieron por lo que les pido que simplemente sigan la sección normalmente pero todo en el navegador web como lo verán en los videos.
+
+Si ionic vuelve a crear una aplicación para hacer pruebas rápidas en el dispositivo, lo añadiré al curso :)
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 117. Creando el esqueleto de nuestra aplicación
+
+Antes de nada vamos a https://ionicframework.com/ y nos creamos una cuenta gratuita. Esto servía para poder acceder a la aplicación de prueba que se menciona en la sección anterior y que, lamentablemente, ya no está disponible.
+
+Posteriormente instalamos ionic de manera global, al ser de manera global necesitaremos permisos de administrador o superusuario, actualmente lo estoy instalando en linux por tanto sería:
+
+>sudo npm install -g ionic
+
+En la web podemos ver en la sección de Get Started diferentes plantillas iniciales, en blanco, con menú lateral, con tabs... nosotros vamos a usar la de tabs, asi que vamos a nuestro directorio raiz de los proyectos y ejecutamos:
+
+>ionic start deseos tabs
+
+En esta versión de ionic que estoy usando (superior a la del curso) me pregunta en primer lugar que framework quiero usar, me da a elegir entre Angular y React, así que elegiremos Angular (obviamente xD).
+
+Una vez terminada la instalación renombraremos el directorio a 05-deseos.
+
+Para levantar el proyecto es tan sencillo como situarnos en el directorio del proyecto y en la terminar llamar a:
+
+>ionic serve
+
+Tras arreglar un montón de fallos de dependencias por diferencias de versiones ya tenemos desplegada la aplicación, será buena la práctica de usar el inspector del navegador en modo desarrollador con la opción de visualizar como dispositivo móvil, pues esta es nuestra finalidad.
+
+Vamos a realizar una pequeña modificación sólo para ver el resultado, si vamos a src/app y ahí tenemos varios directorios, a simple vista vemos los distintos tabs, vamos a src/app/tab1/tab1.page.html por ejemplo.
+
+```
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Tab 1
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tab 1</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <app-explore-container name="Tab 1 page"></app-explore-container>
+</ion-content>
+```
+
+Cambiaremos el texto Tab 1 por Pendientes y todo lo que hay dentro de ion-content lo eliminaremos.
+
+También para VS Code instalaremos el Ionic Snippets para tener accesos directos a la generación de etiquetas.
+
+Y Auto Close Tag también lo instalaremos, que no falte la ayuda!
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 118. Material de la sección - DeseosApp
+
+Material de la sección
+
+Necesito que descarguen el material adjunto que usaremos en la próxima clase, básicamente es la configuración del Animate.css para hacer que se vea un poco mejor nuestra aplicación.
+
+Simplemente descárguenlo y ténganlo a mano.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 119. Componente de Pendientes, estructura y tabs
+
+Con la aplicación desplegada y en modo responsive de desarrollador podemos ver en consola una serie de warnings:
+
+```
+Native: tried calling StatusBar.styleDefault, but Cordova is not available. Make sure to include cordova.js or run in a device/simulator
+```
+
+Esto significa que normalmente cuando ejecutemos esta aplicación en un dispositivo móvil hay una libreria llamada Cordova que va a estar ejecutándose en el dispositivo móvil, cuando estamos en el escritorio esa librería no existe, por lo cual cualquier cosa que use Cordova no va a funcionar en el escritorio, podríamos decir que Cordova nos sirve para usar funcionalidades nativas del dispositivo propiamente dicho. Son normales cuando estamos desarrollando la aplicación.
+
+Vamos a hacer algunos cambios, para nuestra aplicación sólo vamos a necesitar dos tabs, que serán el de Pendientes y el de Terminados.
+
+Nos vamos a src/app/tabs/tabs.page.html vemos que este es el html inferior de la aplicación donde se agrupan los tabs, dejaremos la maquetación así:
+
+```
+<ion-tabs>
+
+    <ion-tab-bar slot="bottom">
+        <ion-tab-button tab="tab1">
+            <ion-icon name="clipboard"></ion-icon>
+            <ion-label>Pendientes</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="tab2">
+            <ion-icon name="ellipse"></ion-icon>
+            <ion-label>Terminados</ion-label>
+        </ion-tab-button>
+    </ion-tab-bar>
+
+</ion-tabs>
+```
+
+Podemos ver que dentro de los componentes predeterminados de ionic tenemos ion-icon, podemos buscar los iconos disponibles de ionic en https://ionicons.com/ y elegimos unos adecuados a la lógica, quedando:
+
+```
+<ion-icon name="clipboard"></ion-icon>
+<ion-icon name="checkmark-done-outline"></ion-icon>
+```
+
+En cuestion de estilos, en el ion-header tiene como un box-shadow-bottom, que vamos a eliminar para que se vea como una sola página. Para esto ionic tiene unos estilos propios, vamos a los diferentes ion-header y lo dejamos así:
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+```
+
+Vamos a considerar algunas cosas más antes de terminar esta sección. Vamos a redistribuir los directorios, actualmente todas las páginas estan en el raíz del proyecto (app), así que vamos a crear un subdirectorio "pages" dentro de app para colocar los tabs (páginas) allí.
+
+Como lo hice desde VSCode me preguntó si quería actualizar las rutas a los archivos, me lo hizo automáticamente, sino tendríamos que hacerlo manualmente actualizando los datos en app-routing.module.ts:
+
+```
+const routes: Routes = [
+  {
+    path: '',
+    loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
+  }
+];
+```
+
+El código anterior significa que solicita importar el archivo de módulos y una vez hecho esto le pasará al loadChildre el módulo TabsPageModule
+
+Otra parte del código, que incluyo a continuación, define un preloadingStrategy, que es una configuración por defecto para decirle al router de Angular que cargue o pre-cargue ciertos módulos que se encuentran aquí.
+
+```
+  @NgModule({
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, relativeLinkResolution: 'legacy' })
+  ],
+  exports: [RouterModule]
+})
+```
+
+Finalmente eliminaremos el directorio tabs3 porque no le vamos a dar uso en esta aplicación. Pero existe una referencia a este tab que tendremos que eliminar también, esto se encuentra en src/app/pages/tabs/tabs-routing.module.ts
+
+```
+{
+  path: 'tab3',
+  loadChildren: () => import('../tab3/tab3.module').then(m => m.Tab3PageModule)
+},
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 120. Servicio y clases de nuestra lista de deseos
+
+Vamos a usar los ya conocidos servicios para centralizar la lógica del manejo de nuestra aplicación. Lo vamos a crear mediante la línea de comandos. Muy parecido a lo que ya hacíamos con Angular (ng)
+
+>ionic g s services/deseos
+
+Ahora en deseos.service.ts vamos a definir una propiedad "listas" que será un array, lo definimos de momento como tipo any, pero para poder manejar bien la información mediante métodos vamos a trabajar los modelos para ello. Podríamos generarlo con el cli de ionic, pero en este caso lo vamos a hacer de manera manual.
+
+Creamos un directorio nuevo dentro de app llamado "models" y dentro de ese directorio un nuevo archivo de typescript "lista-item.model.ts" esto será una clase común y corriente. Comenzaremos declarándola con "export" para indicar que será usada y llamada desde fuera de este archivo. Ahora definimos este objeto que será nuestro item de la lista. Tendrá una descripción de tipo string, un estado completado de tipo boolean. Posteriormente crearemos el constructor del objeto, que solo pedirá la descripción, porque el estado completado será de inicio "false" (por lógica), quedando, de momento:
+
+```
+export class ListaItem {
+
+    desc: string;
+    completado: boolean;
+
+    constructor( desc: string ) {
+
+        this.desc = desc;
+        this.completado = false;
+    }
+}
+```
+
+Dentro del directorio models vamos a crear otro archivo de typescript que definirá la lista como tal. lista.model.ts. Esta clase será exportada también y tendrá como propiedades un id de tipo number, un titulo de tipo string, fecha de creación creadaEn de tipo date, fecha de terminación terminadaEn de tipo date, una bandera de tipo boolean que llamaremos "terminada" que nos servirá para saber cuando todos los items de la lista han sido completados, y por último tendré los items, que será un array del tipo ListaItem creado anteriormente (hay que asegurarse de que queda importada la clase ListaItem).
+
+Lo siguiente será crear el constructor de esta nueva clase, que como mínimo vamos a definir que reciba el título de la lista, por tanto el título será el recibido, creadaEn será la fecha actual, la lista no se creará terminada (lógico) e inicializaremos el valor a falso y los items será un array vacío. Para el id lo ideal sería gestionarlo a través de una base de dato o similar, un número autoincrementable o similar, pero para nuestra app de aprendizaje vamos a usar una función de Date para tomar un número que será único. La clase queda, de momento, así:
+
+```
+import { ListaItem } from "./lista-item.model";
+
+export class Lista {
+
+    id: number;
+    titulo: string;
+    creadaEn: Date;
+    terminadaEn: Date;
+    terminada: boolean;
+    items: ListaItem[];
+
+    constructor( titulo: string ) {
+
+        this.titulo = titulo;
+        this.creadaEn = new Date();
+        this.terminada = false;
+        this.items = [];
+        this.id = new Date().getTime();
+    }
+
+}
+```
+
+Como ya tenemos el tipo, volvemos al servicio y a la propiedad "listas" ya podemos definirle el tipo Lista (hay que asegurarse que se importa la clase correcta de models/lista.model.ts)
+
+Importante: El objetivo del servicio es manejar una única instancia en toda la aplicación, por tanto debe ser siempre accesible. Así que por ejemplo si queremos disponer de él en una de las páginas, nos vamos la página, digamos la tab1 (tab1.page.ts) y en el constructor le pasamos el servicio previamente importado. Lo haremos igual para el tab2. Quedando tipo:
+
+```
+import { DeseosService } from 'src/app/services/deseos.service';
+
+constructor( public deseosService: DeseosService) {}
+```
+
+Por tanto como el servicio lo tenemos definido así:
+
+```
+import { Injectable } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DeseosService {
+
+  listas: Lista[] = [];
+
+  constructor() { 
+    console.log('Servicio inicializado');
+  }
+}
+```
+
+Y posteriormente fue inyectado en los constructores de las páginas, el servicio queda instanciado una sola vez de forma global y siempre estará accesible. (Se puede notar que el console log del Servicio inicializado aparece solo una vez aunque navegemos entre páginas)
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 121. Pantalla de pendientes - diseño y documentación de ionic
+
+Regresamos a deseos.service.ts y eliminamos el console log, vamos a crear dos listas para hacer todas las pruebas visuales.
+
+En el constructor declararemos dos constantes que serán instancias de la clase Lista, como requieren el titulo obligatorio se lo definiremos ya. Esas dos listas las meteremos en la propiedad lista del servicio que ya teniamos declarado anteriormente. Podemos incluir un console log para ver dichas listas.
+
+```
+constructor() { 
+    
+    const lista1 = new Lista('Recolectar piedras del infinito');
+    const lista2 = new Lista('Héroes a desaparecer');
+
+    this.listas.push(lista1,lista2);
+
+    console.log(this.listas);
+  }
+```
+
+Estas dos listas las vamos a mostrar en el tab1.page.html. Vamos a usar componentes de ionic, vamos a ionicframework.com, a su documentación. En componentes podemos ver todos los componentes que hay. Básicamente estos componentes son servicios que se deben de importar para luego trabajar con ellos. Nosotros empezaremos con ion-list. Una de las ventajas de usar todos los componentes, como puede ser el ion-label es que nos controlará el responsive (gloria bendita).
+
+Como ya tenemos en el componente inyectado el servicio en el constructor (el cual, a su vez, en el constructor definió las listas), podemos llamarlo directamente en el html y con un bucle for acceder a los títulos.
+
+Como esperamos que hagamos click en esas listas para manipularlas le podemos agregar al ion-item  "detail" que añade la flecha que nos indica que podemos hacer click en esos elementos. De momento queda el html así:
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar>
+        <ion-title>
+            Pendientes
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+    <ion-list>
+        <ion-item *ngFor="let lista of deseosService.listas" detail>
+            <ion-label>{{ lista.titulo }}</ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>
+```
+
+A continuación vamos a editar un poco la apariencia de la app. Ionic tiene una serie de colores predefinidos que se pueden cambiar.
+
+src/themes/variables.scss Aquí podemos ver por ejemplo `--ion-color-dark: #222428;`
+
+Añadiremos la clase color="dark" a todos los componentes que nos interesan, ion-toolbar, ion-content, ion-item, etc.
+
+Para algunos elementos como el ion-list que sale con unos bordes blancos tendremos que ir al archivo src/global.scss y crear una clase para ion-list con background-color y el hexadecimal que mencionamos anteriormente en variables.scss. Tambien cambiaremos el color de los iconos tomando como referencia el terciary de las variables.scss, previa inspección del elemento y viendo que su clase es .tab-selected
+
+```
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+
+/* Core CSS required for Ionic components to work properly */
+
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+ion-list {
+    background-color: #222428!important;
+}
+.tab-selected {
+    color: #7044ff;
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 122. Navegación entre pantallas
+
+Vamos a crear una nueva pantalla/página que nos permitirá agregar nuevas listas, la crearemos con el CLI:
+
+>ionic g page pages/agregar
+
+Editamos un poco de texto en la plantilla html creada para poder ver los cambios posteriormente.
+
+Ahora tenemos que definir la navegación a esta página, ionic desde la versión 4 en adelante trabaja directamente con el Router de Angular, por lo que si queremos llegar a la página tendremos que navegar simplemente utilizando el Router de Angular.
+
+Vamos a ver el app-routing.module.ts, y veremos que automaticamente agregó el path 'agregar' a las rutas. Por tanto si en el navegador escribimos directamente la url `http://localhost:8100/agregar` nos llevará a la página correctamente, pero perdimos nuestros tabs, porque en app-routing.module.ts está definido que está fuera del módulo de los tabs, así que vamos a comentar la línea que define el path, para tenerlo como referencia.
+
+Pero antes de la documentación de ionic vamos a coger un botón para usarlo de navegación a la página. Y lo añadiremos al html del tab1:
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar color="dark">
+        <ion-title>
+            Pendientes
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" color="dark">
+
+    <ion-list color="dark">
+        <ion-item *ngFor="let lista of deseosService.listas" detail color="dark">
+            <ion-label>{{ lista.titulo }}</ion-label>
+        </ion-item>
+    </ion-list>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="tertiary" (click)="agregarLista()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>
+```
+
+Necesitamos inyectar el Router de Angular en el componente de tab1 para poder navegar (asegurarnos de que es importado de @angular/router). Posteriormente vamos a crear en el ts de tab1 un método llamado agregarLista que, temporalmente, lo que hará será navegar hacia esa ruta (posteriormente controlaremos la información a manejar). Y en el html definir en el botón un evento click que ejecute el método agregarLista. Asi funcionaría pero estamos perdiendo los tabs.
+
+```
+agregarLista() {
+
+  this.router.navigateByUrl('/agregar');
+}
+```
+
+Para tener esos tabs, debemos eliminar el path de app-routing.module.ts
+
+```
+/* {
+    path: 'agregar',
+    loadChildren: () => import('./pages/agregar/agregar.module').then( m => m.AgregarPageModule)
+  } */
+```
+
+Ahora en las nuevas versiones de ionic cada tab tiene su propio modulo de rutas, así que vamos a tab1-routing.module.ts y añadimos la ruta:
+
+```
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { Tab1Page } from './tab1.page';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: Tab1Page,
+  },
+  {
+    path: 'agregar',
+    loadChildren: () => import('../agregar/agregar.module').then( m => m.AgregarPageModule)
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class Tab1PageRoutingModule {}
+```
+
+Lo que pasará ahora al pulsar el botón es darnos un error, porque la función del boton busca navegar a la url '/agregar' que ya no está definida. Por lo que regresamos al ts de tab1 para definir la ruta correctamente, como ahora es una ruta hija (como hemos definido en tabs1-routing.module.ts) sería:
+
+```
+agregarLista() {
+
+    this.router.navigateByUrl('/tabs/tab1/agregar');
+  }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 123. Diseño de la página de agregar
+
+Pese a que nativamente se puede cambiar de pantalla en distintos dispositivos, botón atrás de Android o slide en la pantalla de iOS, vamos a añadir un botón para ir hacia atrás en la pantalla de Agregar.
+
+Vamos a empezar con algunos cambios en el agregar.page.html, como eliminar el sombreado del header y a añadir el estilo oscuro con `class="ion-no-border"` y `color="dark"`
+
+Para el botón vamos a usar componentes de ionic, `<ion-buttons> </ion-buttons>` para crear un pack de botones, y dentro de él `<ion-back-button></ion-back-button>` para el botón de regresar atrás. Como ionic detecta que no hay una página anterior no lo renderizará, para evitar esto hay que definir el parámetro `defaultHref="/"` para decirle que por defecto vaya a la raíz de la app. Para posicionar el botón al principio (esquina superior izquierda) tendremos que añadirle el parámetro `slot="start"` a ion-buttons.
+
+Ahora para el html de la lista vamos a la documentación de ionic, normalmente podríamos usar aquí ion-input para introducir datos, en nuestro caso vamos a usar ion-item dentro de ion-list (esta manera se define en la documentación dentro de la sección ion-input como una de las opciones a poder usar). Se acostumbra a poner el ion-item dentro de un ion-list, y es que el ion-list por defecto permite hacer scroll (por ejemplo para formularios muy largos). Con esto tendríamos el input para agregar nuevos items a la lista.
+
+Ahora para crear dicha lista vamos a usar otro ion-list con un ion-list-header y un ion-label para indicar que será "Tareas por hacer" y un ion-item que tendrá un checkbox, ionic tiene los suyos propios: ion-checkbox, que también tiene un parámetro `slot="start"` para colocarlo al inicio, incluiremos un ion-label que será el texto de la tarea. La maquetación queda así:
+
+```
+<ion-header class="ion-no-border">
+    <ion-toolbar color="dark">
+        <ion-buttons slot="start">
+            <ion-back-button text="" color="tertiary" defaultHref="/"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Nombre de la lista</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+    <ion-list>
+        <ion-item color="dark">
+            <ion-label position="floating">Nuevo item</ion-label>
+            <ion-input type="text"></ion-input>
+        </ion-item>
+    </ion-list>
+    <ion-list>
+        <ion-list-header color="dark">
+            <ion-label>Tareas por hacer</ion-label>
+        </ion-list-header>
+        <ion-item color="dark">
+            <ion-checkbox slot="start" color="tertiary"></ion-checkbox>
+            <ion-label>Recordar comer hoy</ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 124. Alert Controller - Agregar una lista a nuestro servicio
+
+Lo que vamos a hacer en esta sección es que en lugar de navegar a la página "Agregar" al pulsar el botón de Agregar en el inicio, no salga una pantalla donde yo pueda escribir el nombre o título de la lista y agregarla a mi servicio. Para que aparezca esa ventana vamos a usar el Alert Controller de ionic (ion-alert). En principio es sólo un Alert pop-up, pero si le defino los inputs podemos usarlo para introducir datos como si fuera un formulario.
+
+Para poder usarlo hay que inyectarlo en el constructor del componente, asegurándonos de que se importa la librería correcta. Lo tendremos que hacer en el ts del tab1 que es donde está el botón de agregar.
+
+Una vez inyectado llamaremos en el método del botón agregarLista al AlertController, de momento dejamos comentada la navegación. En la documentación de ionic tenemos como defifinir las funciones de AlertController, el código que necesitamos es el siguiente:
+
+```
+const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Alert',
+      subHeader: 'Subtitle',
+      message: 'This is an alert message.',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+```
+
+Explicamos el código. Lo que hace el alertController es trabajar con una promesa, pero al usar "await" le indicamos que hasta que no se cree la constante no ejecute la promesa, pero la expresión await solo se puede usar con una función asíncrona, así que tendremos que definir la función como `async agregarLista()`, de esta manera la función pasa a ser una promesa.
+
+Entonces lo que hará la función será ejecutar el método create y cuando esté terminado lo almacenará en la constante alert.
+
+El método .present de alert lo que hará será renderizar el resultado, pero quitaremos el await que lleva delante porque para nuestro caso no es necesario.
+
+Para convertir el alert en lo que el profesor llama un "prompt" (no me parece exacto este término,pero bueno), sería cuestión de definir los inputs y la acción de los botones. Para los inputs tendremos que definir el 'name', que lo usaremos para tomar referencia del input (como en cualquier formulario), el type para el tipo de input, en nuestro caso 'text' y el placeholder para dar información sobre el input al usuario.
+
+```
+inputs:[{
+        name: 'titulo',
+        type: 'text',
+        placeholder: 'Nombre de la lista',
+      }],
+```
+
+Para los botones definiremos el 'text' que será el texto del botón, 'role' que define el comportamiento del botón, si lo definimos como 'cancel' esto hará que si pulsamos fuera del alert se cierre la pantalla, el 'handler' definirá una función a ejecutar al pulsar el botón, para muestra haremos con el botón crear un console log de los datos del formulario 'alert' y otro indicando que se pulsó el botón cancelar al pulsar este otro botón. También haremos una validación para que el título no esté vacío a la hora de crear la lista.
+
+```
+buttons: [{
+        text: 'Cancelar',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancelar');
+        }
+      },
+      {
+        text: 'Crear',
+        handler: ( data ) => {
+          console.log( data );
+          if ( data.titulo.length === 0 ) {
+            return;
+          }
+          // Si no es 0 tengo que crear la lista
+        }
+      }]
+```
+
+El método para crear la lista debería estar centralizado en nuestro servicio, y para eso vamos a deseos.service.ts y creamos un método llamado crearLista que necesitará el título como argumento (recordemos que en el modelo lista.model.ts definimos como es ese tipo de objeto, y en el constructor definimos que necesitaba, como mínimo, el título.), y creará una nueva instancia del objeto Lista con dicho título y la introducirá en el array de listas que tenemos en el servicio.
+
+```
+crearLista( titulo: string ){
+
+    const nuevaLista = new Lista( titulo );
+    this.listas.push( nuevaLista );
+
+  }
+```
+
+Ahora ya podemos llamar al método crearLista del servicio deseosService en el handler del boton crear. Cuando ejecutemos la función se refrescará automaticamente las listas, porque en el html lo que hacemos es listar directamente del servicio.
+
+```
+buttons: [{
+        text: 'Cancelar',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancelar');
+        }
+      },
+      {
+        text: 'Crear',
+        handler: ( data ) => {
+          console.log( data );
+          if ( data.titulo.length === 0 ) {
+            return;
+          }
+          // Si no es 0 tengo que crear la lista
+          this.deseosService.crearLista( data.titulo );
+        }
+      }]
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 125. Localstorage - Hacer persistente la información
+
+Dejamos la aplicación que tras tocar el botón agregar se añadía la nueva lista en el inicio, pero si refrescamos la información se pierde, en el punto en el que estamos, así que tendremos que almacenarla, existen distintos lugares para hacer esto, lo podemos ver con facilidad en las herramientas del navegador, Application->Storage (o similar dependiendo del navegador), tenemos Local Storage, Session Storage, etc. El Local Storage guarda la información como string, pero no la encripta y es de fácil acceso, por lo que no deberíamos guardar información sensible aquí, Session Storage guarda la información también en string pero en lo que dure la sesión, es decir, cuando se cierre el navegador se perderá la información, por último tendríamos las cookies, cada vez más en desuso en detrimento de las otras dos mencionadas anteriormente.
+
+Nosotros para esta aplicación vamos a usar el Local Storage, se recomienda usar un plugin de ionic llamado "Storage" que podemos ver en las guias de la documentación para desarrollar aplicaciones con ionic. El problema con el local storage es que los datos ocuparán espacio en nuestro dispositivo, y algunas aplicaciones de limpieza de móvil pueden borrar estos datos.
+
+Vamos a crear un par de métodos nuevos en el deseos.service.ts, guardarStorage() y cargarStorage(), para guardar la información y para cargarla cuando se abra la aplicación, respectivamente. No necesitamos importar ninguna libreria para usar el método localStorage y la función setItem, que nos permite guardar información en forma de key->value, pero el value tiene que ser un string, y como nosotros lo que tenemos es un array lo que haremos será convertirlo a un json de tipo string con el método JSON.stringify.
+
+el método guardarStorage() lo tendremos que llamar cuando hagamos el push de los datos en el array lista[], y para cargarlo tendremos que hacer en cargarStorage() el paso inverso, getItem y convertir de string a array de nuevo, previamente tendremos que validar si hay datos en el storage, porque si tratamos de convertir a array un string null, dado ese caso, nos daría error, para llamar al cargarStorage() lo podemos hacer en el constructor, aprovecharemos para comentar/quitar las constantes de prueba, el código queda así:
+
+```
+import { Injectable } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DeseosService {
+
+  listas: Lista[] = [];
+
+  constructor() {
+
+    this.cargarStorage();
+    
+    //const lista1 = new Lista('Recolectar piedras del infinito');
+    //const lista2 = new Lista('Héroes a desaparecer');
+   
+    //this.listas.push(lista1,lista2);
+
+    //console.log(this.listas);
+  }
+
+  crearLista( titulo: string ){
+
+    const nuevaLista = new Lista( titulo );
+    this.listas.push( nuevaLista );
+    this.guardarStorage();
+
+  }
+
+  guardarStorage() {
+
+    localStorage.setItem('data',JSON.stringify(this.listas));
+  }
+
+  cargarStorage() {
+
+    if ( localStorage.getItem('data') ){
+      this.listas = JSON.parse( localStorage.getItem('data') );
+    } else {
+      this.listas = []; // Realmente esto se podría obviar porque al iniciar el servicio ya tenemos inicializado el array vacío
+    }
+  }
+
+}
+
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 126. Funcionalidad de la pantalla para agregar tareas a la lista
+
+Vamos a trabajar en la funcionalidad de poder agregar items a esas listas. Recordemos que todas las listas tienen un id único (que habíamos creado usando la función Date()), vamos a usarlo como argumento para navegar a la pantalla de Agregar y modificar la información relevante a los items de esa lista.
+
+Para ello vamos a tab1-routing.module.ts para definir que la ruta puede recibir un parámetro por url.
+
+```
+const routes: Routes = [
+  {
+    path: '',
+    component: Tab1Page,
+  },
+  {
+    path: 'agregar/:listaId',
+    loadChildren: () => import('../agregar/agregar.module').then( m => m.AgregarPageModule)
+  }
+];
+```
+
+Regresamos al typescript del componente tab1. Cuando en el método agregarLista() estamos agregando la nueva lista mediante la función crearLista() necesitamos saber el id de esa lista para poder llamar a la redirección que teníamos comentada `//this.router.navigateByUrl('/tabs/tab1/agregar');`
+
+En deseos.service.ts vamos al método crearLista(), allí podemos hacer un `return nuevaLista.id;` y será el id que necesitamos. De esta manera ahora ademas de crear la lista devolvemos su id, entonces el resultado de la función lo podemos almacenar en esa variable que necesitamos (tab1.page.ts `const listaId = this.deseosService.crearLista( data.titulo );`), y mediante backticks alterar la url de navegación añadiendo ese id como argumento: `this.router.navigateByUrl(`/tabs/tab1/agregar/${listaId}`);`
+
+Lo siguiente que haremos en el servicio será crear un método obtenerLista para poder acceder a todas las propiedades de esa lista y sus datos. El método como argumento para trabajar necesitará el id de la lista, lo definiremos como string o number, pero posteriormente haremos la comprobación y transformación a number para poder trabajar con él `id = Number(id);`(cuando se crea es number, pero en la url es tipo string, dependiendo de donde quisieramos llegar a usar el método). Después usaremos el método find() de los array para devolver la lista que coincida con la buscada mediante el método con el id coincidente de la función principal.
+
+```
+obtenerLista( id: string | number ) {
+
+    id = Number(id);
+
+    return this.listas.find( listaData => listaData.id === id );// Versión corta de función de flecha, un solo "return" implícito
+
+  }
+```
+
+Esto deberá ser cargado en la página Agregar, así que en agregar.page.ts importamos el servicio DeseosService en el constructor, también tendremos que importar el ActivatedRoute para recoger el parámetro de la url, y lo que se hará en el método de constructor es ejecutar la función obtenerLista pasándole el id conseguido mediante el ActivatedRoute para tener disponibles los datos. Así que guardamos en una constante el id, sin recurrir a observables, de esta manera: `const listaId = this.route.snapshot.paramMap.get('listaId');`, definiendo un nuevo objeto de tipo Lista de nuestro modelo ahora podemos almacenar ahí la información:
+
+```
+lista: Lista;
+
+  constructor(private deseosService: DeseosService,
+              private route: ActivatedRoute) {
+
+    const listaId = this.route.snapshot.paramMap.get('listaId');
+
+    this.lista = this.deseosService.obtenerLista(listaId);
+    
+   }
+```
+
+Lo siguiente será crear la función que permita agregar items a la lista agregarItem() así como una variable nombreItem de tipo string, si vamos al html tendremos que relacionar esa variable con el input donde escribimos el nuevo item y así poder agregarlo a la lista `<ion-input type="text" [(ngModel)]="nombreItem"></ion-input>` recordar que ngModel tiene paréntesis porque emite un evento y las llaves cuadradas es porque escucha un evento.
+
+En agregarItem() haremos una primera validación de que se escriba un nombre para el item y no esté en blanco. La función creará un nuevo item de lista que instanciaremos del modelo ListaItem, y añadiremos el item al array de items de esa lista. Finalmente limpiaremos la variable nombreItem para que sea posible usarla de nuevo.
+
+```
+agregarItem( ) {
+
+    if ( this.nombreItem.length ===0 ){
+      return;
+    }
+
+    const nuevoItem = new ListaItem(this.nombreItem);
+    this.lista.items.push( nuevoItem );
+    this.nombreItem = '';
+  }
+```
+
+Añadiremos la función cuando se pulse intro en el input del agregar.page.html mencionado anteriormente. Y crearemos un bucle que nos muestre todos los items de la lista que se vayan agregando:
+
+```
+ <ion-item color="dark" *ngFor="let item of lista.items">
+    <ion-checkbox slot="start" color="tertiary"></ion-checkbox>
+    <ion-label>{{item.desc}}</ion-label>
+</ion-item>
+```
+
+Para que la información sea persistente, como el objeto Lista con el que estamos trabajando realmente es una instanciación del objeto de listas que tenemos en el servicio, es como si trabajásemos directamente con el objeto del servicio, por lo tanto podemos llamar a la función que guarda toda la info en el local storage
+
+```
+agregarItem( ) {
+
+    if ( this.nombreItem.length ===0 ){
+      return;
+    }
+
+    const nuevoItem = new ListaItem(this.nombreItem);
+    this.lista.items.push( nuevoItem );
+    this.nombreItem = '';
+    this.deseosService.guardarStorage();
+  }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 127. Detalles estéticos de la pantalla agregar
+
+En esta sección vamos a limar temas de apariencia y funcionalidad, como que persista el estado de los checkbox de los items de la lista. Recurrimos en primer lugar al archivo de texto adjunto en la sección animate.txt que es un extracto de animaciones css (muy útil, por cierto, esta fuente https://daneden.github.io/animate.css/). Añadiremos el código del txt al global.scss
+
+Ya podemos llamarlo en nuestro agregar.page.html:
+
+```
+<ion-item color="dark" *ngFor="let item of lista.items" class="animated fadeInDown">
+```
+
+Para el tema de la persistencia de los checkbox, la mayoria de los elementos en ionic tienen posibilidad de asociar un evento (ionChange) que se dispara cuando cambia el elemento, y lo añadiremos al elemento definiendo que dispare una función que reciba ese item del checkbox como argumento (recordemos que el item tiene como propiedad un booleano, además de la descripción.). Cada vez que llamemos a esta función se llamará a la función guardarStorage para guardarlo en nuestro servicio, asímismo vamos a aprovechar para controlar las dos propiedades de la lista que son terminadaEn y terminada, para cuando se hayan marcado todos los items darla por terminada, cosa que luego será usado en la segunda parte de la aplicación.
+
+Hacemos un return de los items que no estan completados. Para ello declaramos una constante que almacenará el resultado de la función filter sobre el array de items de la lista, dicho resultado será la longitud de ese array. Cuando sea 0 será que está completa la lista.
+
+```
+cambioCheck( item: ListaItem ) {
+    
+    const pendientes = this.lista.items
+                        .filter( itemData => !itemData.completado)
+                        .length;
+    
+    if ( pendientes === 0 ) {
+      this.lista.terminada = true;
+      this.lista.terminadaEn = new Date();
+    } else {
+      this.lista.terminada = false;
+      this.lista.terminadaEn = null;
+    }
+
+    this.deseosService.guardarStorage();
+  }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 128. Eliminar items de la lista de deseos
+
+Para añadir la funcionalidad de eliminar vamos a usar un componente de ionic llamado ion-item-sliding, que nos permitirá deslizar el item para eliminarlo. Sería tan sencillo como englobar el item en este componente y luego añadir el ion-item-options que nos mostrará los distintos botones que queramos incluir, eliminar o cualquier otro que quisiéremos, ver la documentación de ionic para todo esto. Tambien tendremos que cambiar el bucle for y la animación al wrapper de ion-item-sliding, que será el elemento padre ahora. Para la función de borrar necesitaremos el id del item que queremos borrar, así que añadiremos la generación de índices en el bucle for. El html quedaría así:
+
+```
+<ion-item-sliding *ngFor="let item of lista.items;let i = index;" class="animated fadeInDown">
+            <ion-item color="dark">
+                <ion-checkbox slot="start" color="tertiary" [(ngModel)]="item.completado" (ionChange)="cambioCheck(item)"></ion-checkbox>
+                <ion-label>{{item.desc}}</ion-label>
+            </ion-item>
+            <ion-item-options side="end">
+                <ion-item-option (click)="borrar(item)" color="danger">
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+```
+
+La función para borrar usará el método splice al que le pasamos por argumentos la posición desde la que queremos borrar (i) y cuantos elementos queremos borrar del array (1), despues guardaremos los cambios en nuestro servicio.
+
+```
+borrar ( i: number ) {
+
+    this.lista.items.splice( i, 1);
+    this.deseosService.guardarStorage();
+
+  }
+```
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 129. Editar elementos de otras listas
+
+Ahora en la sección principal de listas pendientes vamos a agregar la funcionalidad de tocar una lista para editarla, será igual a lo que hacía el botón de añadir (+), haremos el elemento clickable y le añadiremos que dispare una función tipo listaSeleccionada(lista) que navegará a la pantalla de edición usando el id de esa lista como parámetro `<ion-item *ngFor="let lista of deseosService.listas" detail color="dark" (click)="listaSeleccionada(lista)">`
+
+```
+listaSeleccionada (lista: Lista) {
+
+    this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    
+}
+```
+
+También vamos a añadir que en la pantalla principal de pendientes se muestre el número de items de esa lista, por dar más información, usando un componente de ionic llamado ion-note.
+
+```
+<ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar color="dark">
+        <ion-title>
+            Pendientes
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" color="dark">
+
+    <ion-list color="dark">
+        <ion-item *ngFor="let lista of deseosService.listas" detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+    </ion-list>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="tertiary" (click)="agregarLista()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>
+```
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 130. Módulo de componentes y listas component
+
+Vamos a explicar que son los módulos, algo con lo que trabaja mucho ionic desde la versión 4 en adelante.
+
+En el caso que nos ocupa, podríamos decir que Angular es una colección de módulos, cuando necesitamos incorporar nuevas funcionalidades en la aplicación las implementamos en el app.module.ts o en el app-routing.module.ts.
+
+Actualmente tenemos una pantalla de Pendientes, y la pantalla que nos queda por hacer, la de terminadas, será en esencia exactamente igual que la anterior, con las diferencias obvias.
+
+Entonces lo interesante sería poder reutilizar todo el html, pero copiar y pegar todo el código sería complicado y podría dar muchos errores en el proceso.
+
+Vamos a crear un módulo de componentes con el ionic cli:
+
+>ionic g m components
+
+Una vez creado si vamos al archivo components.module.ts vemos en primer lugar las importaciones que hace, NgModule siempre estará, es la base, el componente nuclear de Angular, el CommonModule trae los ngIf, ngFor etc. Dentro de las declaraciones irían los componentes que va a usar ese módulo.
+
+La idea de esto es poder centralizar y en este módulo poner toda la lógica referente a los componentes de la aplicación, así sólo tendríamos que llamar al módulo cuando queramos usarlo y este ya traerá todos los pipes, componentes, métodos, etc que albergue.
+
+Lo siguiente será crear un componente llamado listas, que me permitirá reutilizar todo el html que teníamos hasta ahora referente a las listas.
+
+>ionic g c components/listas
+
+Lo siguiente será revisar si el componente se importó o no automáticamente. En nuestro caso no lo hizo, así que nos vamos a components.module.ts para importarlo en las declaraciones, también tendremos que declararlo en los exports, si queremos llamar al componente desde fuera del módulo
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+```
+
+En listas.component.ts podemos ver el nombre del selector para usar el componente `app-listas`. Pero para poder usarlo sin errores hay que importar el módulo de componentes que hemos creado en los distintos lugares donde se va a usar el componente. Para que quede más claro: Cada página (tab1 y tab2) tiene su propio archivo de módulos, si importamos ahí el modulo que hemos creado de componentes ya tendríamos acceso directo a los componentes de ese módulo, si por otro lado tratásemos de importar en cada una de las páginas, directamente, el componente nuevo (en lugar del módulo al que pertenece) nos daría error porque estaría tratando de importar dos veces el mismo componente .....
+
+components.module.ts:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+```
+
+tab2.module.ts:
+
+```
+import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Tab2Page } from './tab2.page';
+import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
+
+import { Tab2PageRoutingModule } from './tab2-routing.module';
+import { ComponentsModule } from 'src/app/components/components.module';
+
+@NgModule({
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    ExploreContainerComponentModule,
+    Tab2PageRoutingModule,
+    ComponentsModule
+  ],
+  declarations: [Tab2Page]
+})
+export class Tab2PageModule {}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 131. Componente listas
+
+Vamos a mover la lógica del html de las listas al componente. Para poder usar etiquetas html de ionic en nuestro nuevo componente tenemos que importarlo en el components.module.ts, hablamos de IonicModule:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+import { IonicModule } from '@ionic/angular';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule,
+    IonicModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+
+```
+
+Para poder usar el servicio y las funciones debemos importar primero en el constructor de listas.component.ts el servicio. Tambien quitaremos la función de listaSeleccionada del tab1 y la pondremos en el listas.component.ts, porque ahora es de uso común. Para esto necesitaremos, además, importar en el constructor el router y el modelo de Lista, y en el tab1 ya no necesitaremos ni el router ni el modelo de Lista. El servicio DeseosService tendremos que declararlo en el constructor como público, pues se está accediendo desde fuera a él.
+
+listas.component.ts:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Lista } from 'src/app/models/lista.model';
+import { DeseosService } from 'src/app/services/deseos.service';
+
+@Component({
+  selector: 'app-listas',
+  templateUrl: './listas.component.html',
+  styleUrls: ['./listas.component.scss'],
+})
+export class ListasComponent implements OnInit {
+
+  constructor(public deseosService: DeseosService,
+              private router: Router) { }
+
+  ngOnInit() {}
+
+  listaSeleccionada (lista: Lista) {
+
+    this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    
+  }
+}
+```
+
+Pero aun nos falta que nos redirija correctamente cuando intentemos hacer click en uno de las listas de Terminados, por tanto primero tenemos que agregar el path hijo correspondiente en tab2-routing.module.ts
+
+```
+{
+  path: 'agregar/:listaId',
+  loadChildren: () => import('../agregar/agregar.module').then( m => m.AgregarPageModule)
+}
+```
+
+Y después tendremos que verificar en listas.component.ts si estamos en la página de terminados o de pendientes (tab1 ó tab2). Para ello vamos a declarar un @Input (importado de @Angular/core) que tenga una variable que haga de bandera, para saber en qué página estamos, en función de si es verdadero o falso llevará a una url u otra
+
+```
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Lista } from 'src/app/models/lista.model';
+import { DeseosService } from 'src/app/services/deseos.service';
+
+@Component({
+  selector: 'app-listas',
+  templateUrl: './listas.component.html',
+  styleUrls: ['./listas.component.scss'],
+})
+export class ListasComponent implements OnInit {
+
+  @Input() terminada = true;
+
+  constructor(public deseosService: DeseosService,
+              private router: Router) { }
+
+  ngOnInit() {}
+
+  listaSeleccionada (lista: Lista) {
+
+    if (this.terminada) {
+      this.router.navigateByUrl(`/tabs/tab2/agregar/${ lista.id }`);  
+    } else {
+      this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    }
+    
+  }
+}
+```
+
+Como tenemos el input ya listo vamos a cada uno de las llamadas al componente y definimos la variable en verdadero o falso en función de en qué página se esté llamando al selector `<app-listas [terminada]="false">`
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 132. Eliminar una lista
+
+Para eliminar una lista lo haremos con ion-item-sliding de nuevo. La diferencia es que aquí no podremos usar el índice para definir que elemento se va a eliminar, porque el orden de listas puede cambiar debido a que pasen de Pendientes a Terminadas en distinto orden.
+
+Vamos a listas.component.html y maquetamos los componentes de ionic ion-item-sliding, definiendo correctamente el bucle for y dejando lista una función de borrar en el botón de eliminar del sliding, la función la declararemos en listas.component.ts, pero para que esté todo centralizado la funcionalidad deberá estar definida en el servicio. A continuación listas.component.html:
+
+```
+<ion-list color="dark">
+    <ion-item-sliding *ngFor="let lista of deseosService.listas">
+        <ion-item detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+        <ion-item-options side="end">
+            <ion-item-option (click)="borrarLista(lista)" color="danger">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+    </ion-item-sliding>
+
+</ion-list>
+```
+
+Tenemos por tanto que ir a deseos.service.ts y tras crearLista vamos a definir el método borrarLista(), en el cual vamos a hacer un filtrado de todos los elementos cuyo id sea diferente al de la lista, y esto lo sobreescribiremos en nuestro array de listas, es decir, recorreremos el array de lista comparando con el id de la lista que queremos borrar y reescribiremos todos las listas exceptuando esa, quedando borrada (o excluída, a efectos prácticos), para hacer persistente el cambio deberemos guardarlo en el localStorage al final.
+
+```
+borrarLista( lista: Lista ) {
+
+    this.listas = this.listas.filter( listaData => listaData.id !== lista.id );
+    this.guardarStorage();
+
+  }
+```
+
+Ya podemos llamar al método del servicio en listas.component.ts
+
+```
+borrarLista( lista: Lista ) {
+
+  this.deseosService.borrarLista( lista );
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 133. Pipes impuros
+
+Ahora toca discriminar entre las listas terminadas y las que no, pues ahora mismo muestra la mismas listas en los dos tabs, estén terminadas o no. Para esto vamos a crearnos un pipe, que no sólo sirven para modificar los datos visualmente, también los podemos usar como filtro, pondremos ese filtro en el ngFor de la lista de listas y mostrará una lista u otra en función de unas condiciones.
+
+Al igual que con los componentes, vamos a crear un módulo para los pipes, por el mismo tema de centralización y reutilización, sobre todo pensando en ionic y en su enfoque de cara a los módulos para funcionar.
+
+>ionic g m pipes
+
+Una vez creado podemos eliminar de pipes.module.ts el CommonModule porque no vamos a usar ngIf, ngFor, etc, sólo vamos a usarlo este módulo para la gestión de los pipes.
+
+Lo siguiente es crear el pipe con el ionic cli:
+
+>ionic g pipe pipes/filtroCompletado
+
+Nótese que actualizó el pipes.module.ts y lo importó y declaró. Como lo usaremos fuera necesitamos exportarlo aquí en pipes.module.ts, si creamos más pipes deberíamos controlarlos aquí. Ahora vamos a la lógica de filtro-completado.pipe.ts. Deberíamos recibir como valor el array con todas las listas, y como argumento si estan completadas o no, y lo que devolverá será otro array con la lista filtrada, el pipe lo que hará será devolver un array filtrando por la propiedad "terminada" que tienen las listas, quedando el pipe así:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+
+@Pipe({
+  name: 'filtroCompletado'
+})
+export class FiltroCompletadoPipe implements PipeTransform {
+
+  transform(listas: Lista[], completada: boolean = true): Lista[] {
+
+    return listas.filter( lista => lista.terminada === completada );
+    
+  }
+
+}
+```
+
+Para poder usar el pipe en el listas.component.html hay que importarlo en compoments.module.ts, porque hay que recordar que ese html es de un componente que forma parte de un módulo de componentes, y al definir el pipe en el módulo todos los componentes que formen parte de ese módulo podrán hacer uso de él.
+
+Como habíamos definido un @Input terminada que nos hacía de bandera podemos usarlo como argumento para pasarselo al pipe y que lo use como criterio de filtrado.
+
+Pero falta un detalle, y es que hasta que no se recarga la aplicacion no se actualizan las listas, es decir, no se vuelve a aplicar el filtro del pipe, esto es porque como la alteración de los datos no se está dando dentro del mismo componente, sino fuera (en su propio módulo) el pipe no está escuchando atento a esos cambios, para que esté atento a los cambios en todo momento en el pipe debemos incluir, en el decorador, tras el name, pure: false, y ya renderizará en todo momento pese a que los cambios se estén dando fuera, por tanto queda así el código:
+
+filtro-completado.pipe.ts:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+import { Lista } from '../models/lista.model';
+
+
+@Pipe({
+  name: 'filtroCompletado',
+  pure: false
+})
+export class FiltroCompletadoPipe implements PipeTransform {
+
+  transform(listas: Lista[], completada: boolean = true): Lista[] {
+
+    return listas.filter( lista => lista.terminada === completada );
+
+  }
+
+}
+
+```
+
+components.module.ts:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListasComponent } from './listas/listas.component';
+import { IonicModule } from '@ionic/angular';
+import { PipesModule } from '../pipes/pipes.module';
+
+
+
+@NgModule({
+  declarations: [
+    ListasComponent
+  ],
+  imports: [
+    CommonModule,
+    IonicModule,
+    PipesModule
+  ],
+  exports: [
+    ListasComponent
+  ]
+})
+export class ComponentsModule { }
+
+```
+
+listas.component.html:
+
+```
+<ion-list color="dark">
+    <ion-item-sliding *ngFor="let lista of deseosService.listas | filtroCompletado:terminada">
+        <ion-item detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+        <ion-item-options side="end">
+            <ion-item-option (click)="borrarLista(lista)" color="danger">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+    </ion-item-sliding>
+
+</ion-list>
+```
+
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 134. Editar el título de la lista
+
+Esta lección consiste en una tarea práctica para el alumno. Agregar la funcionalidad de deslizar una lista para que aparezca un icono de edición, al pulsar el icono de edición que aparezca un alert (como el de crear lista) para editar el título de la lista, que se pueda guardar y almacenar en el Local Storage.
+
+Como es repaso de conceptos yo hice por mi cuenta todo el proceso y llegué hasta la última parte de almacenar, que no lo tenía claro y como siempre me lío y lo hago más complicado, así que me remito a dejar aquí todo el código resultante. Previamente de manera esquemática dejaré algunas consideraciones.
+
+- Para poder usar el alert en el componente hay que importar las librerías que lo posibilitan
+- Mucho es tema de documentación, como el que se cierre el slide automáticamente, es algo posible del componente de ionic
+- En todo momento estamos haciendo uso del Servicio, cargando y guardando las listas que tenemos ahí.
+- Podemos hacer referencia a un componente usando @ViewChild, es decir, tenemos el componente listas, en él hay un componente ion-list que es al que queremos hacer referencia y queremos aplicar el método de ion-list que permite cerrar el slide, pues bien, con @ViewChild podemos hacer que se "vea" o "tener en cuenta" un elemento de listas.component.html, en este caso el ion-list, y con @ViewChild creamos una instancia u objeto que representa ese elemento y le decimos que será de tipo IonList, en nuestro código fue llamado lista (en mi opinión nombre poco intuitivo), como solo hay un ion-list en todo el componente y creando su instanciación ya podremos aplicar los métodos que queramos sobre él, si hubiera varios elementos de ese tipo se podrían definir identificadores para cada uno de los elementos y poder instanciarlos por separado (es decir, si hubiera 5 ion-list en el componente, al usar @ViewChild sobre ese tipo tendríamos un array de elementos de ese tipo, por lo tanto podríamos recorrerlos, filtrarlos o seleccionar la posición del array que nos interese para aplicarle cada método o tarea en cuestión):
+
+Ejemplo:
+
+@ViewChild( IonList ) // Un array con todos los IonList del componente, si sólo hay uno, pues obviamente sólo selecciona ese, sería un array con sólo un elemento.
+@ViewChild( 'lista' ) // Un elemento en concreto, en el componente de ionic tendríamos que definir un id local de esta manera: <ion-list #lista>
+
+listas.component.html:
+
+```
+<ion-list color="dark">
+    <ion-item-sliding *ngFor="let lista of deseosService.listas | filtroCompletado:terminada">
+        <ion-item detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+        <ion-item-options side="end">
+            <ion-item-option (click)="borrarLista(lista)" color="danger">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+        <ion-item-options side="start">
+            <ion-item-option (click)="editarLista(lista)" color="primary">
+                <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+    </ion-item-sliding>
+</ion-list>
+```
+
+listas.component.ts
+
+```
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController, IonList } from '@ionic/angular';
+import { Lista } from 'src/app/models/lista.model';
+import { DeseosService } from 'src/app/services/deseos.service';
+
+@Component({
+  selector: 'app-listas',
+  templateUrl: './listas.component.html',
+  styleUrls: ['./listas.component.scss'],
+})
+export class ListasComponent implements OnInit {
+
+  @ViewChild( IonList ) lista: IonList;
+  @Input() terminada = true;
+
+  constructor(public deseosService: DeseosService,
+              private router: Router,
+              private alertCtrl: AlertController) { }
+
+  ngOnInit() {}
+
+  listaSeleccionada (lista: Lista) {
+
+    if (this.terminada) {
+      this.router.navigateByUrl(`/tabs/tab2/agregar/${ lista.id }`);  
+    } else {
+      this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    }
+    
+  }
+  borrarLista( lista: Lista ) {
+
+    this.deseosService.borrarLista( lista );
+
+  }
+  async editarLista(lista: Lista) {
+
+    
+    const alert = await this.alertCtrl.create({
+      cssClass: 'my-custom-class',
+      header: 'Editar lista',
+      inputs:[{
+        name: 'titulo',
+        type: 'text',
+        value: lista.titulo,
+        placeholder: 'Nombre de la lista',
+      }],
+      
+      buttons: [{
+        text: 'Cancelar',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancelar');
+          this.lista.closeSlidingItems();
+        }
+      },
+      {
+        text: 'Editar',
+        handler: ( data ) => {
+
+          if ( data.titulo.length === 0 ) {
+            return;
+          }
+          
+        lista.titulo = data.titulo; 
+        
+        this.deseosService.guardarStorage();
+        this.lista.closeSlidingItems();
+        
+        }
+      }]
+    });
+
+    alert.present();
+  }
+}
+
+```
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 135. Código fuente de la sección
+
+Ver enlaces y videos de información en el curso.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
