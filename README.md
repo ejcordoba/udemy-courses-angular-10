@@ -5813,6 +5813,127 @@ listas.component.html:
 
 ## 134. Editar el título de la lista
 
+Esta lección consiste en una tarea práctica para el alumno. Agregar la funcionalidad de deslizar una lista para que aparezca un icono de edición, al pulsar el icono de edición que aparezca un alert (como el de crear lista) para editar el título de la lista, que se pueda guardar y almacenar en el Local Storage.
+
+Como es repaso de conceptos yo hice por mi cuenta todo el proceso y llegué hasta la última parte de almacenar, que no lo tenía claro y como siempre me lío y lo hago más complicado, así que me remito a dejar aquí todo el código resultante. Previamente de manera esquemática dejaré algunas consideraciones.
+
+- Para poder usar el alert en el componente hay que importar las librerías que lo posibilitan
+- Mucho es tema de documentación, como el que se cierre el slide automáticamente, es algo posible del componente de ionic
+- En todo momento estamos haciendo uso del Servicio, cargando y guardando las listas que tenemos ahí.
+- Podemos hacer referencia a un componente usando @ViewChild, es decir, tenemos el componente listas, en él hay un componente ion-list que es al que queremos hacer referencia y queremos aplicar el método de ion-list que permite cerrar el slide, pues bien, con @ViewChild podemos hacer que se "vea" o "tener en cuenta" un elemento de listas.component.html, en este caso el ion-list, y con @ViewChild creamos una instancia u objeto que representa ese elemento y le decimos que será de tipo IonList, en nuestro código fue llamado lista (en mi opinión nombre poco intuitivo), como solo hay un ion-list en todo el componente y creando su instanciación ya podremos aplicar los métodos que queramos sobre él, si hubiera varios elementos de ese tipo se podrían definir identificadores para cada uno de los elementos y poder instanciarlos por separado (es decir, si hubiera 5 ion-list en el componente, al usar @ViewChild sobre ese tipo tendríamos un array de elementos de ese tipo, por lo tanto podríamos recorrerlos, filtrarlos o seleccionar la posición del array que nos interese para aplicarle cada método o tarea en cuestión):
+
+Ejemplo:
+
+@ViewChild( IonList ) // Un array con todos los IonList del componente, si sólo hay uno, pues obviamente sólo selecciona ese, sería un array con sólo un elemento.
+@ViewChild( 'lista' ) // Un elemento en concreto, en el componente de ionic tendríamos que definir un id local de esta manera: <ion-list #lista>
+
+listas.component.html:
+
+```
+<ion-list color="dark">
+    <ion-item-sliding *ngFor="let lista of deseosService.listas | filtroCompletado:terminada">
+        <ion-item detail color="dark" (click)="listaSeleccionada(lista)">
+            <ion-label>{{ lista.titulo }}</ion-label>
+            <ion-note slot="end" color="tertiary">{{ lista.items.length }} items</ion-note>
+        </ion-item>
+        <ion-item-options side="end">
+            <ion-item-option (click)="borrarLista(lista)" color="danger">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+        <ion-item-options side="start">
+            <ion-item-option (click)="editarLista(lista)" color="primary">
+                <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-item-option>
+        </ion-item-options>
+    </ion-item-sliding>
+</ion-list>
+```
+
+listas.component.ts
+
+```
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController, IonList } from '@ionic/angular';
+import { Lista } from 'src/app/models/lista.model';
+import { DeseosService } from 'src/app/services/deseos.service';
+
+@Component({
+  selector: 'app-listas',
+  templateUrl: './listas.component.html',
+  styleUrls: ['./listas.component.scss'],
+})
+export class ListasComponent implements OnInit {
+
+  @ViewChild( IonList ) lista: IonList;
+  @Input() terminada = true;
+
+  constructor(public deseosService: DeseosService,
+              private router: Router,
+              private alertCtrl: AlertController) { }
+
+  ngOnInit() {}
+
+  listaSeleccionada (lista: Lista) {
+
+    if (this.terminada) {
+      this.router.navigateByUrl(`/tabs/tab2/agregar/${ lista.id }`);  
+    } else {
+      this.router.navigateByUrl(`/tabs/tab1/agregar/${ lista.id }`);
+    }
+    
+  }
+  borrarLista( lista: Lista ) {
+
+    this.deseosService.borrarLista( lista );
+
+  }
+  async editarLista(lista: Lista) {
+
+    
+    const alert = await this.alertCtrl.create({
+      cssClass: 'my-custom-class',
+      header: 'Editar lista',
+      inputs:[{
+        name: 'titulo',
+        type: 'text',
+        value: lista.titulo,
+        placeholder: 'Nombre de la lista',
+      }],
+      
+      buttons: [{
+        text: 'Cancelar',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancelar');
+          this.lista.closeSlidingItems();
+        }
+      },
+      {
+        text: 'Editar',
+        handler: ( data ) => {
+
+          if ( data.titulo.length === 0 ) {
+            return;
+          }
+          
+        lista.titulo = data.titulo; 
+        
+        this.deseosService.guardarStorage();
+        this.lista.closeSlidingItems();
+        
+        }
+      }]
+    });
+
+    alert.present();
+  }
+}
+
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 135. Código fuente de la sección
