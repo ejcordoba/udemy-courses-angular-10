@@ -5938,4 +5938,6 @@ export class ListasComponent implements OnInit {
 
 ## 135. Código fuente de la sección
 
+Ver enlaces y videos de información en el curso.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
