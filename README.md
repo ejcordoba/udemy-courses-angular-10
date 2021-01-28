@@ -5941,3 +5941,67 @@ export class ListasComponent implements OnInit {
 Ver enlaces y videos de información en el curso.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
+
+## 137. Introducción a la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 138. ¿Qué aprenderemos en esta sección?
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 139. Demostración de lo que lograremos al finalizar la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 140. Creando el proyecto de esta sección - Misceláneos
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 141. ngStyle y su uso con directivas de atributos.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 142. Aplicando CSS a un sólo componente
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 143. ngClass - Agregando clases de estilos a nuestros elementos HTML
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 144. Usando procesos asíncronos con indicadores de usuario
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 145. Directivas personalizadas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 146. ngSwitch - Múltiples opciones con una sola decisión
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 147. Rutas y Rutas Hijas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 148. Rutas Hijas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 149. Separar las rutas hijas a un archivo especifico
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 150. Obteniendo parámetros del padre, desde las rutas hijas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 151. Ciclo de vida completo de un componente
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 152. Demostración del ciclo de vida de un componente
+
+[Volver al Índice](#%C3%ADndice-del-curso)
