@@ -5942,19 +5942,89 @@ Ver enlaces y videos de información en el curso.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
+
+# Sección 8:Componentes, directivas de atributos, ciclo de vida y más...
 ## 137. Introducción a la sección
+
+Ver video resumen de la sección.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 138. ¿Qué aprenderemos en esta sección?
 
+Esta sección esta llena de pequeñas cosas útiles que te ayudaran a mejorar la forma en la que usas Angular.
+
+A continuación veremos:
+
+1. Cambios en el estilo de algún elemento HTML utilizando variables en los componentes.
+2. Comprender y aplicar CSS en un determinado scope, sin afectar los demás componentes. 
+3. Adicionar y remover clases según variables o cualquier tipo de condición.
+4. Crearemos directivas personalizadas.
+5. Uso del ngSwitch.
+6. Crearemos una pequeña aplicación para el uso de rutas y rutas hijas.
+7. Comprenderemos el ciclo de vida de un componente o directiva.
+
+Entre otras cosas bien interesantes.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 139. Demostración de lo que lograremos al finalizar la sección
 
+Ver vídeo con demostración de los apredizajes de la sección.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 140. Creando el proyecto de esta sección - Misceláneos
+
+En esta sección más que una aplicacion como tal, simplemente iremos desarrollando una serie de funcionalidades en un proyecto de prueba, se nos proporciona un archivo con el font-awesome, creamos el proyecto:
+
+>ng new miscelaneos
+
+Renombramos el directorio a 06-miscelaneos por coherencia con el resto de directorios del curso. Las dependencias podríamos instalarlas con npm y de otras maneras, en este caso lo vamos a hacer manual. Descargamos pues los archivos de Bootstrap, jQuery y tether. Ubicamos todo en src/assets/, con los directorios b4/jquery/tether, respectivamente, en B4 copiamos los directorios de css y js de bootstrap que hemos descargado, y lo mismo con los archivos js de jquery y tether respectivamente.
+
+Ahora tenemos que indicar las librerías en nuestro angular.json, para los estilos:
+
+```
+"styles": [
+    "src/styles.css",
+    "src/assets/b4/css/bootstrap.min.css"
+],
+```
+
+lo mismo para "scripts" referente a jquery y tether, así como el js de bootstrap
+
+```
+"scripts": [
+  "src/assets/jquery/jquery-3.5.1.slim.min.js",
+  "src/assets/tether/tether.js",
+  "src/assets/b4/js/bootstrap.min.js"
+]
+```
+
+También copiaremos el directorio font-awesome dentro de assets, completo, de lo que habíamos descargado y lo añadimos al angular.json
+
+```
+"styles": [
+                            "src/styles.css",
+                            "src/assets/b4/css/bootstrap.min.css",
+                            "src/assets/font-awesome/css/font-awesome.min.css"
+                        ],
+                        "scripts": [
+                            "src/assets/jquery/jquery-3.5.1.slim.min.js",
+                            "src/assets/tether/tether.js",
+                            "src/assets/b4/js/bootstrap.min.js"
+                        ]
+```
+
+Comprobamos el font-awesome usando un icono en nuestro app.component.html principal:
+
+```
+<h1>{{title}}</h1>
+
+<i class="fa fa-2x fa-star"></i>
+```
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
