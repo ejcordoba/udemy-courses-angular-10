@@ -6030,6 +6030,55 @@ Comprobamos el font-awesome usando un icono en nuestro app.component.html princi
 
 ## 141. ngStyle y su uso con directivas de atributos.
 
+Buscamos la referencia ngStyle en la documentación de Angular. Básicamente nos permite añadir estilos al html "en caliente", es decir, utilizando variables del componente. En la documentación podemos ver que se puede usar de distintas maneras, con variables, objetos, etc. Nosotros lo vamos a ir poniendo en práctica sobre la marcha, creamos un contenedor en nuestro html y nuestro primer componente mediante el CLI.
+
+```
+<div class="containter main-container">
+  <h1>Demo <small>Angular</small></h1>
+  <hr>
+
+  
+</div>
+```
+
+>ng g c components/ngStyle --skipTests
+
+Vamos a dejar el template y los estilos del componente definidos así para hacer pruebas directamente en el archivo TS :
+
+```
+@Component({
+  selector: 'app-ng-style',
+  template: `
+
+
+  `,
+  styles: []
+})
+```
+
+Ya podemos definir un primer estilo de esta manera en el template: `<p [ngStyle]="{ 'font-size': '15px' }">`, si por ejemplo definimos en el componente una variable tipo `tamano: number = 30;` podríamos definir estilos con variables de esta manera: `<p [ngStyle]="{ 'font-size': tamano + 'px' }">`.
+
+Otra manera sería `<p [style.fontSize]="'40px'">` o incluso usando variables si definimos el tipo de valor `<p [style.fontSize.px]="tamano">`
+
+Podemos alterar dinámicamente el valor de esas varialbes, un ejemplo sencillo (lo ideal sería lanzar una función con validación en el evento, pero para entenderlo suficiente) sería:
+
+```
+<p [style.fontSize.px]="tamano">Hola mundo... esto es una etiqueta
+  </p>
+
+  <button class="btn btn-primary" (click)="tamano = tamano + 5">
+    <i class="fa fa-plus"></i>
+  </button>
+  
+  <button class="btn btn-primary" (click)="tamano = tamano - 5">
+    <i class="fa fa-minus"></i>
+  </button>
+```
+
+De esta manera podríamos cambiar el font-size de ese elemento dinámicamente.
+
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 142. Aplicando CSS a un sólo componente
