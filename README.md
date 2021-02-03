@@ -6288,9 +6288,135 @@ Para terminar vamos a mejorarlo un poco y hacer que el botón se desactive cuand
 
 ## 145. Directivas personalizadas
 
+Supongamos que queramos crearnos un mecanismo que funcione cuando le ponemos una etiqueta o atributo a algún componente html o bien a otro componente.
+
+Como base para el ejercicio vamos a tener un sencillo párrafo en nuestro app.component.html, a continuación vamos a crear una directiva personalizada mediante el CLI. Para ello definiremos un nuevo directorio en src/app llamado "directives" y crearemos una directiva llamada "resaltado", porque lo que queremos es que cuando le pongamos ese atributo al elemento lo resalte:
+
+>ng g d directives/resaltado
+
+Si vamos al componente de directiva creado, podemos definir un console.log en el constructor para saber cuando es creado.
+
+```
+import { Directive } from '@angular/core';
+
+@Directive({
+  selector: '[appResaltado]'
+})
+export class ResaltadoDirective {
+
+  constructor() {
+    console.log('Directiva llamada');
+  }
+
+}
+```
+
+Si ahora queremos referenciar a esa directiva podemos hacerlo usando el selector indicado 'appResaltado' en el elemento de párrafo que tenemos de esta manera, y así podremos ver en consola el mensaje que nos indica que esta funcionando y verificamos que funciona:
+
+```
+<p appResaltado>Hola mundo desde app.component</p>
+```
+
+Ahora para poder trabajar con referencias a elementos html y así poder aplicar directivas a esos elementos necesitamos importar de @Angular/core el módulo ElementRef, que le pasaremos al constructor para poder crear una instancia de dicho módulo, una vez que tenemos esa instancia podemos aplicar los métodos de la misma, para seleccionar el elemento y por ejemplo acceder al style del mismo y modificarlo:
+
+```
+import { Directive, ElementRef } from '@angular/core';
+
+
+@Directive({
+  selector: '[appResaltado]'
+})
+export class ResaltadoDirective {
+
+  constructor( private el:ElementRef ) {
+    console.log('Directiva llamada');
+    el.nativeElement.style.backgroundColor = 'yellow';
+  }
+
+}
+```
+
+Podríamos usar esto, por ejemplo, para cuando el cursor se situe sobre el elemento se aplique ese color y en caso contrario no pase nada. Para ello necesitaríamos otro módulo adicional, que nos permita "escuchar" si este "evento" sucede, hablamos de HostListener, este no necesitaremos inyectarlo en el constructor, para poder usarlo lo haremos mediante un decorador al cual le tendremos que pasar el evento que queremos escuchar, en este caso 'mousenter' (si buscamos en internet podremos encontrar algunas listas sobre todos los tipos de eventos disponibles), también definiremos la función que se disparará (mouseEntro()) al escuchar dicho evento. También se puede definir lo mismo para cuando el puntero abandone el elemento:
+
+```
+@HostListener('mouseenter') mouseEntro(){
+  this.el.nativeElement.style.backgroundColor = 'yellow';
+}
+
+@HostListener('mouseleave') mouseSalio(){
+  this.el.nativeElement.style.backgroundColor = null;
+}
+```
+
+Vamos a complicar un poco el ejemplo, añadir la posibilidad de, desde el html, pasarle un parámetro que sea el color con el que jugar. Poniendo el selector entre corchetes [appResaltado] nos posibilita pasarle un valor, como sabemos, tipo `[appResaltado]="'orange'"`, para poder recibirlo en el componente necesitamos importar otro módulo, que ya conocemos, Input. Una vez importado podemos crear un decorador @Input en el componente para indicar que ese appResaltado que pusimos entre corchetes va a enviar un valor, declarando junto al decorador una variable podremos capturar el valor en dicha variable:
+
+```
+@Input('appResaltado') nuevoColor:string;
+```
+
+Si queremos podemos definir una función privada solo accesible desde el propio componente, que reciba como parametro un color y que dicha función se ejecute en el mouseenter, de tal manera que si no se definió un color en el html tenga un por defecto (yellow), o por el contrario coja el del html. Quedarían el html y el ts respectivamente así:
+
+app.component.html
+
+```
+<div class="container main-container">
+    <h1>Demo <small>Angular</small></h1>
+    <hr>
+
+    <!-- <app-ng-style></app-ng-style> -->
+    <!-- <app-css></app-css> -->
+    <!-- <app-clases></app-clases> -->
+
+    <p [appResaltado]="'teal'">Hola mundo desde app.component</p>
+</div>
+```
+
+resaltado.directive.ts
+
+```
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+
+
+@Directive({
+  selector: '[appResaltado]'
+})
+export class ResaltadoDirective {
+
+  constructor( private el:ElementRef ) {
+    console.log('Directiva llamada');
+    // el.nativeElement.style.backgroundColor = 'yellow';
+  }
+
+  @Input('appResaltado') nuevoColor:string;
+
+  @HostListener('mouseenter') mouseEntro(){
+
+    this.resaltar( this.nuevoColor || 'yellow');
+
+  }
+
+  @HostListener('mouseleave') mouseSalio(){
+
+    this.resaltar(null);
+
+  }
+
+  private resaltar( color: string ){
+
+    this.el.nativeElement.style.backgroundColor = color;
+
+  }
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 146. ngSwitch - Múltiples opciones con una sola decisión
+
+Aquí aprenderemos a manejar otra directiva estructural, ngSwitch, que nos permite (como el switch de JS) tener una condicion con multiples opciones a elegir como posibles resultados. Vamos a volver a usar las Alerts de Bootstrap para ejemplificarlo. Vamos a crear un nuevo componente:
+
+>ng g c components/ngSwitch -is
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
