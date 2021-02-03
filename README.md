@@ -6247,6 +6247,43 @@ De esta manera, en el html, podemos usar ngClass con condicionales, aplicará la
 
 ## 144. Usando procesos asíncronos con indicadores de usuario
 
+En esta sección vamos a seguir trabajando en el ejemplo anterior, vamos a añadir un botón con un icono de font-awesome, vamos a usar el icono de guardar y el icono de refrescar, con la clase "fa-spin" de font-awesome podemos hacer que el icono gire (dando un efecto al fa-spin). Así que definimos el botón:
+
+```
+<button class="btn btn-primary" type="button" name="button"><i class="fa fa-save"></i>Guardar cambios</button>
+```
+
+Y por otro lado, en el componente, definimos una variable booleana "loading" que definiremos en "false" de primeras `loading:boolean = false;`, y una función "ejecutar" que cuando se active cambie loading a true y que haga un timeout que usaremos para simular un proceso asíncrono, que hará que tras 3 segundos el valor de loading cambie de nuevo a false.
+
+```
+ejecutar(){
+
+    this.loading = true;
+
+    setTimeout( () => this.loading = false, 3000 );
+    
+  }
+```
+
+Entonces en el botón tendremos que definir el evento click para que ejecute la función ejecutar y en el icono usaremos el ngClass para definir condicionalmente que tendrá la clase "fa-save" si loading es falso (es decir, no está cargando) y que tenga la clase "fa-refresh" y "fa-spin" si loading es verdadero.
+
+
+```
+<button (click)="ejecutar()" class="btn btn-primary" type="button" name="button">
+    <i [ngClass]="{ 'fa-save':!loading, 'fa-refresh fa-spin':loading }" class="fa"></i>
+    Guardar cambios</button>
+```
+
+Para terminar vamos a mejorarlo un poco y hacer que el botón se desactive cuando esté cargando, si la propiedad html "disabled" la ponemos entre llaves cuadradas y la igualamos a la variable loading estamos generando una condicional en función de dicha variable, podemos usar esta variable también para cambiar el texto del botón, quedaría entonces el botón de esta manera:
+
+```
+<button (click)="ejecutar()" class="btn btn-primary" type="button" name="button" [disabled]="loading">
+    <i [ngClass]="{ 'fa-save':!loading, 'fa-refresh fa-spin':loading }" class="fa"></i>
+    <span *ngIf="!loading">Guardar cambios</span>
+    <span *ngIf="loading">Espere por favor...</span>
+</button>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 145. Directivas personalizadas
