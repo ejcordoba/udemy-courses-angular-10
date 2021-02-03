@@ -6083,6 +6083,60 @@ De esta manera podríamos cambiar el font-size de ese elemento dinámicamente.
 
 ## 142. Aplicando CSS a un sólo componente
 
+Para este ejemplo vamos a crear otro componente, esta vez para no tener que reconfigurar la manera de gestionar la plantilla y los estilos (por defecto los crea ambos como archivos aparte y luego en el componente se trazan las rutas a esos archivos), vamos a definir en el CLI que sea inline-template e inline-style (-it -is) de tal manera que todo estará dentro del mismo componente.
+
+>ng g c components/css -it -is
+
+Como ya sabemos, para llamar al componentente usaremos <app-css></app-css> en el app.component.html
+
+Vamos a ver que se pueden aplicar estilos sólo al componente, para ello creamos un párrafo en el app.component.html, y luego hacemos que el componente contenga otro párrafo, si en el componente aplicamos una regla CSS que use como selector 'p' lo aplicará sólo a los 'p' del componente, y no al resto del html.
+
+```
+<div class="containter main-container">
+    <h1>Demo <small>Angular</small></h1>
+    <hr>
+
+    <!-- <app-ng-style></app-ng-style> -->
+    <app-css></app-css>
+
+    <p>Hola mundo desde app.component</p>
+</div>
+```
+
+```
+@Component({
+  selector: 'app-css',
+  template: `
+    <p>
+      css works!
+    </p>
+  `,
+  styles: [`
+  
+  p {
+    color:red;
+    font-size:20px;
+  }
+  `
+  ]
+})
+```
+
+El texto css works! aparece en rojo y el Hola mundo desde app.component no se ve afectado
+
+Si inspeccionamos el elemento coloreado de rojo podremos ver que el estilo se muestra así:
+
+```
+p[_ngcontent-bgp-c11] {
+    color: red;
+    font-size: 20px;
+}
+```
+
+Ese "[_ngcontent-bgp-c11]" es un scope que angular está aplicando a ese elemento, lo genera Angular de manera automática para evitar que colisione con otros atributos en los 'p'.
+
+Si aplicásemos estilos en un componente padre los aplicaría sólo al padre y no a los hijos, cada estilo de componente es cargado solo en ese componente.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 143. ngClass - Agregando clases de estilos a nuestros elementos HTML
