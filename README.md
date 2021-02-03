@@ -6418,6 +6418,46 @@ Aquí aprenderemos a manejar otra directiva estructural, ngSwitch, que nos permi
 
 >ng g c components/ngSwitch -is
 
+Añadimos lo primero en el app.componente el selector del nuevo componente, luego en el componente vamos a declarar una variable de tipo string llamada alerta con el valor 'info' `alerta:string = "info"`.
+
+Ahora en el html de ng-switch.component, si tenemos los snippets de Angular instalados podemos escribir ng-switch y tabulador y nos crea un esqueleto base de ng-switch:
+
+```
+<span [ngSwitch]="">
+<p *ngSwitchCase="true">
+
+</p>
+<p *ngSwitchCase="false"> 
+
+</p>
+<p *ngSwitchDefault>
+
+</p>
+</span>
+```
+
+[ngSwitch] está esperando una expresión que será la condición, en nuestro caso será la variable 'alerta' previamente creada, luego tendremos cada uno de los casos ngSwitchCase (nos puso dos casos tipicos true o false, nosotros definiremos los nuestros) y luego el valor por defecto ngSwitchDefault, a priori tendríamos algo así:
+
+```
+<button type="button" (click)="alerta='success'" class="btn btn-default"> Cambiar </button>
+<div [ngSwitch]="alerta">
+    <div *ngSwitchCase="'success'" class="alert alert-success" role="alert">
+        A simple success alert—check it out!
+    </div>
+    <div *ngSwitchDefault class="alert alert-danger" role="alert">
+        A simple danger alert—check it out!
+    </div>
+    <div *ngSwitchCase="'warning'" class="alert alert-warning" role="alert">
+        A simple warning alert—check it out!
+    </div>
+    <div *ngSwitchCase="'info'" class="alert alert-info" role="alert">
+        A simple info alert—check it out!
+    </div>
+</div>
+```
+
+De esa manera como tendríamos por defecto en la variable declarada el valor 'info' nos mostraría a priori ese alert, luego al pulsar el botón pasaríamos a ver el div del success.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 147. Rutas y Rutas Hijas
