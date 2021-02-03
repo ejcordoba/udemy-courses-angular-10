@@ -6141,6 +6141,108 @@ Si aplicásemos estilos en un componente padre los aplicaría sólo al padre y n
 
 ## 143. ngClass - Agregando clases de estilos a nuestros elementos HTML
 
+A efectos prácticos usaremos mucho más ngClass que ngStyle, porque lo normal es tener que editar varios atributos css de un elemento, y esto siempre es más funcional con el uso de clases css.
+
+En la documentación de Angular podemos ver las distintas maneras que podemos usar para aplicar esta funcionalidad:
+
+```
+<some-element [ngClass]="'first second'">...</some-element>
+
+<some-element [ngClass]="['first', 'second']">...</some-element>
+
+<some-element [ngClass]="{'first': true, 'second': true, 'third': false}">...</some-element>
+
+<some-element [ngClass]="stringExp|arrayExp|objExp">...</some-element>
+
+<some-element [ngClass]="{'class1 class2 class3' : true}">...</some-element>
+```
+
+Para este ejemplo crearemos otro componente solamente con el inline-style, porque no es recomendable en los templates escribir mucho código html como ya vimos en las primeras secciones del curso, así que el html del componente estará aparte:
+
+>ng g c components/clases -is
+
+Llamamos al componente en nuestro app.component.html con el selector <app-clases></app-clases> y en bootstrap buscamos los Alerts:
+
+```
+<div class="alert alert-primary" role="alert">
+  A simple primary alert—check it out!
+</div>
+<div class="alert alert-secondary" role="alert">
+  A simple secondary alert—check it out!
+</div>
+<div class="alert alert-success" role="alert">
+  A simple success alert—check it out!
+</div>
+...
+```
+
+Como vemos cada color y tipo de alert tiene una clase "alert" y otra clase tipo "alert-..." con lo cual nos sirve perfecto para nuestro ejemplo de intercambiar clases con Angular. Podemos usar uno de los div anteriores y dejar solo la clase "alert" como la básica y la segunda clase añadirsela mediante Angular:
+
+```
+<div [ngClass]="'alert-info'" class="alert" role="alert">
+    A simple success alert—check it out!
+</div>
+```
+
+Tambien podríamos crear una variable (alerta) que contenga el nombre de la clase y en el html llamar a dicha variable:
+
+```
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-clases',
+  templateUrl: './clases.component.html'
+})
+export class ClasesComponent implements OnInit {
+
+  alerta:string = "alert-danger";
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+```
+<div [ngClass]="alerta" class="alert" role="alert">
+    A simple success alert—check it out!
+</div>
+```
+
+Lo siguiente va a ser, aprovechando que ya tenemos una variable "alerta" crear unos botones para que cuando suceda el evento (click) el nombre de la clase cambie y, por tanto, se cambie el estilo del elemento:
+
+```
+<div [ngClass]="alerta" class="alert" role="alert">
+    A simple success alert—check it out!
+</div>
+
+<button type="button" class="btn btn-info" (click)="alerta = 'alert-info'">Info</button>
+<button type="button" class="btn btn-success" (click)="alerta = 'alert-success'">Success</button>
+```
+
+Ahora en lugar de string con los nombres de las clases vamos a usar objetos que contengan propiedades css.
+
+Para ello definimos un nuevo objeto que tenga la propiedad "danger" que será un booleano:
+
+```
+propiedades:Object = {
+    danger: true
+  }
+```
+
+Nota: Definir propiedades como tipo "Object" no funciona tal cual en las últimas versiones de TypeScript, por lo cual para que funcione lo declararé como tipo "any".
+
+De esta manera, en el html, podemos usar ngClass con condicionales, aplicará la clase en cuestión "text-danger" o "text-info" en función de si el objeto propiedades.danger es verdadero o falso. Y podemos definir un botón que con el evento click cambie la bandera "danger" de verdadero a falso y viceversa. Podríamos incluso usar esto para que el mismo estilo del botón cambie en función de eso:
+
+```
+<h3 [ngClass]=" { 'text-danger': propiedades.danger, 'text-info': !propiedades.danger } ">Hola Mundo</h3>
+
+<button [ngClass]="{ 'btn-danger': propiedades.danger, 'btn-info': !propiedades.danger }" (click)="propiedades.danger = !propiedades.danger" type="button" name="button" class="btn">Cambiar</button>
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 144. Usando procesos asíncronos con indicadores de usuario
