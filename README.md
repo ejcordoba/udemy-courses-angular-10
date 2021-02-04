@@ -6462,6 +6462,122 @@ De esa manera como tendríamos por defecto en la variable declarada el valor 'in
 
 ## 147. Rutas y Rutas Hijas
 
+En esta sección revisaremos el concepto de rutas y rutas hijas, que nos sirve para navegar entre páginas y subpáginas. Para ello vamos a crear el componente home que hará de la página principal, y en su template pondremos los ejercicios hechos hasta ahora.
+
+>ng g c components/home -it -is
+
+```
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  template: `
+    <app-ng-style></app-ng-style>
+    <app-css></app-css>
+    <app-clases></app-clases>
+    <app-ng-switch></app-ng-switch>
+
+    <p>Hola mundo desde app.component</p>
+  `,
+  styles: [
+  ]
+})
+export class HomeComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Por convención el archivo de rutas se suele crear o ubicar en el mismo nivel de directorios que el app.module.ts, así que allí crearemos el app.routes.ts, usando los snippets vamos a generar el contenido de lo que sería un AppRouterModule:
+
+```
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+    { path: '', component: HomeComponent },
+    { path: 'path', component: FeatureComponent },
+    { path: '**', component: PageNotFoundComponent },
+];
+
+@NgModule({
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule]
+})
+export class AppRoutingModule {}
+```
+
+Tendremos que importar el módulo de home y añadir el path, también verificar (mi VSCode lo hace automáticamente) que se añade en app.module.ts.
+
+En el ejemplo es una versión más antigua y en app.module.ts también se añade la constante que exporta el app.routes.ts, pero en las versiones actuales lo que se exporta es un módulo como tal AppRoutingModule, tendremos que verificar que se importa correctamente en el app.module.ts
+
+Ahora en nuestro app.component.html pondremos el selector <router-outlet>, como ya hemos definido una home este selector tomará como componente principal dicho componente.
+
+Una vez hecho esto vamos a crear dos componentes más para el tema de rutas hijas, serán usuario y usuarioNuevo
+
+>ng g c components/usuario
+>ng g c components/usuario/usuarioNuevo -it -is --flat (esto hace que no cree directorio para el componente)
+>ng g c components/usuario/usuarioEditar -it -is --flat
+>ng g c components/usuario/usuarioDetalle -it -is --flat
+
+Para gestionar el navegar entre páginas vamos a usar un navbar que generaremos como componente y pondremos un html que nos guste, usaremos un navbar de bootstrap en este caso.
+
+>ng g c components/navbar -is
+
+El selector del navbar lo colocaremos al principio del todo en nuestro app.component.html
+
+Y dejaremos definidas las rutas a usuario y el html:
+
+
+app.routes.ts
+
+```
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { UsuarioComponent } from './components/usuario/usuario.component';
+
+
+const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'usuario', component: UsuarioComponent },
+    { path: '**', component: HomeComponent },
+];
+
+@NgModule({
+    imports: [RouterModule.forRoot(ROUTES)],
+    exports: [RouterModule]
+})
+export class AppRoutingModule {}
+```
+
+navbar.component.html
+
+```
+<nav class="navbar navbar-expand-lg navbar-inverse bg-inverse">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Demos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" [routerLink]="['home']" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" [routerLink]="['usuario']" href="#">Usuario</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 148. Rutas Hijas
