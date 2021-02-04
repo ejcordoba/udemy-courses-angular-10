@@ -6582,6 +6582,84 @@ navbar.component.html
 
 ## 148. Rutas Hijas
 
+La idea es poder gestionar rutas tipo `http://localhost:4200/usuario/10/detalle` en la que tengamos un id (que sería un parámetro que se le pasaría a la ruta 'usuario') y luego una subruta, ruta hija, de 'usuario', que para ello habíamos creado 3 componentes, 'detalle', 'editar' y 'nuevo'
+
+Para hacer la navegación interna vamos a usar un button-group de Bootstrap, que incluiremos en el usuario.component.html:
+
+```
+<div class="row">
+    <div class="col-md-12 text-center">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-primary">Nuevo</button>
+            <button type="button" class="btn btn-primary">Editar</button>
+            <button type="button" class="btn btn-primary">Detalle</button>
+        </div>
+    </div>
+</div>
+<router-outlet></router-outlet>
+```
+
+Luego para definir las rutas hijas es bastante sencillo, en app.routes.ts al path:'usuario' le añadiremos una propiedad más 'children', que será un array con todas las rutas hijas. Definiremos eso y que la ruta padre espere recibir el parámetro 'id', en el link a usuario le pasaremos una constante '10' para poder ir trabajando(navbar.component.html: `<a class="nav-link" [routerLink]="['usuario',10]" href="#">Usuario</a>`), más adelante lo dejaremos como variable, el app.routes.ts queda:
+
+```
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { UsuarioDetalleComponent } from './components/usuario/usuario-detalle.component';
+import { UsuarioEditarComponent } from './components/usuario/usuario-editar.component';
+import { UsuarioNuevoComponent } from './components/usuario/usuario-nuevo.component';
+import { UsuarioComponent } from './components/usuario/usuario.component';
+
+
+const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'usuario/:id', component: UsuarioComponent,
+        children: [
+            { path: 'nuevo', component: UsuarioNuevoComponent },
+            { path: 'detalle', component: UsuarioDetalleComponent },
+            { path: 'editar', component: UsuarioEditarComponent },
+        ] },
+    { path: '**', component: HomeComponent },
+];
+
+@NgModule({
+    imports: [RouterModule.forRoot(ROUTES)],
+    exports: [RouterModule]
+})
+export class AppRoutingModule {}
+```
+
+Todavía no hemos definido la funcionalidad de los botones, pero podemos tratar de navegar definiendo la url manualmente en el navegador, si hacemos esto ahora veremos que no funciona porque no encuentra un sitio donde renderizar el contenido de los componentes, tenemos que definir el selector <router-outlet> para indicar que ahí se deben renderizar los componentes hijos. Finalmente dejaremos definidas las rutas en el button-group con su clase active y todo:
+
+```
+<div class="row">
+    <div class="col-md-12 text-center">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-primary" routerLinkActive="active" [routerLink]="['nuevo']">Nuevo</button>
+            <button type="button" class="btn btn-primary" routerLinkActive="active" [routerLink]="['editar']">Editar</button>
+            <button type="button" class="btn btn-primary" routerLinkActive="active" [routerLink]="['detalle']">Detalle</button>
+        </div>
+    </div>
+</div>
+<router-outlet></router-outlet>
+```
+
+Por perfeccionarlo también definiremos que cuando se navegue a cualquier ruta de usuario que no sea ninguna de las hijas (no se pase id, o simplemente sea la primera vez que se pulsa 'usuario' en el navbar) lleve por defecto a la subpágina 'nuevo':
+
+```
+const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'usuario/:id', component: UsuarioComponent,
+        children: [
+            { path: 'nuevo', component: UsuarioNuevoComponent },
+            { path: 'detalle', component: UsuarioDetalleComponent },
+            { path: 'editar', component: UsuarioEditarComponent },
+            { path: '**', redirectTo: 'nuevo' },
+        ] },
+    { path: '**', component: HomeComponent },
+];
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 149. Separar las rutas hijas a un archivo especifico
