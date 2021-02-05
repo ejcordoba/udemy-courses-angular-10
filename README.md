@@ -6803,4 +6803,78 @@ Todo esto lo veremos con una función en la siguiente y última sección de la l
 
 ## 152. Demostración del ciclo de vida de un componente
 
+Como información adicional al ciclo de vida se puede consultar en la documentación de Angular la sección Lifecycle Hooks.
+
+Para nuestra práctica vamos a importar todas esas librerías en nuestro home.component.ts
+
+```
+import { Component, OnInit, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
+```
+
+Adicionalmente tendremos que añadirlas en el 'implements' de la exportación de la clase. A continuación todo el código de prueba para ver los efectos en la consola mientras testeamos nuestra demo.
+
+Notar que realmente útiles a priori son el OnInit, OnChange y el OnDestroy (este se da cada vez que se cambia de página, por ejemplo y hay que eliminar componentes para añadir otros que lo sustituyan).
+
+home.component.ts
+
+```
+import { Component, OnInit, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
+
+// tslint:disable-next-line: no-conflicting-lifecycle
+@Component({
+  selector: 'app-home',
+  template: `
+    <app-ng-style></app-ng-style>
+    <app-css></app-css>
+    <app-clases></app-clases>
+    <app-ng-switch></app-ng-switch>
+
+    <p>Hola mundo desde app.component</p>
+  `,
+  styles: [
+  ]
+})
+// tslint:disable-next-line: max-line-length
+export class HomeComponent implements OnInit, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy {
+
+  constructor() {
+    console.log('constructor');
+  }
+
+  ngOnInit(): void {
+    console.log('ngOnInit');
+  }
+  // tslint:disable-next-line: typedef
+  ngOnChanges(){
+    console.log('ngOnChanges');
+  }
+  // tslint:disable-next-line: typedef
+  ngDoCheck(){
+    console.log('ngDoCheck');
+  }
+  // tslint:disable-next-line: typedef
+  ngAfterContentInit(){
+    console.log('ngAfterContentInit');
+  }
+  // tslint:disable-next-line: typedef
+  ngAfterContentChecked(){
+    console.log('ngAfterContentChecked');
+  }
+  // tslint:disable-next-line: typedef
+  ngAfterViewInit(){
+    console.log('ngAfterViewInit');
+  }
+  // tslint:disable-next-line: typedef
+  ngAfterViewChecked(){
+    console.log('ngAfterViewChecked');
+  }
+  // tslint:disable-next-line: typedef
+  ngOnDestroy(){
+    console.log('ngOnDestroy');
+  }
+}
+
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
