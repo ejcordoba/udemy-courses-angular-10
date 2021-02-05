@@ -6664,6 +6664,55 @@ const ROUTES: Routes = [
 
 ## 149. Separar las rutas hijas a un archivo especifico
 
+Vamos a separar las rutas hijas del resto de rutas, puesto que estamos definiendo todas hasta ahora en el archivo app.routes.ts, imaginemos que en un proyecto grande que la web tenga muchas rutas se nos podría quedar un archivo demasiado grande y con mucha información agolpada.
+
+En nuestro caso vamos a crear un archivo que albergue todas las rutas del usuario, imaginemos que aparte de este usuario tuvieramos muchas otras páginas que a su vez tuvieran rutas hijas, así podríamos dividirlas por "secciones".
+
+Dentro del directorio usuario donde tenemos todos los componentes creemos un nuevo archivo llamado usuario.routes.ts que nos permita controlar todas las rutas referentes al usuario, para ello lo crearemos con snippet como en el ejemplo anterior, o simplemente escribiremos la estructura básica de un módulo de rutas que ya conocemos.
+
+Así que en este nuevo archivo lo único que necesitamos es la librería Routes e importar los distintos componentes hijos de usuario (quitando las importaciones del padre pues ya no las necesitaremos allí) y exportar una constante con el array de las rutas hijas, importando luego en el padre dicha constante y añadiéndosela a la propiedad children de las rutas del padre. Quedando archivo de rutas padre e hijas de esta manera, respectivamente:
+
+app.routes.ts
+
+```
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { UsuarioComponent } from './components/usuario/usuario.component';
+import { USUARIO_ROUTES } from './components/usuario/usuario.routes';
+
+const ROUTES: Routes = [
+    { path: 'home', component: HomeComponent },
+    { path: 'usuario/:id', component: UsuarioComponent,
+      children: USUARIO_ROUTES },
+
+    { path: '**', component: HomeComponent },
+];
+
+@NgModule({
+    imports: [RouterModule.forRoot(ROUTES)],
+    exports: [RouterModule]
+})
+export class AppRoutingModule {}
+```
+
+usuario.routes.ts
+
+```
+import { Routes } from '@angular/router';
+
+import { UsuarioDetalleComponent } from './usuario-detalle.component';
+import { UsuarioEditarComponent } from './usuario-editar.component';
+import { UsuarioNuevoComponent } from './usuario-nuevo.component';
+
+export const USUARIO_ROUTES: Routes = [
+            { path: 'nuevo', component: UsuarioNuevoComponent },
+            { path: 'detalle', component: UsuarioDetalleComponent },
+            { path: 'editar', component: UsuarioEditarComponent },
+            { path: '**', redirectTo: 'nuevo' }
+];
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 150. Obteniendo parámetros del padre, desde las rutas hijas
