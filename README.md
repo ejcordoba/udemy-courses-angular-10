@@ -6873,8 +6873,252 @@ export class HomeComponent implements OnInit, OnChanges, DoCheck, AfterContentIn
     console.log('ngOnDestroy');
   }
 }
-
 ```
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+# Sección 9:Aplicación #5: Aplicación con autenticación Auth0
+## 153. Introducción a la sección
+
+En esta sección trabajaremos con Auth0 un sistema de autenticación para bloquear rutas de nuestra aplicación, es decir sólo queremos mostrar de manera pública a usuarios no autenticados unas pantallas y mediante Auth0 mostraremos información de páginas que sólo serán visibles tras autenticación. Podremos crear autenticaciónes mediante Facebook, Twitter, etc.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 154. ¿Qué aprenderemos en esta sección?
+
+A continuación trabajaremos en una pequeña aplicación que tendrá como finalidad, utilizar el sistema de autenticación de usuarios Auth0.
+
+Tras concluirla, aprenderemos mucho sobre:
+
+1. ¿Qué es Auth0 y la documentación basada en Angular 2?
+
+2. Autenticación con Facebook, Twitter, Google, entre otros...
+
+3. Creación de un formulario de captura para la creación de usuarios.
+
+4. Personalización de la caja de login.
+
+5. Uso de servicios para bloquear rutas que no son válidas si el usuario no esta autenticado.
+
+6. Obtener la información del perfil del usuario ingresado.
+
+7. Entre otras cosas útiles para nuestras aplicaciones.
+
+Espero que estén emocionados con este mecanismo de autenticación!
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 155. Demostración de lo que lograremos al finalizar la sección
+
+Ver video explicativo con el resultado de la sección.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 156. Aplicación con autenticación Auth0 - Inicio del proyecto
+
+La base del proyecto es usar la librería de Auth0, que es gratuita hasta cierto límite de usuarios. 
+
+Podemos ver la información en su web auth0.com, allí nos crearemos una cuenta y nos registraremos.
+
+Una vez tengamos una cuenta, tendremos acceso a un dashboard con toda la información que se puede manejar, usuarios, logins, etc.
+
+Lo siguiente será crear el proyecto con el Angular CLI, cuando nos pregunte si queremos generar automaticamente el sistema de rutas le diremos que si (ya hemos venido aprendiendo como generarlo manualmente) y para los estilos elegiremos css:
+
+>ng new authapp
+
+Renombraremos el proyecto a 07-authapp y lo dejaremos vacío para trabajar.
+
+Añadiremos al index.html el link para bootstrap `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">`
+
+A continuación crearemos unos cuantos componentes para las páginas del proyecto:
+
+>ng g c components/navbar -is --skipTests
+>ng g c components/home -is --skipTests
+>ng g c components/protegida -is --skipTests
+>ng g c components/precios -is --skipTests
+
+Lo siguiente será añadir un navbar de bootstrap al html en cuestión, elegiremos uno que tiene un texto inline a la derecha que sustituiremos por los botones de login y logout posteriormente y dejaremos definidos los valores de textos, etcétera:
+
+```
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Auth0 App</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Precios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Protegida</a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+          Navbar text with an inline element
+        </span>
+        </div>
+    </div>
+</nav>
+```
+
+Como mencionamos anteriormente ya tenemos definidos los archivos para las rutas (app-routing.module.ts), solo necesitamos añadir los path:
+
+```
+const routes: Routes = [
+  {path: 'home', component: HomeComponent},
+  {path: 'precios', component: PreciosComponent},
+  {path: 'protegida', component: ProtegidaComponent},
+  {path: '**', pathMatch: 'full', redirectTo: 'home'}
+];
+```
+
+En nuestro app.component.html sustituimos el h1 que teníamos en el container por <router-outlet> para indicar que tiene que renderizar las vistas de las rutas ahí.
+
+```
+<app-navbar></app-navbar>
+
+<div class="container">
+    <router-outlet></router-outlet>
+</div>
+```
+
+Y en nuestro navbar.component.ts definiremos las rutas de los links y las clases de link activo:
+
+```
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Auth0 App</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/home" aria-current="page">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/precios">Precios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/protegida">Protegida</a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+          Navbar text with an inline element
+        </span>
+        </div>
+    </div>
+</nav>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 157. Creando la interfaz de nuestra aplicación
+
+Llegados a este punto, tendremos que ir a nuestro Dashboard de la web de auth0 y en Applications crear una nueva aplicación.
+
+Le indicaremos un nombre y seleccionaremos que vamos a usar una SPA. Posteriormente nos preguntará qué tecnología vamos a usar, indicamos Angular. Entonces tendremos acceso a tutoriales o guías de los pasos a seguir para la implementación y uso. Nosotros vamos a tener en cuenta lo que vamos a necesitar solamente.
+
+Empezaremos por configurar los Callbacks de url, lo necesitaremos para cuando salgamos de nuestra aplicacion para acceder a la página de login luego poder regresar con la información pertinente (login, logout y los datos de usuario). Para ello iremos a los Settings de nuestra aplicación recién creada y en "Allowed Callback URLs", "Allowed Logout URLs" y "Allowed Web Origins" tendremos que añadir "http://localhost:4200" (para desarrollo, para producción sería otra, sería la url base de nuestra web).
+
+Ahora en nuestra aplicación tenemos que instalar la librería de Auth0, lo vamos a hacer mediante el npm (node package manager)
+
+>npm install @auth0/auth0-angular --save (puede cambiar en distintas versiones el paquete a instalar)
+
+A continuación en el curso se indica como crear un servicio de autenticación, pero mirando la documentación actual de Auth0 para Angular veo que esto no es necesario, a cambio lo que indica es que tenemos que registrar y configuarar el paquete instalado en el app.module.ts, definiendo en los imports el domain y el clientID, quedaría nuestro app.module.ts de esta manera:
+
+```
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { HomeComponent } from './components/home/home.component';
+import { ProtegidaComponent } from './components/protegida/protegida.component';
+import { PreciosComponent } from './components/precios/precios.component';
+
+// Import the module from the SDK
+import { AuthModule } from '@auth0/auth0-angular';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    NavbarComponent,
+    HomeComponent,
+    ProtegidaComponent,
+    PreciosComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    // Import the module into the application, with configuration
+    AuthModule.forRoot({
+      domain: 'dev-ezhy03op.eu.auth0.com',
+      clientId: '5taG31RxvW6XMmd3W9fFRSRzeH3z0ZG5'
+    }),
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 158. Comenzando con Auth0 - Componentes y servicios
+
+Parece ser que la implementación de Auth0 en la versión actual con respecto a Angular ha mejorado mucho. En esta lección se explica como configurar el servicio que en la lección anterior fue creado manualmente, nosotros no hicimos eso y ya está todo listo para funcionar, simplemente instalando la librería e importándola en el app.module.ts ya podemos empezar a trabajar en ella.
+
+Así que me saltaré los pasos, ver el curso para saber cómo se hacía antes, y pasaré directamente al punto en el que se pueda empezar a poner en uso Auth0.
+
+Si comentar antes que se mencionan los distintos métodos de que dispone Auth0, en la documentación de Auth0 se puede consultar todo.
+
+Una vez tenemos la librería podemos inyectar una instancia del servicio en el constructor del app.component.ts, asegurándonos que lo importa del paquete instalado de Auth0.
+
+```
+import { Component } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'Auth0 Demo';
+
+  constructor( private auth: AuthService) {}  
+}
+```
+
+Una vez que lo tenemos en el núcleo de la aplicación podemos usarlo en cualquier parte de la web, en este caso lo vamos a implementar en nuestro navbar, pues es ahí donde estará el botón de login/logout y necesitaremos llamarlo cuando se usen estos botones, para ello tendremos que importarlo e inyectarlo en el constructor del navbar.component.ts, pero lo inyectaremos como instancia pública, pues debe ser accesible por el html donde se gestionará la autenticación.
+
+Antes de esto haremos los botones
+
+```
+<button type="button" class="btn btn-outline-primary">Ingresar</button>
+<button type="button" class="btn btn-outline-danger">Salir</button>
+```
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 159. Configuraciones en Auth0 dashboard y uso del servicio
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 160. Conectar los botones con los métodos de Auth0
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 161. Servicio de bloqueo - CanActivate - AuthGuard
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 162. Obteniendo el perfil del usuario que inició sesión
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 163. Código fuente de la aplicación - AuthApp
 
 [Volver al Índice](#%C3%ADndice-del-curso)
