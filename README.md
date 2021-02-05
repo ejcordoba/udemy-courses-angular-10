@@ -6786,6 +6786,19 @@ export class UsuarioNuevoComponent implements OnInit {
 
 ## 151. Ciclo de vida completo de un componente
 
+El método ngOnInit() forma parte del ciclo de vida de un componente, en el proceso de construcción/destrucción de un componente podemos llamar a los siguientes métodos:
+
+- ngOnInit (Cuando el componente está inicializando, o después del ngOnChanges)
+- ngOnChanges (Cuando los datos en las propiedades del componente cambian de alguna manera)
+- ngDoCheck (Cada vez que se hace una revisión del ciclo de revisión de cambios)
+- ngAfterContentInit (Después de insertar contenido (<app-alguna-pagina>))
+- ngAfterContentChecked (Después de la revisión del contenido insertado)
+- ngAfterViewInit (Despues de la inicialización de los componentes y componentes hijos)
+- ngAfterViewChecked (Después de cada una de las revisiones de los componentes y componentes hijos)
+- ngOnDestroy (Justo antes de que se destruya el componente o directiva, por ej al movernos de vista, o incluso si hacemos un *ngIf del elemento)
+
+Todo esto lo veremos con una función en la siguiente y última sección de la lección
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 152. Demostración del ciclo de vida de un componente
