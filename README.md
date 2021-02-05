@@ -6717,6 +6717,71 @@ export const USUARIO_ROUTES: Routes = [
 
 ## 150. Obteniendo parámetros del padre, desde las rutas hijas
 
+En este supuesto en el que estamos trabajando consideramos que deberíamos poder recibir el parámetro que se le pasa al padre desde las rutas hijas.
+
+Para ello antes de todo necesitamos poder manejar los parametros con ActivatedRoute en el componente usuario. Para ello importamos la librería e inyectamos una instancia de la misma en el constructor, llamándo en dicho constructor al observador del router para que escuche si se pasa un id (que ya habíamos definido previamente en los path del app.routes.ts).
+
+El unico cambio real que hay es que a la hora de llamar al método observador de parámetros previamente se le indica que tiene que escuchar del padre, tan sencillo como eso, y así podríamos anidar infinitamente rutas, recordando que tendríamos que llamar en los respectivos html a <router-outlet> para poder renderizar cada uno de los contenidos de esas subrutas, quedarían respectivamente los componentes padre e hijo de esta manera:
+
+usuario.component.ts (padre):
+
+```
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+
+@Component({
+  selector: 'app-usuario',
+  templateUrl: './usuario.component.html',
+})
+export class UsuarioComponent implements OnInit {
+
+  constructor( private router:ActivatedRoute) {
+
+    this.router.params.subscribe( parametros => {
+      console.log("Ruta padre:");
+      console.log(parametros);
+    });
+   }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+usuario-nuevo.component.ts (hijo):
+
+```
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-usuario-nuevo',
+  template: `
+    <p>
+      usuario-nuevo works!
+    </p>
+  `,
+  styles: [
+  ]
+})
+export class UsuarioNuevoComponent implements OnInit {
+
+  constructor( private router:ActivatedRoute) {
+
+    this.router.parent.params.subscribe( parametros => {
+      console.log("Ruta Hija: Usuario nuevo");
+      console.log(parametros);
+    });
+   }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 151. Ciclo de vida completo de un componente
