@@ -9,5 +9,5 @@ import { AuthService } from '@auth0/auth0-angular';
 export class AppComponent {
   title = 'Auth0 Demo';
 
-  constructor( private auth: AuthService) {}  
+  constructor( private auth: AuthService ) {}
 }

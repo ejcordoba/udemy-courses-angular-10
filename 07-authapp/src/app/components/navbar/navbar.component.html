@@ -9,14 +9,19 @@
                 <li class="nav-item">
                     <a class="nav-link" routerLinkActive="active" routerLink="/precios">Precios</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" *ngIf="auth.isAuthenticated$ | async">
                     <a class="nav-link" routerLinkActive="active" routerLink="/protegida">Protegida</a>
                 </li>
             </ul>
             <span class="navbar-text">
-                <button *ngIf="auth.isAuthenticated$" type="button" class="btn btn-outline-primary">Ingresar</button>
-                <button *ngIf="!auth.isAuthenticated$" type="button" class="btn btn-outline-danger">Salir</button>
-        </span>
+                <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
+                    <button class="btn btn-outline-danger" (click)="auth.logout({ returnTo: document.location.origin })">Salir</button>
+                </ng-container>
+              
+                <ng-template #loggedOut>
+                    <button class="btn btn-outline-primary" (click)="auth.loginWithRedirect()">Ingresar</button>
+                </ng-template>
+            </span>
         </div>
     </div>
 </nav>

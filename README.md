@@ -7101,21 +7101,255 @@ Antes de esto haremos los botones
 ```
 
 
+NOTA: Rectifico de nuevo manteniendo lo anterior, voy a empezar la sección de nuevo esperando que funcione con los métodos antiguos pese a tener las librerías nuevas ..... o una mezcla de todo, a ver qué sale:
+
+Tras instalar el paquete nuevo me dispongo a generar un servicio:
+
+>ng g s services/auth --skipTests
+
+No es necesario incluirlo en el app.module.ts siempre y cuando esté definida la propiedad providedIn: 'root' :
+
+```
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+
+  constructor() { }
+}
+```
+
+De esta manera será accesible en toda la aplicación, cosa fundamental para un servicio.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 159. Configuraciones en Auth0 dashboard y uso del servicio
+
+Aquí lo primero que se indica en el curso es copiar el código que debería llevar el archivo auth.service.ts.
+
+De momento voy a pasar este paso, porque ahora teóricamente el servicio se encuentra 'dentro' del AuthModule y se inyecta en el constructor del componente desde la librería AuthService que está en la nueva librería de Auth0. Supongo que así el servicio queda externo a la aplicación y más seguro aún.
+
+Como digo me saltaré los pasos y trataré de que funcione el ejemplo del curso con las librerías actuales de Auth0.
+
+Yo tengo actualmente el navbar así, es posible que lo rectifique en la siguiente sección:
+
+```
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Auth0 App</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/home" aria-current="page">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/precios">Precios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/protegida">Protegida</a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+                <button *ngIf="auth.isAuthenticated$" type="button" class="btn btn-outline-primary">Ingresar</button>
+                <button *ngIf="!auth.isAuthenticated$" type="button" class="btn btn-outline-danger">Salir</button>
+        </span>
+        </div>
+    </div>
+</nav>
+```
+
+El navbar.component.ts queda:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
+
+@Component({
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styles: [
+  ]
+})
+export class NavbarComponent implements OnInit {
+
+  constructor( public auth: AuthService) { }
+
+  ngOnInit(): void {
+  }
+
+}
+
+```
+
+IMPORTANTE - ACTUALIZACIÓN - NOTA:
+
+Confirmado que todo es mucho más sencillo ahora, resumo los pasos hasta el momento y es posible que la sección 160 no sea necesaria:
+
+1) Instalar el SDK de Auth0 con el Angular CLI
+2) Importar el módulo de Auth0 en app.module.ts
+3) Inyectar en el constructor de app.components.ts una instancia privada de AuthService de la librería '@auth0/auth0-angular'
+4) Inyectar en el constructor del componente que gestion el login (navbar.component.ts) una instancia pública de AuthService desde @auth0/auth0-angular
+5) Importar Inject de @angular/core y DOCUMENT de @angular/common para inyectar en el constructor una instancia del DOCUMENT html y así poder usarlo para localizar dónde redirigir cuando se haga logout.
+
+Quedarían así todos los archivos:
+
+navbar.component.ts:
+
+```
+import { Component, Inject, OnInit } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
+import { DOCUMENT } from '@angular/common';
+
+
+@Component({
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styles: [
+  ]
+})
+export class NavbarComponent implements OnInit {
+
+  constructor( @Inject(DOCUMENT) public document: Document, public auth: AuthService ) {}
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+navbar.component.html
+
+```
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Auth0 App</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/home" aria-current="page">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/precios">Precios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" routerLink="/protegida">Protegida</a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+                <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
+                    <button class="btn btn-outline-danger" (click)="auth.logout({ returnTo: document.location.origin })">Salir</button>
+                </ng-container>
+              
+                <ng-template #loggedOut>
+                    <button class="btn btn-outline-primary" (click)="auth.loginWithRedirect()">Ingresar</button>
+                </ng-template>
+            </span>
+        </div>
+    </div>
+</nav>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 160. Conectar los botones con los métodos de Auth0
 
+En esta lección se definen las funciones de los botones de login y logout. Con la configuración del html y los archivos de typescript de la sección anterior es suficiente, no es necesario lo indicado en esta sección, también en esta sección se debe crear un callback, cosa que tampoco es necesario con la versión actual de Auth0 (como quedó definico el auth.logout del html ya se encarga de la redirección con el parámetro returnTo que se le pasa, asimismo el método le login cambió)
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 161. Servicio de bloqueo - CanActivate - AuthGuard
 
+Seguimos adecuando el código a la última versión de Auth0 y Angular.
+
+Primero vamos a ocultar o mostrar el link "Protegida" del navbar en función de si está logueado o no el usuario:
+
+`<li class="nav-item" *ngIf="auth.isAuthenticated$ | async">`
+
+Nótese que no se comentó en las secciones anteriores, pero como estamos usando el observable isAuthenticated$ (por convención los observables se definen con $ al final), debemos usar el pipe async, de esta manera siempre que se renderice el html se comprobará el último valor del observable.
+
+Ahora tenemos que prevenir que no se pueda acceder a esa página si no se está autenticado. (Actualmente si escribiéramos la url directamente podríamos acceder a la página "Protegida" `http://localhost:4200/protegida`).
+
+Aqui también tenemos la mayoría del trabajo hecho, basta con irnos a nuestro archivo de rutas, en este caso 'app-routing.module.ts', importar AuthGuard de la librería y definir la ruta 'protegida' de esta manera:
+
+```
+{path: 'protegida', component: ProtegidaComponent, canActivate: [AuthGuard]},
+```
+
+Sólo con esto cada vez que tratemos de acceder a la url /protegida sin estar autenticados el resultado será que nos redirigirá a la página externa de login de Auth0 para que lo hagamos.
+
+```
+import { NgModule, Component } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { PreciosComponent } from './components/precios/precios.component';
+import { ProtegidaComponent } from './components/protegida/protegida.component';
+// Import the authentication guard
+import { AuthGuard } from '@auth0/auth0-angular';
+
+const routes: Routes = [
+  {path: 'home', component: HomeComponent},
+  {path: 'precios', component: PreciosComponent},
+  {path: 'protegida', component: ProtegidaComponent, canActivate: [AuthGuard]},
+  {path: '**', pathMatch: 'full', redirectTo: 'home'}
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 162. Obteniendo el perfil del usuario que inició sesión
+
+Tendremos que inyectar el servicio de AuthService en el componente de la página protegida, de manera pública.
+
+
+```
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
+
+@Component({
+  selector: 'app-protegida',
+  templateUrl: './protegida.component.html',
+  styles: [
+  ]
+})
+export class ProtegidaComponent implements OnInit {
+
+  constructor(public auth: AuthService) { }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora en el html podemos llamar al objeto user$ que es un observable del servicio auth que hemos inyectado en el constructor y ver sus atributos:
+
+```
+<h1>Perfil del usuario</h1>
+
+<hr>
+<pre *ngIf="auth.user$ | async as profile">
+    <code>{{ profile | json }}</code>
+</pre>
+```
+
+Un atributo muy importante que podemos recibir así es el ID de la conexión de autenticación, para localizar los logins:
+
+```
+"sub": "google-oauth2|1106....."
+```
+
+Antes había un problema con la recarga de la página que no mantenía la sesión y se explica en el curso como solucionarlo, pero en las versiones actuales de Auth0 eso ya fue arreglado.
+
+Finalmente decir que con visitar la documentación de Auth0 he podido adecuar todo a nuestro proyecto, está todo muy bien explicado y resumido (mucho mejor que cuando se hizo el curso), y es muy intuitivo a la hora de gestionar y customizar los logins, así como muchísimas funcionalidades que tiene Auth0.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
