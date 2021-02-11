@@ -7353,6 +7353,598 @@ Finalmente decir que con visitar la documentación de Auth0 he podido adecuar to
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 163. Código fuente de la aplicación - AuthApp
+# Sección 10: Bonus: Login tradicional y manejo de tokens - Firebase
+## 164. Introducción a la sección
+
+Ver video introductorio de la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 165. Temas puntuales de la sección
+
+El objetivo de la sección, es trabajar con un proceso de autenticación por token tradicional, veremos temas como:
+
+* Validar formularios
+
+* Tokens
+
+* LocalStorage
+
+* Borrar tokens
+ 
+* Caducidad de tokens
+ 
+* Creación de usuarios
+ 
+* Posteos
+ 
+* Firebase REST API
+
+También trabajaremos con un diseño elaborado elegante para nuestro login, y poder reconstruir un proyecto usando un repositorio externo.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 166. Demostración de la aplicación - Login tradicional
+
+Ver video mostrando el proyecto terminado y sus funcionalidades.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 167. Inicio de proyecto - LoginApp
+
+Descargamos el proyecto base del repositorio que nos proporciona el profesor y lo renombramos a '07-bonus-loginApp'
+
+Tras eso ejecutaremos en el terminal, dentro del directorio 'npm install' para instalar los modulos de node definidos en el package.json
+
+La estructura del proyecto no es nada que no hayamos visto hasta ahora, con tres páginas: home, login y registro, solo quedó pendiente añadir en el index.html el link a Font Awesome.
+
+```
+  <link rel="stylesheet" href="assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+```
+
+Esto permitirá que se vea el icono "check" de los checkboxes
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 168. Crear modelo para el manejo de los usuarios
+
+En la página de crear cuenta necesitaremos capturar el correo, nombre y contraseña para enviarlo al servidor y realizar el registro del usuario.
+
+Para ello vamos a crear un modelo, para ello crearemos el directorio y archivo src/app/models/usuario.model.ts que será una clase de typescript que nos permitirá acceder a las propiedades y métodos de un usuario:
+
+```
+export class UsuarioModel {
+    email: string;
+    password: string;
+    nombre: string;
+}
+```
+
+Simplemente tendría ese código, esto nos permitirá ahora crear instancias de ese objeto con los valores que se introduzcan, para poder enviar dicho objeto al servidor.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 169. Conectar el formulario de registro con una instancia del modelo de usuario
+
+Primero tenemos que asignar los campos al formulario, para ello vamos al registro.component.ts y crearemos una nueva instancia del modelo del usuario, para ello importaremos el modelo, declararemos un objeto usuario de tipo UsuarioModel y en el inicio del componente (ngOnInit) crearemos una instancia de dicho objeto.
+
+La gestión de las propiedades del objeto a través del html lo haremos con los formularios, si en el input de email colocamos un [(ngModel)]="usuario.email" y en el componente, en el ngOnInit le asociamos un valor por defecto al campo email `this.usuario.email = 'test@gmail.com';` debería aparecer en el campo del formulario, ahora mismo no aparecerá porque para poder usar la funcionalidad del ngModel en un formulario necesitamos importar en los módulos la librería de Angular para gestión de formularios.
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
+import { RegistroComponent } from './pages/registro/registro.component';
+import { HomeComponent } from './pages/home/home.component';
+import { LoginComponent } from './pages/login/login.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    RegistroComponent,
+    HomeComponent,
+    LoginComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+Ahora ya existe una relación, es decir, el ngModel es de "entrada/salida" podríamos decir (de ahí que esté entre corchetes y paréntesis a la vez), y dinámicamente tendrá el valor asociado a la propiedad del objeto (usuario.email), de tal manera que cuando se crea el componente ya aparece el valor que le dimos en él, y si en el input del formulario cambiamos el valor, ya podríamos asociarlo a la propiedad del objeto.
+
+Haremos lo mismo para el nombre y el password.
+
+Ahora si hacemos click en "Crear cuenta" no hará refresco de la página, puesto que al contener ngModel el formulario Angular ya sabe que esto debe ser gestionado y no hace nada (porque no hemos definido aún que haga nada) así que ahora recogeremos los datos del formulario.
+
+Para ello en la etiqueta <form> del html añadiremos (ngSubmit) que nos permitirá ejecutar una función al pulsar el botón que ya tenemos declarado como type="submit", solo para las pruebas haremos que al pulsar el botón se haga un console.log con un mensaje y otro console.log con los valores del objeto usuario (que aparecerán si hemos rellenado los campos del formulario)
+
+```
+<form (ngSubmit)="onSubmit()" class="login100-form validate-form flex-sb flex-w">
+```
+
+```
+onSubmit() {
+    console.log('Formulario enviado');
+    console.log(this.usuario);
+  }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 170. Validar la información antes de enviarla a un servidor
+
+Las validaciones se pueden hacer o bien por template (plantilla), es decir, en el mismo html, o en el componente, aquí usaremos el primer caso y el segundo lo haremos en la siguiente sección que es específica de formularios de Angular.
+
+Por tanto, primero vamos a añadirle las propiedades "required" y "email" al input del email, con esto ya estamos indicando que ese campo es obligatorio y que tiene que ser de tipo email, aun así además el type lo definiremos como email en lugar de text.
+
+Tenemos que hacerle saber a Angular de alguna manera, ya que hemos usado el modo de plantilla, de que tiene que tener en cuenta el html del formulario como tal, para ello vamos a declarar en el formulario una referencia local (#) que declararemos indicando que esto es un ngForm, los fragmentos del html a continuación:
+
+```
+<form #f="ngForm" (ngSubmit)="onSubmit()" class="login100-form validate-form flex-sb flex-w">
+```
+
+```
+<input class="input100" type="email" name="email" [(ngModel)]="usuario.email" placeholder="Email" required email>
+```
+
+Ahora en nuestra función onSubmit podemos pasarle la referencia del formulario onSubmit( f )
+
+Y en la función de nuestro componente podemos definir que recibirá un objeto form de tipo ngForm (la referencia local 'f' que habíamos declarado), deberemos, por tanto, importar NgForm de @angular/forms, cuyo módulo ya habíamos importado, a su vez, anteriormente en el app.module.ts
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { UsuarioModel } from '../../models/usuario.model';
+
+@Component({
+  selector: 'app-registro',
+  templateUrl: './registro.component.html',
+  styleUrls: ['./registro.component.css']
+})
+export class RegistroComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor() { }
+
+  ngOnInit() {
+
+    this.usuario = new UsuarioModel();
+
+    this.usuario.email = 'test@gmail.com';
+  }
+
+  onSubmit( form: NgForm ) {
+    console.log('Formulario enviado');
+    console.log(this.usuario);
+    console.log(form);
+  }
+}
+```
+
+Podemos ver el objeto form en consola, con muchísima información acerca del formulario. Actualmente si tratamos de enviar un formulario vacío debería dar error, puesto que el input email es required, si en la consola miramos la propiedad "controls" del objeto, veremos los inputs a los cuales les hemos definido la propiedad "name" en el html, en nuestro caso 'email', 'nombre' y 'pass'. Si vemos la propiedad 'valid' veremos que es 'false'.
+
+Vamos a restringir un poco más el formulario, haciendo requeridos todos los campos, añadiendo 'required' a los dos inputs, y también definiremos un mínimo de caracteres para el nombre y para la contraseña.
+
+También añadiremos al ngOnInit un validador de si el formulario es válido o no, lo cual mostrará la información por consola o no.
+
+```
+onSubmit( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+    console.log('Formulario enviado');
+    console.log(this.usuario);
+    console.log(form);
+  }
+```
+
+El html del formulario quedaría hasta el momento así:
+
+```
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-50 p-b-90">
+            <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="login100-form validate-form flex-sb flex-w">
+
+                <span class="login100-form-title p-b-51">
+                        Crear nueva cuenta
+                    </span>
+
+                <!-- <span class="text-danger">El correo es obligatorio</span> -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="email" name="email" [(ngModel)]="usuario.email" placeholder="Email" required email>
+
+                    <span class="focus-input100"></span>
+                </div>
+
+                <!-- <span class="text-danger">El nombre es obligatorio</span> -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="text" name="nombre" [(ngModel)]="usuario.nombre" placeholder="Nombre y apellidos" required minlength="2">
+
+                    <span class="focus-input100"></span>
+                </div>
+
+                <!-- <span class="text-danger">La contraseña debe de ser más de 6 letras</span> -->
+                <div class="wrap-input100 m-b-16" data-validate="Password is required">
+                    <input class="input100" type="password" name="pass" [(ngModel)]="usuario.password" placeholder="Password" required minlength="6">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="flex-sb-m w-full p-t-3 p-b-24">
+                    <div class="contact100-form-checkbox">
+                        <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                        <label class="label-checkbox100" for="ckb1">
+                                Recordar mi usuario
+                            </label>
+                    </div>
+
+                    <div>
+                        <a routerLink="/registro" class="txt1">
+                                ¿Ya tienes cuenta? / Ingresar
+                            </a>
+                    </div>
+                </div>
+
+                <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn" type="submit">
+                            Crear cuenta
+                        </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 171. Mostrar errores en pantalla
+
+Ya tenemos comentados en el html unos <span> que deberemos de renderizar cuando los inputs no cumplan las condiciones de validación. Vimos en la lección anterior que podemos acceder a las distintas propiedades del formulario, del cual tenemos una referencia local en el html (#f), por tanto si queremos saber si un campo está validado podemos hacerlo sencillamente con las propiedades del ngForm de angular, por ejemplo acceder a f.controls['email].errors, y si el formulario se ha tratado de enviar con errores que muestre el error, sería algo así:
+
+```
+<span *ngIf="f.submitted && f.controls['password'].errors" class="text-danger animated fadeIn">La contraseña debe de ser más de 6 letras</span>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 172. Tarea - Pantalla de login y sus validaciones
+
+En el formulario de registro hay un enlace que lleva a la página de login y viceversa, vamos a hacerlo funcionar. Sólo habría que definir en el enlace la ruta correcta, que estaba puesta en la plantilla una por defecto `<a routerLink="/login" class="txt1">`, también puliremos algunos estilos añadiendo animaciones en registro y login html `<div class="limiter animated fadeInRight">` y cambiaremos el efecto de animación por uno más rápido en animate.css `animation-duration: 0.5s;`
+
+La tarea consiste en dejar el formulario de login hasta el punto que hemos dejado el de registro, validar nombre y password, pero el nombre deberá ser un email, y el password de al menos 6 caracteres y que cuando esté validado muestre la información del formulario en consola, pero que no lo haga en caso contrario.
+
+login.component.html
+
+```
+<div class="limiter animated fadeInLeft">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-50 p-b-90">
+            <form (ngSubmit)="login(f)" #f="ngForm" class="login100-form validate-form flex-sb flex-w">
+
+                <span class="login100-form-title p-b-51">
+                    Login
+                </span>
+
+                <span *ngIf="f.submitted && f.controls['email'].errors" class="text-danger">El correo es obligatorio</span>
+                <div class="wrap-input100 m-b-16">
+                    <input [(ngModel)]="usuario.email" required email class="input100" type="email" name="email" placeholder="email">
+
+                    <span class="focus-input100"></span>
+                </div>
+
+                <span *ngIf="f.submitted && f.controls['password'].errors" class="text-danger">La contraseña debe de ser más de 6 letras</span>
+                <div class="wrap-input100 m-b-16" data-validate="Password is required">
+                    <input [(ngModel)]="usuario.password" required minlength="6" class="input100" type="password" name="password" placeholder="Password">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="flex-sb-m w-full p-t-3 p-b-24">
+                    <div class="contact100-form-checkbox">
+                        <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                        <label class="label-checkbox100" for="ckb1">
+                            Recordar mi usuario
+                        </label>
+                    </div>
+
+                    <div>
+                        <a routerLink="/registro" class="txt1">
+                            ¿No tienes cuenta?
+                        </a>
+                    </div>
+                </div>
+
+                <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn" type="submit">
+                        Ingresar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+```
+
+login.component.ts
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { UsuarioModel } from '../../models/usuario.model';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor() { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  login( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    console.log('Login enviado');
+    console.log(form);
+
+  }
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 173. Firebase y servicios REST
+
+Como backend para la gestión de los registros de usuarios y validaciones vamos a usar Firebase, que es parecido a MongoDB.
+
+Para ello nos creamos una cuenta y vamos a la consola de administración y creamos un nuevo proyecto 'login-app'.
+
+Tras esto vamos a "Authentication" y "Sign-in method" y seleccionamos correo y contraseña como método de autenticación y activamos "Habilitar", esto nos permitirá hacer llamadas a una API y crear usuarios, en la pestaña Usuarios podremos ver los usuarios autenticados y conectados.
+
+Por otro lado tenemos este enlace 'https://firebase.google.com/docs/reference/rest/auth#section-create-email-password' que nos da información de los servicios REST de que dispone Firebase, nosotros usaremos el de registro con usuario y contraseña, de hecho está diferenciado entre registro e inicio de sesión, para crear y autenticar usuarios, respectivamente. Empezamos con la creación de usuario.
+
+Para ello primero necesitamos poder hacer peticiones HTTP a la api REST, para ello debemos disponer del módulo, lo importaremos en nuestro app.module.ts
+
+```
+import { HttpClientModule } from '@angular/common/http';
+...
+imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule
+  ],
+```
+
+Lo siguiente será crear un servicio para manejar todo lo referente a la autenticación: `ng g s services/auth`
+
+Copiamos de la documentación referida anteriormente el endpoint para el Sign-up y el Sign-in en auth.service.ts:
+
+```
+// Crear nuevos usuarios
+  // https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=[API_KEY]
+  // Login
+  // https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=[API_KEY]
+```
+
+E inyectaremos el cliente http en el constructor del servicio:
+
+```
+import { HttpClient } from '@angular/common/http';
+...
+  constructor( private http: HttpClient ) { }
+```
+
+Para la composición de los endpoints, como hicimos en lecciones anteriores, vamos a componer la url del endpoint diferenciando entre la parte común y la que difiere (Entre sign-up y sign-in), además definiremos otra variable (la anterior y esta privadas) que contenta la api_key de nuestra aplicación de firebase, la cual podemos ver en la configuración del proyecto, en General.
+
+```
+private url = 'https://identitytoolkit.googleapis.com/v1/accounts:';
+private apikey = 'AIzaSyCdaX1vaVW_MzsmGAV******fOGWVoBwhVkw';
+```
+
+Por último dejaremos definidos los métodos del servicio que usaremos para la gestión de login, logout y registro de usuarios, necesitando tener importado el modelo de Usuario, puesto que será requerido como parámetro para usar los métodos.
+
+```
+import { UsuarioModel } from '../models/usuario.model';
+...
+logout() {
+
+}
+login( usuario: UsuarioModel ) {
+
+}
+nuevoUsuario( usuario: UsuarioModel ) {
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 174. Registrar un nuevo usuario
+
+En la documentación de Firebase podemos ver que necesitamos enviar cierta información si queremos registrar un nuevo usuario:
+
+```
+email	string	The email the user is signing in with.
+password	string	The password for the account.
+returnSecureToken	boolean	Whether or not to return an ID and refresh token. Should always be true.
+```
+
+Entonces en auth.service.ts en nuestro método nuevoUsuario() crearemos una constante con los valores que nos piden, definiendo returnSecureToken a true y pasando el email y password del objeto usuario:
+
+```
+const authData = {
+      email: usuario.email,
+      password: usuario.password,
+      returnSecureToken: true
+    };
+```
+
+Podríamos usar un método más abreviado que lo que haría sería pasar el objeto entero, definiendo como "email" el campo en "usuario.email" y así sucesivamente, quedando el código más limpio:
+
+```
+const authData = {
+      ...usuario,
+      returnSecureToken: true
+    };
+```
+
+Lo siguiente sería hacer una petición POST a la api, necesitamos hacer un return para poder suscribirnos en otro lugar, la función post del objeto http client necesita, cómo mínimo, que le pasemos la url del endpoint (que hemos preparado previamente) y el body con los datos requeridos (que también hemos definido como una constante llamada authData):
+
+```
+nuevoUsuario( usuario: UsuarioModel ) {
+
+    const authData = {
+      ...usuario,
+      returnSecureToken: true
+    };
+
+    return this.http.post( `${this.url}signUp?key=${this.apikey}` , authData );
+
+  }
+```
+
+Ahora para poder usarlo en nuestro componente de registro inyectamos en el constructor nuestro servicio auth servicio de manera privada:
+
+```
+import { AuthService } from 'src/app/services/auth.service';
+...
+constructor( private auth: AuthService ) { }
+```
+
+Ahora al servicio le podremos pasar como argumento el usuario que recibimos del formulario y suscribirnos a él, de momento sólo vamos a hacer un console log de la respuesta http para ver qué nos devuelve:
+
+```
+this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+    });
+```
+
+Pudiera ser que diera un error si probamos a enviar el formulario en este punto, porque al haber hecho cambios en el servicio, y este estar definido con el decorador @Injectable providedIn: 'root' puede que no se noten los cambios hasta haber bajado y levantado la aplicación.
+
+Podemos ahora ver la respuesta http con toda la información que necesitamos, idToken, tiempo de expiración, localId, etcétera.
+
+Tenemos que capturar un error adicional, porque si tratamos de enviar por segunda vez el formulario, como es normal, da error porque ese usuario ya fue creado con ese email. Vamos a capturar los posibles errores en el subscribe de la petición POST http, de esta manera creamos un objeto 'err' con toda la información del error y podemos, por ejemplo, usar una propiedad de dicho objeto que contiene el mensaje de error para mostrarlo al usuario y sepa qué está sucediendo:
+
+```
+onSubmit( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+    }, (err) => {
+      console.log(err.error.error.message);
+    });
+  }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 175. Login de usuarios
+
+Para esta parte tendremos, al menos, un usuario creado en Firebase.
+
+Luego sería el mismo código, viendo la documentación, que el que usamos en el método nuevoUsuario() en nuestro servicio, cambiando la parte de la cadena de caracteres de la url que era diferente para login():
+
+```
+login( usuario: UsuarioModel ) {
+
+    const authData = {
+      ...usuario,
+      returnSecureToken: true
+    };
+
+    return this.http.post( `${this.url}signInWithPassword?key=${this.apikey}` , authData );
+
+  }
+```
+
+En el lado del componente sería prácticamente igual que con el registro, solo cambiaría la llamada al método login(), pero el control de errores y todo sería igual, podemos ver en consola si hacemos un login satisfactorio que disponemos de un idToken que será lo que haya que destruir a la hora de hacer logout (cerrar la sesión), el componente de login quedaría así:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioModel } from '../../models/usuario.model';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor( private auth: AuthService ) { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  login( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    this.auth.login( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+    }, (err) => {
+      console.log(err.error.error.message);
+    });
+
+  }
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 176. Guardar Token en el LocalStorage
+
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 177. SweetAlert2 - Mostrar notificaciones al usuario
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 178. Recordar usuario
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 179. Guard para proteger la ruta si no se está autenticado
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 180. Logout - Cerrar sesión
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 181. Mejorar la validación del token
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 182. Código fuente de la sección
 
 [Volver al Índice](#%C3%ADndice-del-curso)
