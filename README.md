@@ -7921,11 +7921,229 @@ export class LoginComponent implements OnInit {
 
 ## 176. Guardar Token en el LocalStorage
 
+Si vamos a auth.service.ts y vemos las funciones de login y nuevoUsuario podemos ver, recordamos, que devuelven un observable, en ese observable podemos hacer algunas modificaciones antes de notificar a la página de registro o la página del login, es decir cuando se devuelva el observable podemos almacenar el token que viene de la petición, en el caso de que devolviese esa información.
 
+Entonces vamos a crear dos métodos más, un método privado guardarToken que recibirá como parámetro el idToken del response, crearemos previamente la variable de almacenamiento de tipo string "userToken", inicializada a null no debe dar problema alguno, sencillamente nuestro método recibirá el idToken y lo almacenará en dicha variable, la cual usaremos para llamar al localstorage y usar su método setItem para pasarle la variable:
+
+```
+private guardarToken( idToken: string ) {
+
+  this.userToken = idToken;
+  localStorage.setItem('token', idToken);
+
+}
+```
+
+Ahora necesitaremos otro método para leer el token del localstorage, no necesitaremos ningún argumento, pero si necesitaremos verificar si existe algún dato en el localstorage, en el caso de que esté usaremos el método getItem pasandole como argumento la referencia que en este caso la habíamos definido como 'token', si lo encuentra se almacenará en la variable de token que teníamos definida, si no existiera podríamos inicializar la variable a una cadena vacía, en cualquier caso acabará devolviendo el valor de la variable userToken:
+
+```
+private leerToken() {
+
+  if ( localStorage.getItem('token') ) {
+    this.userToken = localStorage.getItem('token');
+  } else {
+    this.userToken = '';
+  }
+
+  return this.userToken;
+
+}
+```
+
+Para usar el método de guardarToken lo haremos en el mismo servicio, de esta manera cuando llamemos a los métodos para registrar un nuevo usuario o para hacer login pasaremos la petición http por un pipe con el operador map de rxjs, de esta manera filtraremos el response recibiendo sólo el idToken y, al mismo tiempo, llamando al método guardarToken para que lo almacene en el localstorage. Esto tiene una ventaja y es que si por algun motivo sucede un error en la petición, el map no se dispara. Adicionalmente para que el operador map no bloquee la respuesta tendremos que devolver la respuesta filtrada.Obviamente necesitaremos importar el map de la librería `import { map } from 'rxjs/operators';`.
+
+```
+nuevoUsuario( usuario: UsuarioModel ) {
+
+  const authData = {
+    ...usuario,
+    returnSecureToken: true
+  };
+
+  return this.http.post( `${this.url}signUp?key=${this.apikey}` , authData )
+  .pipe(
+    map( resp => {
+      this.guardarToken( resp['idToken']);
+      return resp;
+    }
+    )
+  );
+
+}
+```
+
+Si tras hacer login o registro vamos a Application en el navegador veremos el token en el localstorage
+
+Por otro lado podemos llamar al método leerToken cuando inicialicemos el servicio de autenticación:
+
+```
+constructor( private http: HttpClient ) {
+  this.leerToken();
+}
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 177. SweetAlert2 - Mostrar notificaciones al usuario
+
+En el material adjunto tenemos información sobre SweetAlert2, que nos permite (puesto que tiene soporte para typescript) usar unos Alerts customizados, que usaremos para dar información al usuario si hay algún tipo de error en login y los registros, como ya tenemos la información (hasta ahora la mostrábamos por consola cogiendo los error message) usaremos dicha información para mostrarla en el alert.
+
+Lo vamos a instalar con npm:
+
+>npm install sweetalert2
+
+Primero vamos a usarlo en el login.component.ts, para ello vamos a importar la librería instalada, al no tratarse de un módulo será de la siguiente manera:
+
+`import Swal from 'sweetalert2';` 
+
+Ahora podemos acceder al objeto Swal y sus métodos y funciones, en la documentación podremos ver todas las posibilidades, podemos empezar por en el login hacer un "loading", para eso usaremos el método 'fire' al que le pasaremos como argumento un objeto, este objeto tendrá las propiedades 'allowOutsideclick' que inicializaremos a 'false' haciendo que no se pueda hacer click fuera del alert para cerrar la ventana, 'icon' nos permitirá definir el icono, que será 'info' y el 'text' a mostrar.
+
+```
+Swal.fire({
+  allowOutsideClick: false,
+  icon: 'info',
+  text: 'Espere por favor...'
+});
+```
+
+Esto definiría la ventana del alert, pero si no queremos que aparezca el botón de OK y en su lugar aparezca un loading a continuación definiríamos `Swal.showLoading();`
+
+En la lógica cuando nos suscribamos correctamente (hagamos login) debería de cerrarse esa ventana `Swal.close();`, y si hubiera algun error debería de mostrarse la ventana con el error, para ello crearemos otra ventana que contenga el mensaje de error que recibimos de la respuesta:
+
+```
+...
+, (err) => {
+      console.log(err.error.error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al autenticar',
+        text: err.error.error.message
+      });
+    });
+```
+
+Haremos lo mismo para la sección de registro, quedarían registro.component.ts y login.component.ts, respectivamente, de esta manera:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioModel } from '../../models/usuario.model';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-registro',
+  templateUrl: './registro.component.html',
+  styleUrls: ['./registro.component.css']
+})
+export class RegistroComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor( private auth: AuthService ) { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  onSubmit( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    Swal.fire({
+      allowOutsideClick: false,
+      icon: 'info',
+      text: 'Espere por favor...'
+    });
+    Swal.showLoading();
+
+    this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+      Swal.close();
+    }, (err) => {
+      console.log(err.error.error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al autenticar',
+        text: err.error.error.message
+      });
+    });
+  }
+
+}
+
+```
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioModel } from '../../models/usuario.model';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor( private auth: AuthService ) { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  login( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    Swal.fire({
+      allowOutsideClick: false,
+      icon: 'info',
+      text: 'Espere por favor...'
+    });
+    Swal.showLoading();
+
+    this.auth.login( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+      Swal.close();
+    }, (err) => {
+      console.log(err.error.error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al autenticar',
+        text: err.error.error.message
+      });
+    });
+
+  }
+
+}
+
+```
+
+Por último vamos a dejar preparada la navegación para en las siguientes clases validar tokens, etc.
+
+Para ello inyectamos en el constructor de registro.component.ts el Router:
+
+```
+import { Router } from '@angular/router';
+...
+constructor( private auth: AuthService, private router: Router ) { }
+```
+
+Lo siguiente sería usarlo cuando yo ya sé que tengo una autenticación válida, para que nos lleve a la home, navegando por url:
+
+```
+this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+      Swal.close();
+      this.router.navigateByUrl('/home');
+```
+
+Haremos lo mismo para el login.component.ts
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
