@@ -8149,13 +8149,197 @@ Haremos lo mismo para el login.component.ts
 
 ## 178. Recordar usuario
 
+Empezaremos con el login, para ello vamos a crear una variable booleana llamada "recordarme" y en el html lo asociaremos con ngmodel `<input [(ngModel)]="recordarme" class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">`
+
+Luego en el componente, cuando se verifica la autenticación (tras el Swal.close()), verificaremos si se marcó el checkbox, y en ese caso del objeto usuario (que se maneja con el formulario, recordemos) guardaremos la propiedad email en el local storage:
+
+```
+if ( this.recordarme ) {
+  localStorage.setItem('email', this.usuario.email);
+}
+```
+
+Para que esto se efectúe, en el ngOnInit del componente tendremos que hacer la misma consulta, para poder poner como valor del input el email guardado en el localstorage, además de dejar marcado el checkbox:
+
+```
+ngOnInit() { 
+  if ( localStorage.getItem('email') ) {
+    this.usuario.email = localStorage.getItem('email');
+    this.recordarme = true;
+  }
+}
+```
+
+Necesitaremos hacer lo mismo en el registro.component.ts, pero la lógica de base es un poco distinta, porque en ese formulario marcar el checkbox lo que hará será, que cuando se registre, recuerde el email para ser usado en la pantalla de login.
+
+En el formulario del registro asociaremos el ngModel a la variable, en el componente declararemos la variable y haremos la comprobación en la función de nuevoUsuario():
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 179. Guard para proteger la ruta si no se está autenticado
 
+Aquí usaremos un Guard para proteger la ruta home que solo será accesible al registrar o hacer login, actualmente escribiendo directamente localhost:4200/home es accesible. Angular CLI ya trae una instrucción para crear un Guard:
+
+>ng g guard guards/auth
+
+* CanActivate
+* CanActivateChild
+* CanLoad
+
+Nos da a elegir entre varios métodos por defecto que se usarán para proteger rutas, rutas hijas y para lazy load, respectivamente. Nosotros con la primera tenemos suficiente de momento. Explicamos el auth.guard.ts:
+
+```
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return true;
+  }
+
+}
+```
+
+Es un servicio que implementa CanActivate de @angular/router, que es la instrucción que Angular debe ejecutar cuando se navegue a una ruta, verificando si se puede navegar a dicha ruta o no. 'next' contiene cual es la siguiente ruta a la cual el usuario quiere navegar y el 'state' es el estado actual de la ruta, vemos que puede retornar observables, promesas etc, en función de si esa navegación va a necesitar de algún proceso asíncrono en su ejecución,en nuestro caso solo necesitaremos que devuelva un booleano tal cual. Nosotros usaremos esto porque vamos a definir un método sencillo en nuestro auth.service.ts que verifique si existe un token de usuario, y que tenga una longitud mayor a 2, posteriormente afinaremos esto porque pudiera ser que exista un token pero que dicho token hubiera expirado, si la verificación funciona en tal caso devolverá 'true', usando esto como argumento de comprobación en el CanActivate.
+
+Así que primero de todo en auth.service.ts crearemos dicho método:
+
+estaAutenticado() : boolean {
+
+  return this.userToken.length > 2;
+
+}
+
+Regresando a nuestro auth.guard.ts necesitamos inyectar el servicio en el constructor para poder acceder al método estaAutenticado(), entonces lo que devolverá canActivate será el estado de estaAutenticado():
+
+```
+import { Injectable } from '@angular/core';
+import { CanActivate } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+
+  constructor( private auth: AuthService ) {}
+  canActivate(): boolean {
+    return this.auth.estaAutenticado();
+  }
+
+}
+```
+
+Una vez implementado ahora podemos en nuestro app-routing.module.ts definir que rutas necesitan esta autenticación, en nuestro caso sólo será el home, importaremos el guard y modificaremos el path a la home añadiendo una propiedad mas, canActivate que deberá ser ejecutada desde el AuthGuard, quedando el app-routing.module.ts así:
+
+```
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { HomeComponent } from './pages/home/home.component';
+import { RegistroComponent } from './pages/registro/registro.component';
+import { LoginComponent } from './pages/login/login.component';
+import { AuthGuard } from './guards/auth.guard';
+
+const routes: Routes = [
+  { path: 'home'    , component: HomeComponent, canActivate: [ AuthGuard ]},
+  { path: 'registro', component: RegistroComponent },
+  { path: 'login'   , component: LoginComponent },
+  { path: '**', redirectTo: 'registro' }
+];
+
+@NgModule({
+  imports: [ RouterModule.forRoot(routes) ],
+  exports: [ RouterModule ]
+})
+export class AppRoutingModule { }
+
+```
+
+Recordamos que al haber modificado el servicio, y este estar como @Injectable providedIn: root, debemos bajar y levantar la aplicación de nuevo para que se apliquen los cambios.
+
+Por último, hecho esto lo que sucede es que nos lleva a una página en blanco si no estamos autenticados, para evitar esto podemos hacer una redirección en el auth.guard.ts, así que modificaremos el método canActivate para hacer una validación primero de si esta autenticado, en tal caso devolverá 'true' como antes, pero si no lo que hará será navegar hasta el /login, y para ello implementaremos el router en el servicio:
+
+```
+import { Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+
+  constructor( private auth: AuthService, private router: Router ) {}
+  canActivate(): boolean {
+    if ( this.auth.estaAutenticado() ) {
+      return true;
+    } else {
+      this.router.navigateByUrl('/login');
+    }
+
+  }
+
+}
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 180. Logout - Cerrar sesión
+
+En nuestra aplicación lo único que necesitamos para hacer logout es eliminar el token de usuario, para ello en la función logout() que tenemos por definir en auth.service.ts tendremos que destruir el item 'token':
+
+```
+logout() {
+    localStorage.removeItem('token');
+  }
+```
+
+Ahora en home.component.html haremos un html sencillo que incluya el botón que ejecute una función salir():
+
+```
+<div class="m-5">
+
+    <h1>Mi aplicación secreta</h1>
+    <hr>
+
+    <button class="btn btn-outline-danger" (click)="salir()">Cerrar sesión</button>
+</div>
+```
+
+En el componente de home necesitaremos crear dicha función salir que ejecutará el método logout del servicio, por tanto también necesitaremos inyectar en el constructor tanto el servicio como el router, para que nos lleve a la página de login de nuevo si cerramos la sesión:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+
+  constructor( private auth: AuthService, private router: Router) { }
+
+  ngOnInit() {
+  }
+
+  salir() {
+    this.auth.logout();
+    this.router.navigateByUrl('/login');
+  }
+
+}
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
