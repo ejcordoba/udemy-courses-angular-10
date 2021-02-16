@@ -7353,6 +7353,1040 @@ Finalmente decir que con visitar la documentación de Auth0 he podido adecuar to
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 163. Código fuente de la aplicación - AuthApp
+# Sección 10: Bonus: Login tradicional y manejo de tokens - Firebase
+## 164. Introducción a la sección
+
+Ver video introductorio de la sección
 
 [Volver al Índice](#%C3%ADndice-del-curso)
+
+## 165. Temas puntuales de la sección
+
+El objetivo de la sección, es trabajar con un proceso de autenticación por token tradicional, veremos temas como:
+
+* Validar formularios
+
+* Tokens
+
+* LocalStorage
+
+* Borrar tokens
+ 
+* Caducidad de tokens
+ 
+* Creación de usuarios
+ 
+* Posteos
+ 
+* Firebase REST API
+
+También trabajaremos con un diseño elaborado elegante para nuestro login, y poder reconstruir un proyecto usando un repositorio externo.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 166. Demostración de la aplicación - Login tradicional
+
+Ver video mostrando el proyecto terminado y sus funcionalidades.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 167. Inicio de proyecto - LoginApp
+
+Descargamos el proyecto base del repositorio que nos proporciona el profesor y lo renombramos a '07-bonus-loginApp'
+
+Tras eso ejecutaremos en el terminal, dentro del directorio 'npm install' para instalar los modulos de node definidos en el package.json
+
+La estructura del proyecto no es nada que no hayamos visto hasta ahora, con tres páginas: home, login y registro, solo quedó pendiente añadir en el index.html el link a Font Awesome.
+
+```
+  <link rel="stylesheet" href="assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+```
+
+Esto permitirá que se vea el icono "check" de los checkboxes
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 168. Crear modelo para el manejo de los usuarios
+
+En la página de crear cuenta necesitaremos capturar el correo, nombre y contraseña para enviarlo al servidor y realizar el registro del usuario.
+
+Para ello vamos a crear un modelo, para ello crearemos el directorio y archivo src/app/models/usuario.model.ts que será una clase de typescript que nos permitirá acceder a las propiedades y métodos de un usuario:
+
+```
+export class UsuarioModel {
+    email: string;
+    password: string;
+    nombre: string;
+}
+```
+
+Simplemente tendría ese código, esto nos permitirá ahora crear instancias de ese objeto con los valores que se introduzcan, para poder enviar dicho objeto al servidor.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 169. Conectar el formulario de registro con una instancia del modelo de usuario
+
+Primero tenemos que asignar los campos al formulario, para ello vamos al registro.component.ts y crearemos una nueva instancia del modelo del usuario, para ello importaremos el modelo, declararemos un objeto usuario de tipo UsuarioModel y en el inicio del componente (ngOnInit) crearemos una instancia de dicho objeto.
+
+La gestión de las propiedades del objeto a través del html lo haremos con los formularios, si en el input de email colocamos un [(ngModel)]="usuario.email" y en el componente, en el ngOnInit le asociamos un valor por defecto al campo email `this.usuario.email = 'test@gmail.com';` debería aparecer en el campo del formulario, ahora mismo no aparecerá porque para poder usar la funcionalidad del ngModel en un formulario necesitamos importar en los módulos la librería de Angular para gestión de formularios.
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
+import { RegistroComponent } from './pages/registro/registro.component';
+import { HomeComponent } from './pages/home/home.component';
+import { LoginComponent } from './pages/login/login.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    RegistroComponent,
+    HomeComponent,
+    LoginComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+Ahora ya existe una relación, es decir, el ngModel es de "entrada/salida" podríamos decir (de ahí que esté entre corchetes y paréntesis a la vez), y dinámicamente tendrá el valor asociado a la propiedad del objeto (usuario.email), de tal manera que cuando se crea el componente ya aparece el valor que le dimos en él, y si en el input del formulario cambiamos el valor, ya podríamos asociarlo a la propiedad del objeto.
+
+Haremos lo mismo para el nombre y el password.
+
+Ahora si hacemos click en "Crear cuenta" no hará refresco de la página, puesto que al contener ngModel el formulario Angular ya sabe que esto debe ser gestionado y no hace nada (porque no hemos definido aún que haga nada) así que ahora recogeremos los datos del formulario.
+
+Para ello en la etiqueta <form> del html añadiremos (ngSubmit) que nos permitirá ejecutar una función al pulsar el botón que ya tenemos declarado como type="submit", solo para las pruebas haremos que al pulsar el botón se haga un console.log con un mensaje y otro console.log con los valores del objeto usuario (que aparecerán si hemos rellenado los campos del formulario)
+
+```
+<form (ngSubmit)="onSubmit()" class="login100-form validate-form flex-sb flex-w">
+```
+
+```
+onSubmit() {
+    console.log('Formulario enviado');
+    console.log(this.usuario);
+  }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 170. Validar la información antes de enviarla a un servidor
+
+Las validaciones se pueden hacer o bien por template (plantilla), es decir, en el mismo html, o en el componente, aquí usaremos el primer caso y el segundo lo haremos en la siguiente sección que es específica de formularios de Angular.
+
+Por tanto, primero vamos a añadirle las propiedades "required" y "email" al input del email, con esto ya estamos indicando que ese campo es obligatorio y que tiene que ser de tipo email, aun así además el type lo definiremos como email en lugar de text.
+
+Tenemos que hacerle saber a Angular de alguna manera, ya que hemos usado el modo de plantilla, de que tiene que tener en cuenta el html del formulario como tal, para ello vamos a declarar en el formulario una referencia local (#) que declararemos indicando que esto es un ngForm, los fragmentos del html a continuación:
+
+```
+<form #f="ngForm" (ngSubmit)="onSubmit()" class="login100-form validate-form flex-sb flex-w">
+```
+
+```
+<input class="input100" type="email" name="email" [(ngModel)]="usuario.email" placeholder="Email" required email>
+```
+
+Ahora en nuestra función onSubmit podemos pasarle la referencia del formulario onSubmit( f )
+
+Y en la función de nuestro componente podemos definir que recibirá un objeto form de tipo ngForm (la referencia local 'f' que habíamos declarado), deberemos, por tanto, importar NgForm de @angular/forms, cuyo módulo ya habíamos importado, a su vez, anteriormente en el app.module.ts
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { UsuarioModel } from '../../models/usuario.model';
+
+@Component({
+  selector: 'app-registro',
+  templateUrl: './registro.component.html',
+  styleUrls: ['./registro.component.css']
+})
+export class RegistroComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor() { }
+
+  ngOnInit() {
+
+    this.usuario = new UsuarioModel();
+
+    this.usuario.email = 'test@gmail.com';
+  }
+
+  onSubmit( form: NgForm ) {
+    console.log('Formulario enviado');
+    console.log(this.usuario);
+    console.log(form);
+  }
+}
+```
+
+Podemos ver el objeto form en consola, con muchísima información acerca del formulario. Actualmente si tratamos de enviar un formulario vacío debería dar error, puesto que el input email es required, si en la consola miramos la propiedad "controls" del objeto, veremos los inputs a los cuales les hemos definido la propiedad "name" en el html, en nuestro caso 'email', 'nombre' y 'pass'. Si vemos la propiedad 'valid' veremos que es 'false'.
+
+Vamos a restringir un poco más el formulario, haciendo requeridos todos los campos, añadiendo 'required' a los dos inputs, y también definiremos un mínimo de caracteres para el nombre y para la contraseña.
+
+También añadiremos al ngOnInit un validador de si el formulario es válido o no, lo cual mostrará la información por consola o no.
+
+```
+onSubmit( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+    console.log('Formulario enviado');
+    console.log(this.usuario);
+    console.log(form);
+  }
+```
+
+El html del formulario quedaría hasta el momento así:
+
+```
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-50 p-b-90">
+            <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="login100-form validate-form flex-sb flex-w">
+
+                <span class="login100-form-title p-b-51">
+                        Crear nueva cuenta
+                    </span>
+
+                <!-- <span class="text-danger">El correo es obligatorio</span> -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="email" name="email" [(ngModel)]="usuario.email" placeholder="Email" required email>
+
+                    <span class="focus-input100"></span>
+                </div>
+
+                <!-- <span class="text-danger">El nombre es obligatorio</span> -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="text" name="nombre" [(ngModel)]="usuario.nombre" placeholder="Nombre y apellidos" required minlength="2">
+
+                    <span class="focus-input100"></span>
+                </div>
+
+                <!-- <span class="text-danger">La contraseña debe de ser más de 6 letras</span> -->
+                <div class="wrap-input100 m-b-16" data-validate="Password is required">
+                    <input class="input100" type="password" name="pass" [(ngModel)]="usuario.password" placeholder="Password" required minlength="6">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="flex-sb-m w-full p-t-3 p-b-24">
+                    <div class="contact100-form-checkbox">
+                        <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                        <label class="label-checkbox100" for="ckb1">
+                                Recordar mi usuario
+                            </label>
+                    </div>
+
+                    <div>
+                        <a routerLink="/registro" class="txt1">
+                                ¿Ya tienes cuenta? / Ingresar
+                            </a>
+                    </div>
+                </div>
+
+                <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn" type="submit">
+                            Crear cuenta
+                        </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 171. Mostrar errores en pantalla
+
+Ya tenemos comentados en el html unos <span> que deberemos de renderizar cuando los inputs no cumplan las condiciones de validación. Vimos en la lección anterior que podemos acceder a las distintas propiedades del formulario, del cual tenemos una referencia local en el html (#f), por tanto si queremos saber si un campo está validado podemos hacerlo sencillamente con las propiedades del ngForm de angular, por ejemplo acceder a f.controls['email].errors, y si el formulario se ha tratado de enviar con errores que muestre el error, sería algo así:
+
+```
+<span *ngIf="f.submitted && f.controls['password'].errors" class="text-danger animated fadeIn">La contraseña debe de ser más de 6 letras</span>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 172. Tarea - Pantalla de login y sus validaciones
+
+En el formulario de registro hay un enlace que lleva a la página de login y viceversa, vamos a hacerlo funcionar. Sólo habría que definir en el enlace la ruta correcta, que estaba puesta en la plantilla una por defecto `<a routerLink="/login" class="txt1">`, también puliremos algunos estilos añadiendo animaciones en registro y login html `<div class="limiter animated fadeInRight">` y cambiaremos el efecto de animación por uno más rápido en animate.css `animation-duration: 0.5s;`
+
+La tarea consiste en dejar el formulario de login hasta el punto que hemos dejado el de registro, validar nombre y password, pero el nombre deberá ser un email, y el password de al menos 6 caracteres y que cuando esté validado muestre la información del formulario en consola, pero que no lo haga en caso contrario.
+
+login.component.html
+
+```
+<div class="limiter animated fadeInLeft">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-50 p-b-90">
+            <form (ngSubmit)="login(f)" #f="ngForm" class="login100-form validate-form flex-sb flex-w">
+
+                <span class="login100-form-title p-b-51">
+                    Login
+                </span>
+
+                <span *ngIf="f.submitted && f.controls['email'].errors" class="text-danger">El correo es obligatorio</span>
+                <div class="wrap-input100 m-b-16">
+                    <input [(ngModel)]="usuario.email" required email class="input100" type="email" name="email" placeholder="email">
+
+                    <span class="focus-input100"></span>
+                </div>
+
+                <span *ngIf="f.submitted && f.controls['password'].errors" class="text-danger">La contraseña debe de ser más de 6 letras</span>
+                <div class="wrap-input100 m-b-16" data-validate="Password is required">
+                    <input [(ngModel)]="usuario.password" required minlength="6" class="input100" type="password" name="password" placeholder="Password">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="flex-sb-m w-full p-t-3 p-b-24">
+                    <div class="contact100-form-checkbox">
+                        <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                        <label class="label-checkbox100" for="ckb1">
+                            Recordar mi usuario
+                        </label>
+                    </div>
+
+                    <div>
+                        <a routerLink="/registro" class="txt1">
+                            ¿No tienes cuenta?
+                        </a>
+                    </div>
+                </div>
+
+                <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn" type="submit">
+                        Ingresar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+```
+
+login.component.ts
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { UsuarioModel } from '../../models/usuario.model';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor() { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  login( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    console.log('Login enviado');
+    console.log(form);
+
+  }
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 173. Firebase y servicios REST
+
+Como backend para la gestión de los registros de usuarios y validaciones vamos a usar Firebase, que es parecido a MongoDB.
+
+Para ello nos creamos una cuenta y vamos a la consola de administración y creamos un nuevo proyecto 'login-app'.
+
+Tras esto vamos a "Authentication" y "Sign-in method" y seleccionamos correo y contraseña como método de autenticación y activamos "Habilitar", esto nos permitirá hacer llamadas a una API y crear usuarios, en la pestaña Usuarios podremos ver los usuarios autenticados y conectados.
+
+Por otro lado tenemos este enlace 'https://firebase.google.com/docs/reference/rest/auth#section-create-email-password' que nos da información de los servicios REST de que dispone Firebase, nosotros usaremos el de registro con usuario y contraseña, de hecho está diferenciado entre registro e inicio de sesión, para crear y autenticar usuarios, respectivamente. Empezamos con la creación de usuario.
+
+Para ello primero necesitamos poder hacer peticiones HTTP a la api REST, para ello debemos disponer del módulo, lo importaremos en nuestro app.module.ts
+
+```
+import { HttpClientModule } from '@angular/common/http';
+...
+imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule
+  ],
+```
+
+Lo siguiente será crear un servicio para manejar todo lo referente a la autenticación: `ng g s services/auth`
+
+Copiamos de la documentación referida anteriormente el endpoint para el Sign-up y el Sign-in en auth.service.ts:
+
+```
+// Crear nuevos usuarios
+  // https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=[API_KEY]
+  // Login
+  // https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=[API_KEY]
+```
+
+E inyectaremos el cliente http en el constructor del servicio:
+
+```
+import { HttpClient } from '@angular/common/http';
+...
+  constructor( private http: HttpClient ) { }
+```
+
+Para la composición de los endpoints, como hicimos en lecciones anteriores, vamos a componer la url del endpoint diferenciando entre la parte común y la que difiere (Entre sign-up y sign-in), además definiremos otra variable (la anterior y esta privadas) que contenta la api_key de nuestra aplicación de firebase, la cual podemos ver en la configuración del proyecto, en General.
+
+```
+private url = 'https://identitytoolkit.googleapis.com/v1/accounts:';
+private apikey = 'AIzaSyCdaX1vaVW_MzsmGAV******fOGWVoBwhVkw';
+```
+
+Por último dejaremos definidos los métodos del servicio que usaremos para la gestión de login, logout y registro de usuarios, necesitando tener importado el modelo de Usuario, puesto que será requerido como parámetro para usar los métodos.
+
+```
+import { UsuarioModel } from '../models/usuario.model';
+...
+logout() {
+
+}
+login( usuario: UsuarioModel ) {
+
+}
+nuevoUsuario( usuario: UsuarioModel ) {
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 174. Registrar un nuevo usuario
+
+En la documentación de Firebase podemos ver que necesitamos enviar cierta información si queremos registrar un nuevo usuario:
+
+```
+email	string	The email the user is signing in with.
+password	string	The password for the account.
+returnSecureToken	boolean	Whether or not to return an ID and refresh token. Should always be true.
+```
+
+Entonces en auth.service.ts en nuestro método nuevoUsuario() crearemos una constante con los valores que nos piden, definiendo returnSecureToken a true y pasando el email y password del objeto usuario:
+
+```
+const authData = {
+      email: usuario.email,
+      password: usuario.password,
+      returnSecureToken: true
+    };
+```
+
+Podríamos usar un método más abreviado que lo que haría sería pasar el objeto entero, definiendo como "email" el campo en "usuario.email" y así sucesivamente, quedando el código más limpio:
+
+```
+const authData = {
+      ...usuario,
+      returnSecureToken: true
+    };
+```
+
+Lo siguiente sería hacer una petición POST a la api, necesitamos hacer un return para poder suscribirnos en otro lugar, la función post del objeto http client necesita, cómo mínimo, que le pasemos la url del endpoint (que hemos preparado previamente) y el body con los datos requeridos (que también hemos definido como una constante llamada authData):
+
+```
+nuevoUsuario( usuario: UsuarioModel ) {
+
+    const authData = {
+      ...usuario,
+      returnSecureToken: true
+    };
+
+    return this.http.post( `${this.url}signUp?key=${this.apikey}` , authData );
+
+  }
+```
+
+Ahora para poder usarlo en nuestro componente de registro inyectamos en el constructor nuestro servicio auth servicio de manera privada:
+
+```
+import { AuthService } from 'src/app/services/auth.service';
+...
+constructor( private auth: AuthService ) { }
+```
+
+Ahora al servicio le podremos pasar como argumento el usuario que recibimos del formulario y suscribirnos a él, de momento sólo vamos a hacer un console log de la respuesta http para ver qué nos devuelve:
+
+```
+this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+    });
+```
+
+Pudiera ser que diera un error si probamos a enviar el formulario en este punto, porque al haber hecho cambios en el servicio, y este estar definido con el decorador @Injectable providedIn: 'root' puede que no se noten los cambios hasta haber bajado y levantado la aplicación.
+
+Podemos ahora ver la respuesta http con toda la información que necesitamos, idToken, tiempo de expiración, localId, etcétera.
+
+Tenemos que capturar un error adicional, porque si tratamos de enviar por segunda vez el formulario, como es normal, da error porque ese usuario ya fue creado con ese email. Vamos a capturar los posibles errores en el subscribe de la petición POST http, de esta manera creamos un objeto 'err' con toda la información del error y podemos, por ejemplo, usar una propiedad de dicho objeto que contiene el mensaje de error para mostrarlo al usuario y sepa qué está sucediendo:
+
+```
+onSubmit( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+    }, (err) => {
+      console.log(err.error.error.message);
+    });
+  }
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 175. Login de usuarios
+
+Para esta parte tendremos, al menos, un usuario creado en Firebase.
+
+Luego sería el mismo código, viendo la documentación, que el que usamos en el método nuevoUsuario() en nuestro servicio, cambiando la parte de la cadena de caracteres de la url que era diferente para login():
+
+```
+login( usuario: UsuarioModel ) {
+
+    const authData = {
+      ...usuario,
+      returnSecureToken: true
+    };
+
+    return this.http.post( `${this.url}signInWithPassword?key=${this.apikey}` , authData );
+
+  }
+```
+
+En el lado del componente sería prácticamente igual que con el registro, solo cambiaría la llamada al método login(), pero el control de errores y todo sería igual, podemos ver en consola si hacemos un login satisfactorio que disponemos de un idToken que será lo que haya que destruir a la hora de hacer logout (cerrar la sesión), el componente de login quedaría así:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioModel } from '../../models/usuario.model';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor( private auth: AuthService ) { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  login( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    this.auth.login( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+    }, (err) => {
+      console.log(err.error.error.message);
+    });
+
+  }
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 176. Guardar Token en el LocalStorage
+
+Si vamos a auth.service.ts y vemos las funciones de login y nuevoUsuario podemos ver, recordamos, que devuelven un observable, en ese observable podemos hacer algunas modificaciones antes de notificar a la página de registro o la página del login, es decir cuando se devuelva el observable podemos almacenar el token que viene de la petición, en el caso de que devolviese esa información.
+
+Entonces vamos a crear dos métodos más, un método privado guardarToken que recibirá como parámetro el idToken del response, crearemos previamente la variable de almacenamiento de tipo string "userToken", inicializada a null no debe dar problema alguno, sencillamente nuestro método recibirá el idToken y lo almacenará en dicha variable, la cual usaremos para llamar al localstorage y usar su método setItem para pasarle la variable:
+
+```
+private guardarToken( idToken: string ) {
+
+  this.userToken = idToken;
+  localStorage.setItem('token', idToken);
+
+}
+```
+
+Ahora necesitaremos otro método para leer el token del localstorage, no necesitaremos ningún argumento, pero si necesitaremos verificar si existe algún dato en el localstorage, en el caso de que esté usaremos el método getItem pasandole como argumento la referencia que en este caso la habíamos definido como 'token', si lo encuentra se almacenará en la variable de token que teníamos definida, si no existiera podríamos inicializar la variable a una cadena vacía, en cualquier caso acabará devolviendo el valor de la variable userToken:
+
+```
+private leerToken() {
+
+  if ( localStorage.getItem('token') ) {
+    this.userToken = localStorage.getItem('token');
+  } else {
+    this.userToken = '';
+  }
+
+  return this.userToken;
+
+}
+```
+
+Para usar el método de guardarToken lo haremos en el mismo servicio, de esta manera cuando llamemos a los métodos para registrar un nuevo usuario o para hacer login pasaremos la petición http por un pipe con el operador map de rxjs, de esta manera filtraremos el response recibiendo sólo el idToken y, al mismo tiempo, llamando al método guardarToken para que lo almacene en el localstorage. Esto tiene una ventaja y es que si por algun motivo sucede un error en la petición, el map no se dispara. Adicionalmente para que el operador map no bloquee la respuesta tendremos que devolver la respuesta filtrada.Obviamente necesitaremos importar el map de la librería `import { map } from 'rxjs/operators';`.
+
+```
+nuevoUsuario( usuario: UsuarioModel ) {
+
+  const authData = {
+    ...usuario,
+    returnSecureToken: true
+  };
+
+  return this.http.post( `${this.url}signUp?key=${this.apikey}` , authData )
+  .pipe(
+    map( resp => {
+      this.guardarToken( resp['idToken']);
+      return resp;
+    }
+    )
+  );
+
+}
+```
+
+Si tras hacer login o registro vamos a Application en el navegador veremos el token en el localstorage
+
+Por otro lado podemos llamar al método leerToken cuando inicialicemos el servicio de autenticación:
+
+```
+constructor( private http: HttpClient ) {
+  this.leerToken();
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 177. SweetAlert2 - Mostrar notificaciones al usuario
+
+En el material adjunto tenemos información sobre SweetAlert2, que nos permite (puesto que tiene soporte para typescript) usar unos Alerts customizados, que usaremos para dar información al usuario si hay algún tipo de error en login y los registros, como ya tenemos la información (hasta ahora la mostrábamos por consola cogiendo los error message) usaremos dicha información para mostrarla en el alert.
+
+Lo vamos a instalar con npm:
+
+>npm install sweetalert2
+
+Primero vamos a usarlo en el login.component.ts, para ello vamos a importar la librería instalada, al no tratarse de un módulo será de la siguiente manera:
+
+`import Swal from 'sweetalert2';` 
+
+Ahora podemos acceder al objeto Swal y sus métodos y funciones, en la documentación podremos ver todas las posibilidades, podemos empezar por en el login hacer un "loading", para eso usaremos el método 'fire' al que le pasaremos como argumento un objeto, este objeto tendrá las propiedades 'allowOutsideclick' que inicializaremos a 'false' haciendo que no se pueda hacer click fuera del alert para cerrar la ventana, 'icon' nos permitirá definir el icono, que será 'info' y el 'text' a mostrar.
+
+```
+Swal.fire({
+  allowOutsideClick: false,
+  icon: 'info',
+  text: 'Espere por favor...'
+});
+```
+
+Esto definiría la ventana del alert, pero si no queremos que aparezca el botón de OK y en su lugar aparezca un loading a continuación definiríamos `Swal.showLoading();`
+
+En la lógica cuando nos suscribamos correctamente (hagamos login) debería de cerrarse esa ventana `Swal.close();`, y si hubiera algun error debería de mostrarse la ventana con el error, para ello crearemos otra ventana que contenga el mensaje de error que recibimos de la respuesta:
+
+```
+...
+, (err) => {
+      console.log(err.error.error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al autenticar',
+        text: err.error.error.message
+      });
+    });
+```
+
+Haremos lo mismo para la sección de registro, quedarían registro.component.ts y login.component.ts, respectivamente, de esta manera:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioModel } from '../../models/usuario.model';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-registro',
+  templateUrl: './registro.component.html',
+  styleUrls: ['./registro.component.css']
+})
+export class RegistroComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor( private auth: AuthService ) { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  onSubmit( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    Swal.fire({
+      allowOutsideClick: false,
+      icon: 'info',
+      text: 'Espere por favor...'
+    });
+    Swal.showLoading();
+
+    this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+      Swal.close();
+    }, (err) => {
+      console.log(err.error.error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al autenticar',
+        text: err.error.error.message
+      });
+    });
+  }
+
+}
+
+```
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioModel } from '../../models/usuario.model';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit {
+
+  usuario: UsuarioModel;
+
+  constructor( private auth: AuthService ) { }
+
+  ngOnInit() { this.usuario = new UsuarioModel(); }
+
+  login( form: NgForm ) {
+
+    if ( form.invalid ) { return; }
+
+    Swal.fire({
+      allowOutsideClick: false,
+      icon: 'info',
+      text: 'Espere por favor...'
+    });
+    Swal.showLoading();
+
+    this.auth.login( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+      Swal.close();
+    }, (err) => {
+      console.log(err.error.error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al autenticar',
+        text: err.error.error.message
+      });
+    });
+
+  }
+
+}
+
+```
+
+Por último vamos a dejar preparada la navegación para en las siguientes clases validar tokens, etc.
+
+Para ello inyectamos en el constructor de registro.component.ts el Router:
+
+```
+import { Router } from '@angular/router';
+...
+constructor( private auth: AuthService, private router: Router ) { }
+```
+
+Lo siguiente sería usarlo cuando yo ya sé que tengo una autenticación válida, para que nos lleve a la home, navegando por url:
+
+```
+this.auth.nuevoUsuario( this.usuario )
+    .subscribe( resp => {
+      console.log(resp);
+      Swal.close();
+      this.router.navigateByUrl('/home');
+```
+
+Haremos lo mismo para el login.component.ts
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 178. Recordar usuario
+
+Empezaremos con el login, para ello vamos a crear una variable booleana llamada "recordarme" y en el html lo asociaremos con ngmodel `<input [(ngModel)]="recordarme" class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">`
+
+Luego en el componente, cuando se verifica la autenticación (tras el Swal.close()), verificaremos si se marcó el checkbox, y en ese caso del objeto usuario (que se maneja con el formulario, recordemos) guardaremos la propiedad email en el local storage:
+
+```
+if ( this.recordarme ) {
+  localStorage.setItem('email', this.usuario.email);
+}
+```
+
+Para que esto se efectúe, en el ngOnInit del componente tendremos que hacer la misma consulta, para poder poner como valor del input el email guardado en el localstorage, además de dejar marcado el checkbox:
+
+```
+ngOnInit() { 
+  if ( localStorage.getItem('email') ) {
+    this.usuario.email = localStorage.getItem('email');
+    this.recordarme = true;
+  }
+}
+```
+
+Necesitaremos hacer lo mismo en el registro.component.ts, pero la lógica de base es un poco distinta, porque en ese formulario marcar el checkbox lo que hará será, que cuando se registre, recuerde el email para ser usado en la pantalla de login.
+
+En el formulario del registro asociaremos el ngModel a la variable, en el componente declararemos la variable y haremos la comprobación en la función de nuevoUsuario():
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 179. Guard para proteger la ruta si no se está autenticado
+
+Aquí usaremos un Guard para proteger la ruta home que solo será accesible al registrar o hacer login, actualmente escribiendo directamente localhost:4200/home es accesible. Angular CLI ya trae una instrucción para crear un Guard:
+
+>ng g guard guards/auth
+
+* CanActivate
+* CanActivateChild
+* CanLoad
+
+Nos da a elegir entre varios métodos por defecto que se usarán para proteger rutas, rutas hijas y para lazy load, respectivamente. Nosotros con la primera tenemos suficiente de momento. Explicamos el auth.guard.ts:
+
+```
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return true;
+  }
+
+}
+```
+
+Es un servicio que implementa CanActivate de @angular/router, que es la instrucción que Angular debe ejecutar cuando se navegue a una ruta, verificando si se puede navegar a dicha ruta o no. 'next' contiene cual es la siguiente ruta a la cual el usuario quiere navegar y el 'state' es el estado actual de la ruta, vemos que puede retornar observables, promesas etc, en función de si esa navegación va a necesitar de algún proceso asíncrono en su ejecución,en nuestro caso solo necesitaremos que devuelva un booleano tal cual. Nosotros usaremos esto porque vamos a definir un método sencillo en nuestro auth.service.ts que verifique si existe un token de usuario, y que tenga una longitud mayor a 2, posteriormente afinaremos esto porque pudiera ser que exista un token pero que dicho token hubiera expirado, si la verificación funciona en tal caso devolverá 'true', usando esto como argumento de comprobación en el CanActivate.
+
+Así que primero de todo en auth.service.ts crearemos dicho método:
+
+estaAutenticado() : boolean {
+
+  return this.userToken.length > 2;
+
+}
+
+Regresando a nuestro auth.guard.ts necesitamos inyectar el servicio en el constructor para poder acceder al método estaAutenticado(), entonces lo que devolverá canActivate será el estado de estaAutenticado():
+
+```
+import { Injectable } from '@angular/core';
+import { CanActivate } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+
+  constructor( private auth: AuthService ) {}
+  canActivate(): boolean {
+    return this.auth.estaAutenticado();
+  }
+
+}
+```
+
+Una vez implementado ahora podemos en nuestro app-routing.module.ts definir que rutas necesitan esta autenticación, en nuestro caso sólo será el home, importaremos el guard y modificaremos el path a la home añadiendo una propiedad mas, canActivate que deberá ser ejecutada desde el AuthGuard, quedando el app-routing.module.ts así:
+
+```
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { HomeComponent } from './pages/home/home.component';
+import { RegistroComponent } from './pages/registro/registro.component';
+import { LoginComponent } from './pages/login/login.component';
+import { AuthGuard } from './guards/auth.guard';
+
+const routes: Routes = [
+  { path: 'home'    , component: HomeComponent, canActivate: [ AuthGuard ]},
+  { path: 'registro', component: RegistroComponent },
+  { path: 'login'   , component: LoginComponent },
+  { path: '**', redirectTo: 'registro' }
+];
+
+@NgModule({
+  imports: [ RouterModule.forRoot(routes) ],
+  exports: [ RouterModule ]
+})
+export class AppRoutingModule { }
+
+```
+
+Recordamos que al haber modificado el servicio, y este estar como @Injectable providedIn: root, debemos bajar y levantar la aplicación de nuevo para que se apliquen los cambios.
+
+Por último, hecho esto lo que sucede es que nos lleva a una página en blanco si no estamos autenticados, para evitar esto podemos hacer una redirección en el auth.guard.ts, así que modificaremos el método canActivate para hacer una validación primero de si esta autenticado, en tal caso devolverá 'true' como antes, pero si no lo que hará será navegar hasta el /login, y para ello implementaremos el router en el servicio:
+
+```
+import { Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+
+  constructor( private auth: AuthService, private router: Router ) {}
+  canActivate(): boolean {
+    if ( this.auth.estaAutenticado() ) {
+      return true;
+    } else {
+      this.router.navigateByUrl('/login');
+    }
+
+  }
+
+}
+```
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 180. Logout - Cerrar sesión
+
+En nuestra aplicación lo único que necesitamos para hacer logout es eliminar el token de usuario, para ello en la función logout() que tenemos por definir en auth.service.ts tendremos que destruir el item 'token':
+
+```
+logout() {
+    localStorage.removeItem('token');
+  }
+```
+
+Ahora en home.component.html haremos un html sencillo que incluya el botón que ejecute una función salir():
+
+```
+<div class="m-5">
+
+    <h1>Mi aplicación secreta</h1>
+    <hr>
+
+    <button class="btn btn-outline-danger" (click)="salir()">Cerrar sesión</button>
+</div>
+```
+
+En el componente de home necesitaremos crear dicha función salir que ejecutará el método logout del servicio, por tanto también necesitaremos inyectar en el constructor tanto el servicio como el router, para que nos lleve a la página de login de nuevo si cerramos la sesión:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+
+  constructor( private auth: AuthService, private router: Router) { }
+
+  ngOnInit() {
+  }
+
+  salir() {
+    this.auth.logout();
+    this.router.navigateByUrl('/login');
+  }
+
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 181. Mejorar la validación del token
+
+En el response cuando hacemos la validación del token de usuario recibimos una propiedad 'expiresIn', que nos devuelve el tiempo de duración del token, por defecto son 3600 segundos (una hora), con los métodos de la función Date() de Javascript podemos controlar la fecha exacta de expiración con respecto a la fecha actual usando dichos métodos.
+
+Por tanto cuando recibamos el token podremos saber la fecha exacta (horas, minutos y segundos inclusive) en la que dejará de ser válido, esa fecha la almacenaremos y luego compararemos esa fecha con el momento actual, para saber si el token sigue siendo válido.
+
+En auth.service.ts trabajaremos primero en el login(), que a su vez llama a la función guardarToken() donde guarda el token en el localStorage, aquí tendremos que hacer también la validación de la fecha, para ello crearemos una variable que almacenará la fecha en el momento en que se guarda el token en el localStorage, a esa fecha le tendremos que sumar 3600 segundos (Que es por defecto lo que define Firebase pero también, por si esto cambiase, podríamos directamente pasarle como parámetro el valor que esté en expiresIn del objeto que devuelve Firebase) y esto será lo que guardemos, pero tendremos que pasarlo a String porque en el localStorage los datos tienen que ser de este tipo, y la función getTime() devuelve un número.
+
+```
+private guardarToken( idToken: string ) {
+
+  this.userToken = idToken;
+  localStorage.setItem('token', idToken);
+
+  let hoy = new Date();
+  hoy.setSeconds( 3600 );
+
+  localStorage.setItem('expira', hoy.getTime().toString());
+
+}
+```
+
+Una vez ya tenemos la fecha de expiración en el localStorage tendremos que validarlo cada vez que lo leamos, para ello en la función estaAutenticado() cojeremos la fecha almacenada y la compararemos con la actual, y en función de eso devolveremos verdadero o falso para que lo use el Guard.
+
+```
+estaAutenticado(): boolean {
+
+    if ( this.userToken.length < 2 ) {
+      return false;
+    }
+
+    const expira = Number(localStorage.getItem('expira'));
+    const expiraDate = new Date();
+    expiraDate.setTime(expira);
+
+    if ( expiraDate > new Date() ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+```
+
+Por último hay que tener en cuenta que ciertamente se podría manipular el token desde el navegador, pero ***siempre tendremos que validar también desde el backend (servidor) ***
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
