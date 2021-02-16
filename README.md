@@ -8345,8 +8345,48 @@ export class HomeComponent implements OnInit {
 
 ## 181. Mejorar la validación del token
 
+En el response cuando hacemos la validación del token de usuario recibimos una propiedad 'expiresIn', que nos devuelve el tiempo de duración del token, por defecto son 3600 segundos (una hora), con los métodos de la función Date() de Javascript podemos controlar la fecha exacta de expiración con respecto a la fecha actual usando dichos métodos.
+
+Por tanto cuando recibamos el token podremos saber la fecha exacta (horas, minutos y segundos inclusive) en la que dejará de ser válido, esa fecha la almacenaremos y luego compararemos esa fecha con el momento actual, para saber si el token sigue siendo válido.
+
+En auth.service.ts trabajaremos primero en el login(), que a su vez llama a la función guardarToken() donde guarda el token en el localStorage, aquí tendremos que hacer también la validación de la fecha, para ello crearemos una variable que almacenará la fecha en el momento en que se guarda el token en el localStorage, a esa fecha le tendremos que sumar 3600 segundos (Que es por defecto lo que define Firebase pero también, por si esto cambiase, podríamos directamente pasarle como parámetro el valor que esté en expiresIn del objeto que devuelve Firebase) y esto será lo que guardemos, pero tendremos que pasarlo a String porque en el localStorage los datos tienen que ser de este tipo, y la función getTime() devuelve un número.
+
+```
+private guardarToken( idToken: string ) {
+
+  this.userToken = idToken;
+  localStorage.setItem('token', idToken);
+
+  let hoy = new Date();
+  hoy.setSeconds( 3600 );
+
+  localStorage.setItem('expira', hoy.getTime().toString());
+
+}
+```
+
+Una vez ya tenemos la fecha de expiración en el localStorage tendremos que validarlo cada vez que lo leamos, para ello en la función estaAutenticado() cojeremos la fecha almacenada y la compararemos con la actual, y en función de eso devolveremos verdadero o falso para que lo use el Guard.
+
+```
+estaAutenticado(): boolean {
+
+    if ( this.userToken.length < 2 ) {
+      return false;
+    }
+
+    const expira = Number(localStorage.getItem('expira'));
+    const expiraDate = new Date();
+    expiraDate.setTime(expira);
+
+    if ( expiraDate > new Date() ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+```
+
+Por último hay que tener en cuenta que ciertamente se podría manipular el token desde el navegador, pero ***siempre tendremos que validar también desde el backend (servidor) ***
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 182. Código fuente de la sección
-
-[Volver al Índice](#%C3%ADndice-del-curso)
