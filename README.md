@@ -8393,49 +8393,286 @@ Por último hay que tener en cuenta que ciertamente se podría manipular el toke
 # Sección 11: Formularios en Angular
 ## 183. Introducción a la sección
 
+Veremos en esta sección formularios de dos tipos, por template y reactivos, aconsejando usar siempre reactivos, ver video explicativo.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 184. ¿Qué aprenderemos en esta sección?
+
+¿Qué aprenderemos en esta sección?
+
+A continuación vamos a aprender sobre los siguientes temas:
+
+1. Diferentes aproximaciones que tiene angular para trabajar formularios.
+2. Profundizaremos en el uso del ngModel.
+3. Utilizar las validaciones pre fabricadas.
+4. Crear validaciones personalizadas.
+5. Crear validaciones asíncronas.
+6. Realizar un submit utilizando el ngSubmit.
+7. Postear información únicamente cuando el formulario es valido,
+8. Crear formularios del lado del componente.
+9. Cargar información por defecto a los formularios.
+10. Subscribirnos a los cambios de los valores de los formularios.
+11. Entre otras cosas bien interesantes.
+
+Durante la sección, tendremos tareas y un examen teórico al final.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 185. Demostración de lo que lograremos al finalizar la sección
 
+Ver vídeo.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 186. Inicio del proyecto de formularios - Material adjunto incluido
+
+Crearemos el nuevo proyecto con el bien ya conocido:
+
+>ng new formularios
+
+Creando automáticamente el routing y con css como estilo del proyecto.
+
+También descargaremos una plantilla html con un formulario tipo para incluirlo en el proyecto.
+
+En nuestro index.html del proyecto añadiremos el CDN de bootstrap `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">`
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 187. Creación de componentes - Formularios y Rutas
 
+Vamos a crear dos páginas, para los formularios por template y para los reactivos, respectivamente:
+
+>ng g c pages/template --skipTests
+>ng g c pages/reactive --skipTests
+
+Usaremos el html del recurso adjunto a la sección como esqueleto para ambos html.
+
+En el app.component.html crearemos como base un div container con el router-outlet
+
+Y en el app-routing.module.ts crearemos las rutas a las dos páginas:
+
+```
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ReactiveComponent } from './pages/reactive/reactive.component';
+import { TemplateComponent } from './pages/template/template.component';
+
+const routes: Routes = [
+  { path: 'template', component: TemplateComponent },
+  { path: 'reactivo', component: ReactiveComponent },
+  { path: '**', pathMatch: 'full', redirectTo: 'template'}
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+```
+
+Nótese que si pulsamos el botón de submit (guardar) del formulario hace un refresh de la página, que es la acción por defecto que tienen los formularios, vamos a desactivar esto para tener nosotros el control de como se comporta el formulario, para ello importaremos y añadiremos en los imports el FormsModule de @angular/forms en el app.module.ts, también añadi el RouterModule porque VSCode me disparaba un error con el router-outlet (aunque no impedía el funcionamiento correcto de la app):
+
+```
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { TemplateComponent } from './pages/template/template.component';
+import { ReactiveComponent } from './pages/reactive/reactive.component';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    TemplateComponent,
+    ReactiveComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    RouterModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 188. Template: ngModel - ngSubmit - Referencias locales a los elementos HTML
+
+Vamos a ir al template.component.html y en el input del Nombre si escribiéramos en la etiqueta *ngModel* nos daría un error, nos pide al menos que definamos el "name", de esta manera podremos hacer alusión a ese campo. Una vez definidos name y ngModel podemos inspeccionar el elemento y vemos que angular añadío varias clases, que podríamos usar para aplicar css: ng-untouched que nos indica que el campo no ha sido tocado, pero si lo tocamos y pasamos a otro campo pasará de ng-untouched a ng-touched, ng-pristine que nos indica que el valor inicial del campo no ha sido modificado, si se modifica se eliminará y pasará a tener ng-dirty, y ng-valid que nos indica que el campo está pasando en ese momento todas las validaciones.
+
+En el tag de form (que tiene definida una propiedad autocomplete="off" para evitar el autocompletado) para poder tener la información del formulario tendremos que definir un 'evento' de Angular que es (ngSubmit) que lanzará una función que definiremos como guardar() cuando se ejecute el formulario (el button type="submit" de rigor)
+
+En el mismo input podemos definir la propiedad 'required' que es propia de html y evita el envío del formulario si el campo no se completó, Angular se da cuenta de esto, y si no tenemos completado el campo ahora podemos ver que la clase ng-valid pasó a ser ng-invalid (si no hemos incluido datos en el campo). Nótese que aun así el submit se ejecuta, pese a ser inválido el campo, porque es posible que esto sea necesario por ejemplo para hacer algún tipo de validación o acción paralela.
+
+Podemos añadir una propiedad más, a efectos de validación, minlength="5" para que requiera al menos 5 caracteres, en este punto podremos observar que ng-invalid se mantiene hasta que escribimos, al menos, cinco caracteres en el input, pasando entonces a ser ng-valid.
+
+Realmente todo esto nos servirá principalmente para cambiar CSS dinámicamente, las validaciones las haremos de otra manera.
+
+```
+<form autocomplete="off" (ngSubmit)="guardar()">
+
+    <div>
+
+        <div class="form-group row">
+            <label class="col-2 col-form-label">Nombre</label>
+            <div class="col-8">
+
+                <input class="form-control" required minlength="5" ngModel name="nombre" type="text" placeholder="Nombre">
+                .....
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 189. Template: Obteniendo la información del formulario
 
+En los formularios por template la mayoría de la configuración se hace del lado del html, mientras que en los reactivos se hace del lado del componente.
+
+Si queremos la información del formulario necesitamos una referencia a este, para esto vamos a crear una referencia local en el tag del form, #forma="ngForm", de esta manera indicamos que este formulario pasa a ser el objeto 'forma' que será un ngForm, y de esta manera a la función guardar que teníamos le podemos pasar como argumento el objeto 'forma', (ngSubmit)="guardar( forma )". De tal manera que ahora en la declaración de la función guardar del componente podremos definir el argumento a recibir, de tipo NgForm, importando el tipo desde @angular/forms.
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
+@Component({
+  selector: 'app-template',
+  templateUrl: './template.component.html',
+  styleUrls: ['./template.component.css']
+})
+export class TemplateComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  guardar( forma: NgForm ) {
+    console.log( forma );
+  }
+
+}
+```
+
+Como hemos hecho un console log del objeto, podemos ver toda la información del formulario, entre las muchas propiedades vemos "valid" que nos servirá para saber si el formulario está siendo válido o no para su envío. Por ejemplo 'pending' es utilizado cuando hay validaciones asíncronas, será un estado que cambiará de true a false cuando se termine la función asíncrona, un caso típico sería consulta a base de datos de un servidor para comprobar existencia de usuario y tener control de esto mientras se realiza. Podemos observar también otra propiedad del objeto de formulario, controls, que nos da detalle de los inputs del formulario, ahora sólo aparecerá nombre puesto que para que se tengan en cuenta debemos definir en la etiqueta el ngModel y el name, dentro de cada control tenemos sus propiedades, si es válido, su parent o su value. Por tanto si llamamos a forma.value nos devolverá un objeto con los valores de los campos.
+
+Por tanto podríamos definir que aparezcan valores por defecto en los campos del formulario en la primera carga del mismo, para ello podemos definir una variable que sea un objeto que tenga como propiedades los campos del formulario.
+
+```
+...
+export class TemplateComponent implements OnInit {
+
+  usuario = {
+    nombre: 'Carlos'
+  }
+...
+```
+
+Si en el template el ngModel lo ponemos entre corchetes le indicamos que va a recibir un valor (y si lo ponemos entre paréntisis indicamos que lo envía, y si ponemos ambos pues ambas funciones podrá permitir), de esta manera podemos manejar la información del componente [ngModel]="usuario.nombre"
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 190. Template: Validaciones independientes y cambio de estilo
+
+Podría ser de muchas otras maneras, para este ejercicio vamos a usar clases de bootstrap para los estilos de validación, usaremos is-invalid, is-valid, y nosotros con Angular determinaremos cuando aplicar o no esas clases css de bootstrap.
+
+Para ello haremos una referencia local al input definiéndola como un modelo de Angular, de esta manera podremos acceder a las propiedades de dicho campo (entre ellas valid o invalid...) `#nombre="ngModel"` entonces en el html podremos dinamicamente añadir una clase, esto se hace indicándolo con corchetes `[class.is-invalid]="nombre.invalid`, esto significa si la propiedad invalid de la referencia local nombre es verdadera (falsa sería !nombre.invalid) entonces añade la class css 'is-invalid' a la etiqueta. Pero de esta manera ya de base aparecería en rojo, con la clase aplicada, así que añadiremos la condición de que haya sido tocado el campo por el usuario `[class.is-invalid]="nombre.invalid && nombre.touched`.
+
+Para el input del email tenemos en los recursos de la sección una expresión regular que añadiremos  
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 191. Tarea: Repaso de las validaciones
 
+Completar las validaciones pendientes de los tres inputs.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 192. Resolución de la tarea - Validaciones
+
+```
+<div>
+
+        <div class="form-group row">
+            <label class="col-2 col-form-label">Nombre</label>
+            <div class="col-8">
+
+                <input class="form-control" #nombre="ngModel" [class.is-invalid]="nombre.invalid && nombre.touched" required minlength="5" [ngModel]="usuario.nombre" name="nombre" type="text" placeholder="Nombre">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-2 col-form-label">Apellido</label>
+            <div class="col-8">
+
+                <input class="form-control" #apellidos="ngModel" [class.is-invalid]="apellidos.invalid && apellidos.touched" required minlength="5" [ngModel]="usuario.apellidos" name="apellidos" type="text" placeholder="Apellido">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-2 col-form-label">Correo</label>
+        <div class="col-8">
+
+            <input #correo="ngModel" [ngModel]="usuario.correo" [class.is-invalid]="correo.invalid && correo.touched" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" class="form-control" type="email" name="correo" placeholder="Correo electrónico">
+        </div>
+    </div>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 193. Template: Mostrar errores y mensajes
 
+Sencillamente usaremos *ngIf para generar un label cuando no se cumplan las condiciones:
+
+`<small class="form-text text-danger" *ngIf="correo.invalid && correo.touched">Correo obligatorio. Ingrese un formato correcto de correo</small>`
+
+Por afinar un poco, si se toca el boton de guardar sin haber rellenado ningún campo debería marcar los avisos, aplicar los estilos, pero no lo hace, hay muchas maneras de poder hacer esto, en este ejercicio lo que haremos será en el componente, en la función guardar, comprobar si el formulario es inválido, y en tal caso hacer un return para que no ejecute el formulario y modificar la propiedad de los campos a "touched" para que así se active los condicionales del html:
+
+```
+guardar( forma: NgForm ) {
+
+  console.log( forma );
+
+  if ( forma.invalid ) {
+    Object.values( forma.controls ).forEach( control => {
+
+      control.markAsTouched();
+    });
+    return;
+  }
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 194. API de países del mundo
+
+API de países del mundo
+
+Nota:
+
+En la siguiente clase vamos a trabajar creando un select, pero con información de países del mundo, por lo que únicamente les pido que abran este URL que usaremos en la próxima clase:
+
+https://restcountries.eu/
+
+Y específicamente usaremos este endpoint:
+
+https://restcountries.eu/rest/v2/lang/es
+
+Nota2:
+
+Se proporciona una extensión de Chrome para ver archivos JSON pero ya no existe o estará desactualizada, se recomienda buscar una alternativa pero no es fundamental.
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
