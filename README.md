@@ -8672,11 +8672,108 @@ Nota2:
 
 Se proporciona una extensión de Chrome para ver archivos JSON pero ya no existe o estará desactualizada, se recomienda buscar una alternativa pero no es fundamental.
 
-
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 195. Servicio Pais - Obtener información de países
+
+Usaremos la api REST proporcionada para crearnos un servicio con los datos que posteriormente usaremos para generar un select de países en el formulario.
+
+`http://restcountries.eu/rest/v2/lang/es`
+
+Por tanto vamos a crear el servicio para tener toda la información centralizada:
+
+>ng g s services/pais --skipTests
+
+Recordamos que necesitamos importar el módulo para hacer peticiones http en el app.module.ts:
+
+`
+import { HttpClientModule } from '@angular/common/http';
+...
+imports: [
+    BrowserModule,
+    AppRoutingModule,
+    RouterModule,
+    FormsModule,
+    HttpClientModule
+  ],
+`
+
+A continuación importamos HttpClient en pais.service.ts e inyectamos una instancia del mismo en el constructor, y crearemos una función que haga la petición get al endpoint:
+
+`
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PaisService {
+
+  constructor( private http: HttpClient ) { }
+
+  getPaises() {
+
+    return this.http.get('http://restcountries.eu/rest/v2/lang/es');
+    
+  }
+}
+`
+
+Regresamos a template.component.ts , importando el servicio personalizado e inyectando una instancia en el constructor:
+
+`
+import { PaisService } from 'src/app/services/pais.service';
+...
+constructor( private paisService: PaisService ) { }
+`
+
+La petición http la haremos en el ngOnInit del template.component.ts para asegurarnos de tener los datos cuando se genere el componente.
+
+Como lo que devuelve es un observable tendremos, además, que suscribirnos a él:
+
+`
+ngOnInit(): void {
+
+    this.paisService.getPaises()
+    .subscribe( paises => {
+      console.log(paises);
+    })
+  }
+`
+
+El observable nos devuelve mucha información y nosotros sólo vamos a necesitar un par de propiedades del objeto que devuelve, como el servicio está centralizado lo ideal es filtrar la petición con un pipe map en el servicio mismo:
+
+`
+getPaises() {
+
+    return this.http.get('http://restcountries.eu/rest/v2/lang/es')
+    .pipe(
+      map( (resp: any[] ) => {
+        return resp.map( pais => {
+          return {
+            nombre: pais.name,
+            codigo: pais.alpha3Code
+          };
+        });
+      })
+    );
+  }
+`
+
+Notese que al aplicar el map de react (rxjs) le indicamos que la respuesta la devolveremos como un array, por tanto después usamos otro metodo map, pero este es el propio de los tipo array que a su vez devuelve un array sociativo que creamos con los atributos nombre y código teniendo como valores las propiedades que nos interesan del objeto de pais.
+
+Una versión más simplificada sería:
+
+``
+getPaises() {
+
+    return this.http.get('http://restcountries.eu/rest/v2/lang/es')
+    .pipe(
+      map( (resp: any[] ) => resp.map( pais =>  ({ nombre: pais.name, codigo: pais.alpha3Code }) ) )
+    );
+  }
+`
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
