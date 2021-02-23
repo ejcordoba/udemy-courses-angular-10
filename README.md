@@ -8776,24 +8776,297 @@ getPaises() {
 `
 
 [Volver al Índice](#%C3%ADndice-del-curso)
-
 ## 196. Template: Select y sus validaciones
+
+Crearemos un select de html en nuestra plantilla, añadiéndole las propiedades name="pais", required y ngModel, por otro lado en el TS crearemos una variable paises que contendrá el array de paises que recibiremos del subscribe al observador, para poder renderizar los datos posteriormente en el html mediante un ngFor del array de paises. Podemos además añadir una validación de que cuando no estén aun cargados los datos del servicio el select quede bloqueado, usando [disabled]. También añadiremos en nuestro TS un valor por defecto añadido al principio del array, usando 'unshift', con un valor nulo.
+
+Añadiendo el atributo 'pais' al objeto usuario e igualando [ngModel]="usuario.pais" en el html ahora podremos por ejemplo poner valores por defecto en el componente, indicando el código del país (recordemos que el value del campo es el código, no el nombre). Resumiendo el código html y ts quedan así:
+
+`
+ <select #pais="ngModel" class="form-control" [class.is-invalid]="pais.invalid && pais.touched" name="pais" id="pais" required [ngModel]="usuario.pais" [disabled]="paises.length === 0">
+                <option *ngFor="let pais of paises" [value]="pais.codigo">
+                    {{ pais.nombre }}
+                </option>
+            </select>
+`
+
+`
+export class TemplateComponent implements OnInit {
+
+  usuario = {
+    nombre: 'Eduardo',
+    apellidos:'Córdoba',
+    correo:'correo@correo.com',
+    pais:''
+  }
+
+  paises: any[] = [];
+
+  constructor( private paisService: PaisService ) { }
+
+  ngOnInit(): void {
+
+    this.paisService.getPaises()
+    .subscribe( paises => {
+      this.paises = paises;
+      this.paises.unshift({
+        nombre: '[Seleccione un País]',
+        codigo: ''
+      });
+      console.log(paises);
+    });
+  }
+`
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 197. Template: Uso de radio buttons
 
+Con esta lección queremos demostrar que la aproximación por template en formularios html usando Angular no es efectiva, se genera mucho código y habría que hacer mucho trabajo adicional a la hora de manejar observables, etc. El código respecto a los radio buttons es lo mismo que las lecciones anteriores, así que en esta lección me limitaré a poner todo el html y ts resultantes de template.component para que se vea el resultado y se pueda comparar con las siguientes lecciones, formularios reactivos (que es lo que se recomienda usar, ya que estamos trabajando con Angular):
+
+template.component.html:
+
+```
+<h4>Formularios <small> Template </small></h4>
+<hr>
+<form autocomplete="off" (ngSubmit)="guardar( forma )" #forma="ngForm">
+
+    <div>
+
+        <div class="form-group row">
+            <label class="col-2 col-form-label">Nombre</label>
+            <div class="col-8">
+
+                <input class="form-control" #nombre="ngModel" [class.is-invalid]="nombre.invalid && nombre.touched" required minlength="5" [ngModel]="usuario.nombre" name="nombre" type="text" placeholder="Nombre">
+                <small class="form-text text-danger" *ngIf="nombre.invalid && nombre.touched">Nombre obligatorio. Ingrese 5 letras</small>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-2 col-form-label">Apellido</label>
+            <div class="col-8">
+
+                <input class="form-control" #apellidos="ngModel" [class.is-invalid]="apellidos.invalid && apellidos.touched" required minlength="5" [ngModel]="usuario.apellidos" name="apellidos" type="text" placeholder="Apellido">
+                <small class="form-text text-danger" *ngIf="apellidos.invalid && apellidos.touched">Apellido obligatorio. Ingrese 5 letras</small>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="form-group row">
+        <label class="col-2 col-form-label">Correo</label>
+        <div class="col-8">
+
+            <input #correo="ngModel" [ngModel]="usuario.correo" [class.is-invalid]="correo.invalid && correo.touched" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" class="form-control" type="email" name="correo" placeholder="Correo electrónico">
+            <small class="form-text text-danger" *ngIf="correo.invalid && correo.touched">Correo obligatorio. Ingrese un formato correcto de correo</small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label">País</label>
+        <div class="col-8">
+
+            <select #pais="ngModel" class="form-control" [class.is-invalid]="pais.invalid && pais.touched" name="pais" id="pais" required [ngModel]="usuario.pais" [disabled]="paises.length === 0">
+                <option *ngFor="let pais of paises" [value]="pais.codigo">
+                    {{ pais.nombre }}
+                </option>
+            </select>
+            <small class="form-text text-danger" *ngIf="pais.invalid && pais.touched">Seleccione un país</small>
+
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-2 col-form-label">Género</label>
+        <div class="col-8">
+            <div class="form-check form-check-inline">
+                <input #genero="ngModel" type="radio" [class.is-invalid]="genero.invalid && genero.touched" class="form-check-input" name="genero" value="M" required ngModel>
+                <label class="form-check-label">Masculino</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input #genero="ngModel" type="radio" [class.is-invalid]="genero.invalid && genero.touched" class="form-check-input" name="genero" value="F" required ngModel>
+                <label class="form-check-label">Femenino</label>
+            </div>
+            <small class="form-text text-danger" *ngIf="genero.invalid && genero.touched">Seleccione un género</small>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-2 col-form-label">&nbsp;</label>
+        <div class="input-group col-md-8">
+            <button type="submit" class="btn btn-outline-primary btn-block">
+        Guardar
+      </button>
+        </div>
+    </div>
+
+</form>
+```
+
+template.component.ts
+
+```
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { PaisService } from 'src/app/services/pais.service';
+
+@Component({
+  selector: 'app-template',
+  templateUrl: './template.component.html',
+  styleUrls: ['./template.component.css']
+})
+export class TemplateComponent implements OnInit {
+
+  usuario = {
+    nombre: 'Eduardo',
+    apellidos:'Córdoba',
+    correo:'correo@correo.com',
+    pais:'CRI'
+  }
+
+  paises: any[] = [];
+
+  constructor( private paisService: PaisService ) { }
+
+  ngOnInit(): void {
+
+    this.paisService.getPaises()
+    .subscribe( paises => {
+      this.paises = paises;
+      this.paises.unshift({
+        nombre: '[Seleccione un País]',
+        codigo: ''
+      });
+      // console.log(paises);
+    });
+  }
+
+  guardar( forma: NgForm ) {
+
+    console.log( forma );
+
+    if ( forma.invalid ) {
+      Object.values( forma.controls ).forEach( control => {
+
+        control.markAsTouched();
+      });
+      return;
+    }
+  }
+
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 198. Reactivo: Aproximación de formularios utilizando código
+
+Ajustaremos el proyecto, en app-routing.module.ts cambiaremos la página por defecto de 'template' a 'reactivo'.
+
+Y tenemos que importar el modulo de formularios reactivos en app.module.ts (al igual que anteriormente importamos el de formularios por template 'FormsModule'):
+
+```
+...
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+...
+ imports: [
+    BrowserModule,
+    AppRoutingModule,
+    RouterModule,
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule
+  ],
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 199. Reactivo: Creación del formulario - FormGroup
 
+En lugar de referencia local en el html como hacíamos con los template, ahora lo haremos en el componente como una propiedad de la clase. 
+
+Por tanto importaremos FormGroup de @angular/forms y crearemos una instancia 'forma' de ese tipo, la cual inyectaremos además en el constructor porque necesitamos tenerla lista antes de que se renderice el html.
+
+También hay que considerar que cuando prevemos generar más de dos líneas de código en el constructor se recomienda generar métodos independientes fuera de él y desde el constructor los llamaremos.
+
+Usaremos FormBuilder que es un servicio que nos permite simplificar el manejo de formularios en Angular, también lo importaremos de @Angular/forms y lo inyectaremos en el constructor.
+
+Con esto podemos crear un metodo crearFormulario() que llamaremos desde el constructor, en él crearemos la variable de tipo FormGroup (forma), que será el resultado de llamar al método 'group' del servicio FormBuilder, en él definiremos un objeto que contendrá el nombre de los inputs y como valor un array que contendrá el valor por defecto, y más adelante además tendrá validaciones síncronas y asíncronas.
+
+Para hacer referencia a esto en el html en el formulario indicaremos que el formGroup va a ser 'forma' y también dejaremos listo el ngSubmit, que lanzará una función guardar() que de momento sólo nos hará console.log del formulario y sus valores. Para poder hacer referencia a dichos valores tendremos que indicar en cada uno de los inputs una propiedad formControlName.
+
+El código pues hasta ahora sería:
+
+```
+...
+<form autocomplete="off" [formGroup]="forma" (ngSubmit)="guardar()">
+...
+<input class="form-control" type="text" placeholder="Nombre" formControlName="nombre">
+...
+```
+
+```
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+@Component({
+  selector: 'app-reactive',
+  templateUrl: './reactive.component.html',
+  styleUrls: ['./reactive.component.css']
+})
+export class ReactiveComponent implements OnInit {
+
+  forma: FormGroup;
+
+  constructor( private fb: FormBuilder ) {
+    this.crearFormulario();
+  }
+
+  ngOnInit(): void {
+  }
+
+  crearFormulario() {
+
+    this.forma = this.fb.group({
+      nombre: ['Eduardo'],
+      apellidos: ['Córdoba'],
+      correo: ['correo@correo.com'],
+    });
+
+  }
+
+  guardar() {
+    console.log(this.forma);
+  }
+
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 200. Reactivo: Validaciones síncronas
+
+Las validaciones síncronas son aquellas que se pueden hacer inmediatamente y que no requieren interacción con servicios web externos.
+
+Como indicamos en la sección anterior, las validaciones síncronas se pasan como segundo parámetro de valor del campo de formulario, el primero era el "name", Angular ya trae los métodos de validación, constando de la propiedad Validators seguida del método de validación a usar, a continuación vemos el ejemplo de validaciones de requerido, longitud mínima y el patrón para el correo:
+
+```
+crearFormulario() {
+
+  this.forma = this.fb.group({
+    nombre: ['', [Validators.required, Validators.minLength(5)]],
+    apellidos: ['', [Validators.required, Validators.minLength(5)]],
+    correo: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+  });
+
+}
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
