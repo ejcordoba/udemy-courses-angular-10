@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-reactive',
@@ -12,9 +12,29 @@ export class ReactiveComponent implements OnInit {
 
   constructor( private fb: FormBuilder ) {
     this.crearFormulario();
+    this.cargarDataAlFormulario();
   }
 
   ngOnInit(): void {
+  }
+
+  get pasatiempos() {
+    return this.forma.get('pasatiempos') as FormArray;
+  }
+  get nombreNoValido() {
+    return this.forma.get('nombre').invalid && this.forma.get('nombre').touched;
+  }
+  get apellidosNoValido() {
+    return this.forma.get('apellidos').invalid && this.forma.get('apellidos').touched;
+  }
+  get correoNoValido() {
+    return this.forma.get('correo').invalid && this.forma.get('correo').touched;
+  }
+  get distritoNoValido() {
+    return this.forma.get('direccion.distrito').invalid && this.forma.get('direccion.distrito').touched;
+  }
+  get ciudadNoValido() {
+    return this.forma.get('direccion.ciudad').invalid && this.forma.get('direccion.ciudad').touched;
   }
 
   crearFormulario() {
@@ -23,12 +43,49 @@ export class ReactiveComponent implements OnInit {
       nombre: ['', [Validators.required, Validators.minLength(5)]],
       apellidos: ['', [Validators.required, Validators.minLength(5)]],
       correo: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      direccion: this.fb.group({
+        distrito: ['', Validators.required ],
+        ciudad: ['', Validators.required ],
+      }),
+      pasatiempos: this.fb.array([
+        [],[],[],[],[]
+      ])
     });
 
   }
 
+  cargarDataAlFormulario() {
+    this.forma.reset({
+      nombre: 'Fernando',
+      apellidos: 'Perez',
+      correo: 'asdf@adfg.com',
+      direccion: {
+        distrito: 'barcelona',
+        ciudad: 'barcelona'
+      }
+
+    });
+  }
+
   guardar() {
     console.log(this.forma);
+    if ( this.forma.invalid ) {
+      return Object.values( this.forma.controls ).forEach( control => {
+
+        if ( control instanceof FormGroup ) {
+          Object.values( control.controls ).forEach ( control =>
+            control.markAsTouched()
+          );
+        } else {
+          control.markAsTouched();
+        }
+      });
+    }
+    // Posteo de información (llamada al servicio para guardar en base de datos, etc)
+    // Reseteo del formulario
+    this.forma.reset({
+      nombre: 'Sin nombre'
+    });
   }
 
 }

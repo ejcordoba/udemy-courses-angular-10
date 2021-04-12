@@ -9072,21 +9072,231 @@ crearFormulario() {
 
 ## 201. Reactivo: Validaciones y HTML
 
+Vamos a añadir lo que teníamos en las lecciones de aproximación por template en cuanto a cambios de estilo y control de validaciones.
+
+Recordamos que aplicábamos dinámicamente la clase is-invalid en función de si era válido o no el campo, nosotros como queremos trabajar del lado del componente lo que podemos hacer es usar un getter (captador) que devolverá verdadero o falso, y cuya funcionalidad será acceder a las propiedades del objeto forma (recordemos que los atributos del objeto del formulario valid, invalid, etc, tenían valor booleano) y verificar si son verdaderas o falsas, tras eso podremos aplicar la clase dinámicamente teniendo como condición dicha función que devuelve verdadero o falso:
+
+```
+get nombreNoValido() {
+  return this.forma.get('nombre').invalid && this.forma.get('nombre').touched;
+}
+```
+Nótese que 'nombre' es el valor que aplicamos al input mediante formControlName
+
+Entonces desde el lado del html llamaremos a la función así:
+
+```
+<input class="form-control" type="text" placeholder="Nombre" formControlName="nombre" [class.is-invalid]="nombreNoValido">
+```
+
+De la misma manera controlaremos también que se muestre un mensaje de error cuando la validación sea errónea:
+
+```
+<small *ngIf="nombreNoValido" class="text-danger">Ingrese 5 caracteres</small>
+```
+
+Para terminar la lección dejaremos también hecha la validación al pulsar el botón de guardar, como lo teníamos en la aproximación por template. Con la diferencia de que aqui 'forma' es un objeto de tipo "FormGroup" y en template era una referencia local y, por tanto, se lo teniamos que pasar como argumento a la función guardar, aqui tendremos que usar this.forma para hacer alusión al objeto del ts:
+
+```
+guardar() {
+  console.log(this.forma);
+  if ( this.forma.invalid ) {
+    return Object.values( this.forma.controls ).forEach( control => {
+
+      control.markAsTouched();
+    });
+  }
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 202. Reactivo: Agrupaciones de los objetos - formGroupName
+
+Aquí veremos control de inputs agrupados, por ejemplo una dirección que es un sólo concepto pero aglutina varios inputs.
+
+En nuestro componente habíamos definido el formulario con formbuilder y el metodo group, pues bien, para eso tendremos que definir un campo que será otro group de formbuilder, y en el tendrá los distintos campos que queremos agrupar:
+
+```
+crearFormulario() {
+
+    this.forma = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(5)]],
+      apellidos: ['', [Validators.required, Validators.minLength(5)]],
+      correo: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      direccion: this.fb.group({
+        distrito: ['', Validators.required ],
+        ciudad: ['', Validators.required ],
+      })
+    });
+
+  }
+```
+
+Para referenciarlo en el html definiremos en el divider padre formGroupName en dirección para indicar que es un grupo de inputs, y luego como en los ejemplo anteriores podremos usar formControlName en cada uno de los elementos hijos.
+
+```
+<div class="form-group row" formGroupName="direccion">
+    <label class="col-2 col-form-label">Dirección</label>
+    <div class="form-row col">
+        <div class="col">
+            <input type="text" class="form-control" placeholder="Distrito" formControlName="distrito">
+        </div>
+        <div class="col">
+            <input type="text" class="form-control" placeholder="Ciudad" formControlName="ciudad">
+        </div>
+    </div>
+</div>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 203. Reactivo: Validación visual de los campos anidados
 
+Primero haremos los getter de propiedades de los inputs de distrito y ciudad, es un poco distinto al resto, porque al ser un input anidado debemos hacer referencia al objeto padre/hijo (direccion.distrito por ej):
+
+```
+get distritoNoValido() {
+  return this.forma.get('direccion.distrito').invalid && this.forma.get('direccion.distrito').touched;
+}
+get ciudadNoValido() {
+  return this.forma.get('direccion.ciudad').invalid && this.forma.get('direccion.ciudad').touched;
+}
+```
+
+Ahora podremos usar los getters para los condicionales de la clase dinámica:
+
+```
+<input type="text" class="form-control" placeholder="Distrito" formControlName="distrito" [class.is-invalid]="distritoNoValido">
+```
+
+Lo siguiente sería controlar aplicar la clase invalid si pulsamos en guardar y no estan válidos estos dos campos, actualmente esto no sucede porque en la función guardar está definido que se recorran los controles del formulario, pero estos dos nuevos son "sub-controles" dentro del mismo, así que tendremos que recorrerlos también, como el campo a verificar que contiene los dos inputs es un formgroup, diremos:
+
+```
+guardar() {
+    console.log(this.forma);
+    if ( this.forma.invalid ) {
+      return Object.values( this.forma.controls ).forEach( control => {
+
+        if ( control instanceof FormGroup ) {
+          Object.values( control.controls ).forEach ( control =>
+            control.markAsTouched()
+          );
+        } else {
+          control.markAsTouched();
+        }
+      });
+    }
+  }
+```
+
+En la condicional preguntamos si el control es una instancia de formgroup volveremos a recorrer todos los campos de ese formgroup
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 204. Reactivo: Reset y carga de la data inicial
 
+Supongamos que nuestro formulario reciba datos desde un servicio y que usemos dichos datos para rellenar los campos del formulario con valores por defecto.
+
+Para esto vamos a crear una nueva función al que llamaremos desde el constructor *después de llamar al método que carga el formulario*, cargarDataAlFormulario().
+
+En la función lo que haremos será llamar al método setValue para pasarle el objeto con los valores:
+
+```
+cargarDataAlFormulario() {
+    this.forma.setValue({
+      nombre: 'Fernando',
+      apellidos: 'Perez',
+      correo: 'asdf@adfg.com',
+      direccion: {
+        distrito: 'barcelona',
+        ciudad: 'barcelona'
+      }
+
+    });
+  }
+```
+
+Para resetear el formulario y dejar todos los campos vacíos sería tan sencillo como al final de la función guardar() llamar al método reset de forma:
+
+```
+this.forma.reset();
+```
+
+Pero quizás quisiéramos conservar algunos valores del formulario, como checkboxes o similar, entonces deberemos pasarle como argumento un objeto con el valor o valores a conservar:
+
+```
+this.forma.reset({
+      nombre: 'Sin nombre'
+    });
+```
+
+De hecho en el ejemplo donde usamos setValue debemos especificar todos los campos a los cuales queremos darle valores, si alguno no recibiera el valor daría error, así que podríamos usar el metodo reset en lugar de setValue para definir valores, de esta manera si faltase alguno no daría error y lo pondría a null:
+
+```
+cargarDataAlFormulario() {
+    this.forma.reset({
+      nombre: 'Fernando',
+      apellidos: 'Perez',
+      correo: 'asdf@adfg.com',
+      direccion: {
+        distrito: 'barcelona',
+        ciudad: 'barcelona'
+      }
+
+    });
+  }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 205. Reactivo: Arreglos de FormControl - FormArray
+
+Para definir un campo como un array de datos usaremos el metodo array de formbuilder, al cual le pasaremos tantos controles como queramos que tenga el array:
+
+```
+pasatiempos: this.fb.array([
+      [],[],[],[],[]
+    ])
+```
+
+En el html generaremos una tabla para renderizar los datos, necesitaremos que un elemento padre (por ejemplo el tbody) tenga la propiedad formArrayName="pasatiempos", para así indicar que los campos que replicaremos posteriormente serán los valores del array (elementos hijos), para ello definiremos en el componente un getter que nos permita recibir los datos del array, indicandole que sera de tipo FormArray y en el html llamaremos a la función getter para recorrer los datos con un bucle for.
+
+```
+get pasatiempos() {
+  return this.forma.get('pasatiempos') as FormArray;
+}
+```
+
+```
+<div class="row">
+        <div class="col">
+            <table class="table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Pasatiempo</th>
+                        <th>Borrar</th>
+                    </tr>
+                </thead>
+                <tbody formArrayName="pasatiempos">
+                    <tr *ngFor="let control of pasatiempos.controls; let i = index;">
+                        <td>{{ i + 1 }}</td>
+                        <td>
+                            <input class="form-control" type="text" [formControlName]="i">
+                        </td>
+                        <td><button class="btn btn-danger" type="button">Borrar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-primary mt-3 mb-5 btn-block">+Agregar</button>
+        </div>
+    </div>
+```
+
+Al darle un nombre con formControlName en el input, y definirlo entre corchetes, tendremos la manera de que pueda recibir datos y quedará identificado.
+
+Añadiremos también botones que usaremos en la siguiente lección para añadir y borrar campos, importante definirlos como type="button" para que no dispare el submit (por defecto se les entiende como submit)
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
