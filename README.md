@@ -9302,6 +9302,49 @@ Añadiremos también botones que usaremos en la siguiente lección para añadir 
 
 ## 206. Reactivo: Añadir y borrar FormControls de forma dinámica
 
+Para añadir form controls de forma dinámica vamos a definir una función en el componente que, haciendo uso del getter, haga push dentro del array recibido con el getter (pasatiempos) con un valor que nosotros definamos:
+
+```
+agregarPasatiempo() {
+    this.pasatiempos.push( this.fb.control('Nuevo elemento', Validators.required) );
+  }
+```
+
+Y en el html simplemente lo llamaremos con el evento click:
+
+```
+<button type="button" class="btn btn-primary mt-3 mb-5 btn-block" (click)="agregarPasatiempo()">+Agregar</button>
+```
+
+Para eliminar será similar solo que en lugar del método "push" usaremos el removeAt que nos permite eliminar una posición del array dado su índice, el cual pasaremos a través de la llamada a la función en el html:
+
+```
+borrarPasatiempo( i: number ) {
+  this.pasatiempos.removeAt(i);
+}
+```
+
+```
+<td><button class="btn btn-danger" type="button" (click)="borrarPasatiempo(i)">Borrar</button></td>
+```
+
+Si quisieramos cargar datos en los pasatiempos en el momento en el que llamamos a la función cargarDataAlFormulario que tenemos definida en el constructor, podríamos hacerlo creando un array de datos y luego aplicando un foreach en el array, que vaya haciendo push en el array por cada posición, llamando al form builder, creando el control y dándole dicho valor en esa posición:
+
+```
+cargarDataAlFormulario() {
+  this.forma.reset({
+    nombre: 'Fernando',
+    apellidos: 'Perez',
+    correo: 'asdf@adfg.com',
+    direccion: {
+      distrito: 'barcelona',
+      ciudad: 'barcelona'
+    }
+  });
+  ['comer','dormir'].forEach( valor => this.pasatiempos.push( this.fb.control(valor)));
+}
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 207. Reactivo: Validaciones personalizadas
