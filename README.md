@@ -9607,6 +9607,45 @@ Para terminar perfilaremos algo, pues cada vez que se carga el formulario se dis
 
 ## 210. Reactivo: Detectar cambios en los valores, estado del formulario o controles
 
+Nosotros tenemos un método para crear el formulario (crearFormulario()), por tanto podemos crear otro método que, después de la creación de este, active listeners, observadores, para verificar cambios en el mismo o sus atributos. Podemos llamar a este método en el constructor tras la creación del formulario y su carga de valores por defecto:
+
+```
+constructor( private fb: FormBuilder,
+              private validadores: ValidadoresService ) {
+  this.crearFormulario();
+  this.cargarDataAlFormulario();
+  this.crearListeners();
+}
+```
+
+En el método podríamos, por ejemplo, usar una propiedad del objeto tipo formulario (en nuestro caso 'forma') que es un observable llamado valueChanges, al cual nos podremos subscribir y realizar alguna función cuando se realice algún tipo de cambio en el formulario, en nuestro ejemplo simplemente mostraremos el valor del formulario por consola:
+
+```
+crearListeners() {
+    this.forma.valueChanges.subscribe( valor => {
+      console.log(valor);
+    })
+  }
+```
+
+Igualmente podemos verificar el estado del formulario (válido, inválido, pendiente...) con el observable statusChanges
+
+```
+this.forma.statusChanges.subscribe( status => {
+    console.log(status);
+  });
+```
+
+Para que no haya confusión al ver el resultado del console log del estado (aparece primero valid y luego un montón de pending), primero se ejecutan las tareas síncronas y posteriormente las asíncronas, de ahí el resultado que vemos.
+
+Si nos interesase un campo en específico podríamos hacer lo mismo, pero de esta manera:
+
+```
+this.forma.get('nombre').valueChanges.subscribe( nombre => {
+    console.log(nombre);
+  });
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## Cuestionario 4: Examen teórico sobre formularios
