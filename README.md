@@ -9512,6 +9512,97 @@ Como dijimos, debe devolver una función, esta función recibirá un FormGroup (
 
 ## 209. Reactivo: Validadores asíncronos
 
+Para la validación asíncrona vamos a crear un nuevo campo en el formulario:
+
+```
+<div class="form-group row">
+        <label class="col-2 col-form-label">Usuario</label>
+        <div class="col">
+
+            <input class="form-control" type="text" placeholder="Usuario" formControlName="usuario" [class.is-invalid]="usuarioNoValido">
+            <small *ngIf="usuarioNoValido" class="text-danger">El nombre de usuario ya existe.</small>
+        </div>
+    </div>
+```
+```
+get usuarioNoValido() {
+    return this.forma.get('usuario').invalid && this.forma.get('usuario').touched;
+  }
+```
+
+Recordar que al definir los campos del FormGroup en el FormBuilder, entre corchetes se situan: [valor, validacion síncrona, validación asíncrona], por tanto:
+
+```
+crearFormulario() {
+
+    this.forma = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(5)]],
+      apellidos: ['', [Validators.required, Validators.minLength(5), this.validadores.noHerrera ]],
+      correo: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      usuario: ['', , this.validadores.existeUsuario ],
+      ......
+```
+
+Mientras que en las funciones de validaciones síncronas devolvíamos una función que tenía como propiedad un string y devolvía un booleano, en las asíncronas haremos la misma devolución, pero a través de una promesa que tendremos que definir. Por tanto la función devolverá un Promise o un Observable.
+
+Necesitaremos importar los observables de rxjs `import { Observable } from 'rxjs';`
+
+Vamos a definir también una interfaz para definir un tipo de dato que será el de la promesa y el observable, este tipo lo que definirá será el objeto que queremos devolver, al igual que en las validaciones síncronas de ejemplo anteriores, un objeto que tendrá un string como propiedad y que devolverá un booleano, quedando la definición de la interfaz así:
+
+```
+interface ErrorValidate {
+  [s:string]: boolean
+}
+```
+
+De hecho ahora podríamos actualizar la validación noHerrera que teníamos, por ejemplo, de esta manera:
+
+```
+noHerrera( control: FormControl ):  ErrorValidate  {
+
+    if ( control.value?.toLowerCase() === 'herrera') {
+      return {
+        noHerrera: true
+      };
+    }
+
+    return null;
+  }
+```
+
+Nuestro validador recibirá el control del formulario y lo que devolverá será el resultado de una nueva promesa, en la cual simularermos una petición http haciendo un timeout de 3500 (3 segundos y medio), en esta simulación de petición comprobaremos si el valor del control es igual a la cadena de ejemplo que queremos validar (el test es un supuesto usuario y verificar que no se está tratando de usar el mismo), en tal caso no se validará y el return (resolve, al ser una promesa) será crear una variable existe: true. En caso contrario será null.
+
+```
+existeUsuario( control: FormControl ): Promise<ErrorValidate> | Observable<ErrorValidate> {
+
+    return new Promise( (resolve, reject) => {
+
+      setTimeout(() => {
+        if ( control.value === 'strider' ) {
+          resolve({ existe: true })
+        } else {
+          resolve( null )
+        }
+      }, 3500);
+    })
+  }
+```
+
+Para terminar perfilaremos algo, pues cada vez que se carga el formulario se dispara la "petición http falseada", y no queremos eso, porque lo que nos interesa es que solo se dispare cuando introduzcamos datos en el input, para ello simplemente haremos una comprobación de si no tiene valor el input devuelva null para que no entre en la validación, mejor dicho, devolverá un resolve de promesa (definido y creado sobre la marcha) cuyo valor será null
+
+```
+ existeUsuario( control: FormControl ): Promise<ErrorValidate> | Observable<ErrorValidate> {
+
+    if ( !control.value ) {
+      return Promise.resolve(null)
+    }
+
+    return new Promise( (resolve, reject) => {
+
+      setTimeout(() => {
+        ......
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 210. Reactivo: Detectar cambios en los valores, estado del formulario o controles

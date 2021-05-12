@@ -32,6 +32,9 @@ export class ReactiveComponent implements OnInit {
   get correoNoValido() {
     return this.forma.get('correo').invalid && this.forma.get('correo').touched;
   }
+  get usuarioNoValido() {
+    return this.forma.get('usuario').invalid && this.forma.get('usuario').touched;
+  }
   get distritoNoValido() {
     return this.forma.get('direccion.distrito').invalid && this.forma.get('direccion.distrito').touched;
   }
@@ -56,6 +59,7 @@ export class ReactiveComponent implements OnInit {
       nombre: ['', [Validators.required, Validators.minLength(5)]],
       apellidos: ['', [Validators.required, Validators.minLength(5), this.validadores.noHerrera ]],
       correo: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      usuario: ['', , this.validadores.existeUsuario ],
       pass1: ['', Validators.required ],
       pass2: ['', Validators.required ],
       direccion: this.fb.group({
@@ -74,6 +78,8 @@ export class ReactiveComponent implements OnInit {
       nombre: 'Fernando',
       apellidos: 'Perez',
       correo: 'asdf@adfg.com',
+      pass1: '123',
+      pass2: '123',
       direccion: {
         distrito: 'barcelona',
         ciudad: 'barcelona'
