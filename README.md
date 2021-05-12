@@ -9411,6 +9411,103 @@ if ( control.value?.toLowerCase() === 'herrera') {
 
 ## 208. Reactivo: Validar que el password2 sea igual al password1
 
+Vamos a crear un par de inputs nuevos para practicar otra validación, las añadiremos debajo del correo, en reactive.component.html
+
+```
+ <div class="form-group row">
+        <label class="col-2 col-form-label">Contraseña</label>
+        <div class="col">
+
+            <input class="form-control" type="text" placeholder="Contraseña" formControlName="pass1">
+
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-2 col-form-label">Repita Contraseña</label>
+        <div class="col">
+
+            <input class="form-control" type="text" placeholder="Repita Contraseña" formControlName="pass2">
+
+        </div>
+    </div>
+```
+
+Añádiremos los nuevos campos a nuestra creación del formulario (crearFormulario()):
+
+```
+  crearFormulario() {
+
+    this.forma = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(5)]],
+      apellidos: ['', [Validators.required, Validators.minLength(5), this.validadores.noHerrera ]],
+      correo: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      pass1: ['', Validators.required ],
+      pass2: ['', Validators.required ],
+      ...
+```
+
+A continuación definiremos getters para manejar la información que recibimos en el input, al menos sabremos si este campo tiene información. Tras esto podremos usarlo para añadir la clase 'invalid' dinámicamente:
+
+```
+get pass1NoValido() {
+    return this.forma.get('pass1').invalid && this.forma.get('pass1').touched;
+  }
+...................
+<input class="form-control" type="text" placeholder="Contraseña" formControlName="pass1" [class.is-invalid]="pass1NoValido">
+```
+
+Para el segundo campo, crearemos un getters que lo que hará será recibir los valores de pass1 y pass2, y con un operador ternario devolveremos true si sus valores son iguales y en caso contrario devolveremos false:
+
+```
+get pass2NoValido() {
+    const pass1 = this.forma.get('pass1').value;
+    const pass2 = this.forma.get('pass2').value;
+
+    return ( pass1 === pass2 ) ? false : true;
+
+  }
+```
+
+Como en el anterior caso, llamaremos a la función para añadir dinámicamente la clase CSS invalid:
+
+```
+<input class="form-control" type="text" placeholder="Repita Contraseña" formControlName="pass2" [class.is-invalid]="pass2NoValido">
+```
+
+Para que no se vean los caracteres de la contraseña tendremos que definir el type del input como "password"
+
+Ahora tendremos que definir estos casos como parte de la validación del formulario, puesto que hasta ahora sólo es visual.
+
+A priori cabría pensar que la validación la podríamos definir cuando se crea el form builder, pero pudiera ser que la comparación entre campos se intentase hacer contra campos que aun no han sido creados, o que se encuentran en otro lugar, etc, entonces tendremos que hacer la validación a nivel de formulario.
+
+Así que a continuación del objeto que tenemos con la definición de los campos (y algunas de sus validaciones 'menores') añadiremos una coma y otro objeto en el cual añadiremos todos los validadores que queramos a nivel de formulario, en nuestro caso sólo incluiremos uno.
+
+Dentro de ese objeto tenemos varias propiedades disponibles interesantes, una de ellas es 'asyncValidators' (que veremos en la siguiente lección) que nos permite hacer validaciones asíncronas, tambien tenemos 'validators' que nos permitirá las validaciones síncronas. Podemos incluir, como hemos dicho, tantos como queramos, definiéndolos entre corchetes y separándolos con comas (si vamos a definir solamente uno esto no es necesario).
+
+Vamos a definir la validación como una llamada a una función passwordsIguales, a la cual le pasaremos como argumentos los dos form controls del form group, pass1 y pass2. Esta función nos deberá devolver otra función que nos sirva para validar el formulario.  Declararemos la función validadora en nuestro servicio de validadores creado en las lecciones anteriores. Así pues declaramos en validadores.service.ts:
+
+```
+passwordsIguales( pass1Value: string , pass2Value: string ) {
+
+  return ( formGroup: FormGroup) => {
+
+    const pass1Control = formGroup.controls[pass1Value];
+    const pass2Control = formGroup.controls[pass2Value];
+
+    if ( pass1Control.value === pass2Control.value ) {
+      pass2Control.setErrors(null);
+    } else {
+      pass2Control.setErrors( {noEsIgual: true} );
+    }
+  }
+}
+
+```
+
+Como dijimos, debe devolver una función, esta función recibirá un FormGroup (todo el formulario, al completo, todos sus campos, validaciones síncronas, etc), y lo que gestionará será la recepcion de los controles del formulario, una vez recibidos comprobaremos si sus valores son iguales, y usaremos el método setErrors para que tenga valor 'null' (validado correctamente) o en caso contrario se le añada un error que será un booleano con valor true.
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 209. Reactivo: Validadores asíncronos
