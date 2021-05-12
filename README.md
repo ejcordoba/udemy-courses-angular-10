@@ -9349,6 +9349,64 @@ cargarDataAlFormulario() {
 
 ## 207. Reactivo: Validaciones personalizadas
 
+Si queremos utilizar validaciones personalizadas lo ideal es tenerlas centralizadas, de esta manera en un futuro podríamos reutilizarlas en otros componentes, podría ser un clase, podría ser un archivo de typescript, pero nosotros vamos a crear un servicio para ello:
+
+```
+ng g s services/validadores --skipTests
+```
+
+Vamos al archivo del servicio creado validadores.service.ts, en él lo que vamos a crear es una colección de validadores, los validadores son funciones que devuelven un objeto.
+
+Vamos a crear un método que usaremos para validar apellidos, para que no se pueda introducir ningún apellido que no sea el que especifiquemos nosotros.
+
+Como argumento recibiremos el control, que será de tipo form control (nos aseguraremos de que lo importe de Angular/Forms), vamos a especificar el tipo de salida como un objeto, este objeto tendrá como atributo un string (s) y devolverá un booleano.
+
+Una de las ventajas de crear un servicio para validadores es que podríamos, por ejemplo, inyectar en el constructor otros servicios, pudiendo por ejemplo hacer validaciones asíncronas, consumir una base de datos, etc.
+
+```
+import { Injectable } from '@angular/core';
+import { FormControl } from '@angular/forms';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ValidadoresService {
+
+  constructor() { }
+
+  noHerrera( control: FormControl ): { [s:string]: boolean } {
+
+    if ( control.value.ToLowerCase() === 'herrera') {
+      return {
+        noHerrera: true
+      }
+    }
+
+    return null;
+  }
+}
+```
+
+En el código vemos que no dejará que se introduzca ninguna cadena de caracteres que sea 'herrera'. Guardamos y vamos al reactive.component.ts para inyectarlo:
+
+```
+import { ValidadoresService } from 'src/app/services/validadores.service';
+constructor( private fb: FormBuilder, private validadores: ValidadoresService ) {
+```
+
+Para usarlo lo llamaremos cuando creamos el formulario y le aplicamos las validaciones:
+
+```
+apellidos: ['', [Validators.required, Validators.minLength(5), this.validadores.noHerrera ]],
+```
+
+Nótese que no ejecutamos la función tipo noHerrera(), sino simplemente le pasamos la referencia.
+
+Si pulsamos guardar habiendo escrito en el input de apellido una cadena que incluya un número nos dará un error, pues tratará de hacer la conversión con toLowerCase, para evitar esto le pondremos un condicional al value en el valor que recibimos en el validador del servicio:
+
+```
+if ( control.value?.toLowerCase() === 'herrera') {
+```
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 208. Reactivo: Validar que el password2 sea igual al password1
