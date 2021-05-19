@@ -9655,3 +9655,398 @@ this.forma.get('nombre').valueChanges.subscribe( nombre => {
 ## 211. Código fuente de los formularios
 
 [Volver al Índice](#%C3%ADndice-del-curso)
+
+# Sección 12: Aplicación #6: Uso del HTTP - CRUD - Firebase
+
+## 212. Introducción a la sección
+
+Haremos un CRUD (Create Read Update Delete) usando la API Restful de Firebase.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 213. ¿Qué aprenderemos en esta sección?
+
+Esto es lo que veremos a continuación:
+
+1. Uso del modulo HTTP.
+2. Utilizaremos los servicios restful de Firebase
+3. POST.
+4. GET.
+5. DELETE.
+6. PUT.
+7. Configuraciones en la consola de Firebase.
+8. Entre otras cosas útiles.
+
+Al final de la sección tenemos un examen teórico.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 214. Demostración de lo que lograremos al finalizar la sección
+
+Ver vídeo mostrando la demo del resultado de la sección.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 215. Inicio del proyecto - CRUD - Firebase
+
+Crear el proyecto con Angular CLI, sin crear el angular routing y usando CSS
+
+```
+ng new heroesApp
+```
+
+Para los estilos usaremos bootstrap y fontawesome
+
+```
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+```
+
+Para las rutas vamos a crear nuestro propio módulo de rutas, para ello:
+
+```
+ng g m appRouting --flat //--flat hace que se cree el archivo dentro del directorio app
+```
+
+Abrimos app-routing.module.ts y quitaremos el CommonModule (incluye los ng-if, ng-for, etc), así como las declaraciones. Aquí construiremos las rutas a nuestras páginas, que serán dos, y vamos a crear a continuación con el Angular CLI
+
+```
+ng g c pages/heroes
+ng g c pages/heroe
+```
+
+Editaremos manualmente nuestro archivo de rutas app-routing.module.ts para definir las rutas a nuestras dos páginas, una de ellas tendrá que recibir un id como parámetro (o será redireccionado al "home" (en nuestro caso 'heroes')), definiremos también los imports y exports.
+
+```
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { HeroesComponent } from './pages/heroes/heroes.component';
+import { HeroeComponent } from './pages/heroe/heroe.component';
+
+const routes: Routes = [
+  { path: 'heroes', component: HeroesComponent },
+  { path: 'heroe/:id', component: HeroeComponent },
+  { path: '**', pathMatch: 'full', redirectTo: 'heroes'}
+];
+@NgModule({
+  imports: [
+    RouterModule.forRoot( routes )
+  ],
+  exports: [
+    RouterModule
+  ]
+})
+export class AppRoutingModule { }
+```
+
+Por último tendremos que indicar en app.module.ts que vamos a usar nuestro módulo de rutas "personalizado", incluyendolo en los imports, asegurándonos de que lo importa desde nuestro archivo:
+
+```
+import { AppRoutingModule } from './app-routing.module';
+...
+ imports: [
+    BrowserModule,
+    AppRoutingModule
+  ],
+```
+
+Para finalizar afinaremos los estilos copiando animaciones de animate.css (visto en google) y aplicandolos al body, crearemos el archivo css en assets/css/animate.css
+
+```
+<link rel="stylesheet" href="./assets/css/animate.css">
+</head>
+
+<body class="container animate__fadeIn animate__animated animate__faster">
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 216. Diseño de la página de héroes
+
+Maquetaremos la página de héroe, las clases de bootstrap y fontawesome, crearemos una tabla donde se gestionarán los datos del CRUD, y un par de avisos para cuando no haya registros y otro para cuando se esté cargando la información, también dejaremos definido el enlace a la página de héroe en el botón Agregar:
+
+```
+<h1>Listado de Héroes</h1>
+<hr>
+<div class="row">
+    <div class="col text-end">
+        <button routerLink="/heroe/nuevo" class="btn btn-primary">
+            <i class="fa fa-plus"></i>Agregar
+        </button>
+    </div>
+</div>
+
+<table class="table mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Poder</th>
+            <th scope="col">Vivo</th>
+            <th scope="col">Tools</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+            <td>@mdo</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="alert alert-warning text-center mt-3">
+    <h4 class="alert-heading">No hay registros</h4>
+    <p>
+        <i class="fa fa-exclamation fa-2x"></i>
+    </p>
+</div>
+
+<div class="alert alert-info text-center mt-3">
+    <h4 class="alert-heading">Cargando </h4>
+    <p>
+        <i class="fa fa-sync-alt fa-spin fa-2x"></i>
+    </p>
+    <p class="mb-0">
+        Espere por favor
+    </p>
+</div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 217. Diseño de la página de héroe
+
+Maquetaremos la página del héroe donde introduciremos los datos, haremos un botón de navegación para volver a la página de listado de héroes principal, e introduciremos los distintos campos que queremos manejar, el ID de Firebase que será de sólo lectura, un nombre obligatorio, un poder opcional y seleccionar si está vivo o muerto el héroe (un botón que cambiará cada vez que hagamos click en él), también un botón de guardar que será el que haga el submit.
+
+```
+<h1>Héroe <small>Nombre del Héroe</small></h1>
+<hr>
+<div class="row text-end">
+    <div class="col">
+        <button class="btn btn-danger" routerLink="/heroes">
+            <i class="fa fa-arrow-left"></i>Regresar
+        </button>
+    </div>
+</div>
+<div class="row animate__fadeIn animate__animated animate__faster">
+    <div class="col">
+        <form action="">
+            <div class="form-group">
+                <label>Firebase ID</label>
+                <input type="text" class="form-control" placeholder="Firebase ID" disabled="disabled">
+                <small class="form-text text-muted">Este campo es autogenerado</small>
+            </div>
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" class="form-control" placeholder="Nombre del héroe" required>
+            </div>
+            <div class="form-group">
+                <label>Poder</label>
+                <input type="text" class="form-control" placeholder="Poder del héroe">
+            </div>
+            <div class="form-group">
+                <label>Estado</label>
+                <br>
+                <button class="btn btn-outline-success w-50" type="button">
+                    <i class="fa fa-smile-wink"></i>Vivo
+                </button>
+                <button class="btn btn-outline-danger w-50" type="button">
+                    <i class="fa fa-dizzy"></i>Muerto
+                </button>
+            </div>
+            <hr>
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary w-25">
+                    <i class="fa fa-save"></i>Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 218. Modelo para manejar Héroes y formulario de edición
+
+Para manejar formularios lo ideal es trabajar con modelos, estos nos permiten manipular información en formato JSON, por ejemplo, pero lo veremos con más detalle a continuación.
+
+Vamos a crear un directorio "models" dentro de app, y en él un nuevo archivo heroe.model.ts.
+
+Tendremos que definir una clase con la notación export para que pueda ser usado en otros archivos, lo notaremos con el sufijo Model por convención para saber que estamos haciendo referencia a un modelo. Nuestro modelo de héroe tendrá las propiedades de id, nombre, poder (strings) y vivo (booleano).
+
+En el constructor inicializaremos la propiedad vivo.
+
+```
+export class HeroeModel {
+    id: string;
+    nombre: string;
+    poder: string;
+    vivo: boolean;
+
+    constructor() {
+        this.vivo = true;
+    }
+}
+```
+
+Ahora en nuestro heroe.component.ts podemos crear una propiedad que sea una nueva instancia de nuestro modelo.
+
+```
+import { HeroeModel } from '../../models/heroe.model';
+...
+export class HeroeComponent implements OnInit {
+
+  heroe = new HeroeModel();
+
+```
+
+Para poder empezar a manejar información del modelo en nuestro formulario necesitamos poder hacer referencias, como ya sabemos, entonces tendremos que dar esta posibilidad importando en nuestro app.module.ts el FormsModule, posteriormente bajaremos y levantaremos la aplicación para que se aplique el cambio:
+
+```
+import { FormsModule } from '@angular/forms';
+...
+imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule
+  ],
+```
+
+Ahora en nuestro formulario HTML ya podemos hacer una referencia local a ngForm y definir que cuando se haga submit se dispare una función para guardar el formulario. `<form #f="ngForm" (ngSubmit)="guardar(f)">` 
+
+Declararemos también la función guardar en el archivo de typescript, de momento solo mostrará por consola los valores del objeto de modelo y del formulario:
+
+```
+guardar( form: NgForm ) {
+    console.log(form);
+    console.log(this.heroe);
+  }
+```
+
+Ahora para referenciar los campos del formulario al objeto usaremos [(ngModel)] y 'name' en cada control de formulario, `<input type="text" class="form-control" placeholder="Firebase ID" disabled="disabled" [(ngModel)]="heroe.id" name="id">`
+
+En el caso del valor vivo haremos un ngIf para que tome valor true o false alternando el mostrar un boton u otro y el valor booleano asociado al campo:
+
+```
+<button *ngIf="heroe.vivo" (click)="heroe.vivo=false" class="btn btn-outline-success w-50" type="button">
+    <i class="fa fa-smile-wink"></i>Vivo
+</button>
+<button *ngIf="!heroe.vivo" (click)="heroe.vivo=true" class="btn btn-outline-danger w-50" type="button">
+    <i class="fa fa-dizzy"></i>Muerto
+</button>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 219. Configurando Firebase como backend REST
+
+Usaremos el proyecto que ya teníamos en Firebase (login-app) para ir a la sección Realtime Database y crear una nueva base de datos.
+
+Seleccionaremos "Comenzar en modo de prueba".
+
+Esto hará que si vamos a la pestaña "Reglas" podamos ver los permisos de lectura y escritura habilitados para todo el mundo, pero con una caducidad:
+
+```
+{
+  "rules": {
+    ".read": "now < 1623448800000",  // 2021-6-12
+    ".write": "now < 1623448800000",  // 2021-6-12
+  }
+}
+```
+
+En la pestaña Datos veremos algo así como el nombre de nuestro proyecto con un hash, si pulsamos en el símbolo + nos añadirá un registro hijo, este será la colección de nuestros objetos (colección de héroes),  así que de nombre le pondremos 'heroes' y pulsaremos el + de nuevo, el siguiente campo será el que definiremos como el ID de héroe, le podemos dar un valor tipo ID que queramos para ver la prueba y tocamos + de nuevo, creará otro hijo, que este ya sería la primera propiedad del objeto, el nombre, añadimos un nombre y pulsamos + en el padre (el ID) para añadir otra propiedad, el poder. Finalizamos pulsando Agregar.
+
+```
+login-app-84410-default-rtdb
+  heroes
+    ABC11341234
+      nombre: "IronMan"
+      poder: "Dinero"
+```
+
+Si hacemos click en "heroes" veremos el path que se genera, tipo "https://login-app-84410-default-rtdb.europe-west1.firebasedatabase.app/heroes"
+
+Si le ponemos .json al final podremos ver el objeto. Como cuando haciamos los endpoints de Spotify y similar.
+
+Posteriormente tendremos que recibir y transformar esta información para que sea manejada en nuestros objetos y puedan ser manipulados con nuestro CRUD.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 220. HTTP - POST - Creando un nuevo registro en Firebase
+
+Como la información de nuestra base de datos va a ser manejada en las dos páginas, la de listado de héroes y la propia de cada héroe, lo ideal es tener un servicio para tener todo centralizado, así que crearemos un servicio
+
+```
+>ng g s services/heroes
+```
+
+Como nuestro servicio se va a encargar de gestionar peticiones HTTP, vamos a necesitar importar el módulo para ello en nuestro app.module.ts:
+
+```
+import { HttpClientModule } from '@angular/common/http';
+...
+imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule
+  ],
+```
+
+Yendo a nuestro recién creado heroes.service.ts inyectaremos en el constructor el servicio del HTTP.
+
+Postieriormente crearemos nuestro primer método para hacer inserción en la base de datos, crearHeroe(), que recibirá un objeto completo de tipo HeroeModel (nos aseguramos de que queda importado correctamente en el servicio), nos devolverá el resultado de hacer el post al endpoint de la base de datos de firebase.
+
+Vamos a crear una constante también para almacenar la url de base y así no tener que reescribirla cada vez que vayamos a llamar al endpoint:
+
+```
+  private url = 'https://login-app-84410-default-rtdb.europe-west1.firebasedatabase.app';
+```
+
+Para confeccionar la url en el metodo post usaremos interpolación de strings y agregaremos la url, seguido de barra y el objeto en el cual yo necesito hacer la inserción, y para decirle a firebase que use su API tengo que terminarla en .json. Como segundo argumento en el método post necesitamos enviar el body, que será los datos a enviar, en nuestro caso será el 'heroe' de tipo 'HeroeModel'.
+
+Cuando hacemos un posteo en Firebase la respuesta (si el posteo se hizo correctamente) será el ID único que genera
+
+```
+crearHeroe( heroe: HeroeModel ) {
+  return this.http.post(`${this.url}/heroes.json`, heroe );
+}
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 221. HTTP - PUT - Actualizar el registro
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 222. Información del estado de las peticiones
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 223. HTTP - GET - Obtener un listado de todos los héroes
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 224. HTTP - GET - Obtener un nodo específico
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 225. HTTP - DELETE - Para eliminar registros
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 226. Maquillaje para nuestra pantalla de héroes
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 227. Código fuente de la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+
+
