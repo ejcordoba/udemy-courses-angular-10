@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HeroeModel } from '../models/heroe.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,13 @@ export class HeroesService {
 
   crearHeroe( heroe: HeroeModel ) {
 
-    return this.http.post(`${this.url}/heroes.json`, heroe );
+    return this.http.post(`${this.url}/heroes.json`, heroe ) //el metodo post requiere, al menos, la url y el cuerpo
+      .pipe(
+        map( (resp: any ) => {
+          heroe.id = resp.name;
+          return heroe;
+        })
+      );
 
   }
 }

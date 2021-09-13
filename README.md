@@ -10018,6 +10018,58 @@ crearHeroe( heroe: HeroeModel ) {
 }
 ```
 
+Para ponerlo en práctica vamos a llamar al servicio en el heroe.component.ts, inyectando una instancia del servicio en el constructor del componente (importando la librería correspondiente que acabamos de crear), y llamando al método crearHeroe en la función guardar del componente. El método requiere el objeto de tipo héroe que ya habíamos creado anteriormente con HeroeModel(). Para que la petición se dispare tenemos que llamar a .suscribe, que nos devolverá una respuesta, la cual visualizaremos por consola.
+
+```
+export class HeroeComponent implements OnInit {
+
+  heroe = new HeroeModel();
+
+  constructor( private heroesService: HeroesService ) { }
+
+  ngOnInit(): void {
+  }
+
+  guardar( form: NgForm ) {
+
+    if ( form.invalid ){
+      console.log('Formulario no válido');
+      return;
+    }
+    // console.log(form);
+    // console.log(this.heroe);
+    this.heroesService.crearHeroe( this.heroe )
+      .subscribe( resp => {
+        console.log(resp);
+      });
+
+  }
+}
+```
+
+Ahora pulsando el botón de guardar del formulario se hace la inserción en la base de datos, pero pueden crearse duplicados si hacemos varias veces click en el botón guardar.
+
+En el servicio sabemos que cuando llamemos al método crearHeroe nos va a devolver el id del héroe (a través del suscribe), entonces podemos utilizar el operador map para transformar esa respuesta del observable. Necesitaremos pues importar los operadores de rxjs:
+
+`import { map } from 'rxjs/operators';`
+
+Una vez importado podemos hacer una llamada al método pipe de los observables cuando vayamos a hacer el post, dentro del pipe podemos poner nuestros operadores, en este caso vamos a usar map, que recibe la respuesta de la petición post. La respuesta puede ser cualquier tipo de objeto, en nuestro caso como vimos antes en el console log que se mostraba al hacer click en guardar nos devuelve 'name' que era el id del objeto o nombre del objeto. Guardaremos esto en una variable "id" que usaremos para gestionar el objeto, de otro modo solo recibiremos los atributos del objeto sin referencia.
+
+```
+crearHeroe( heroe: HeroeModel ) {
+
+    return this.http.post(`${this.url}/heroes.json`, heroe ) //el metodo post requiere, al menos, la url y el cuerpo
+      .pipe(
+        map( (resp: any ) => {
+          heroe.id = resp.name;
+          return heroe;
+        })
+      );
+
+  }
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 221. HTTP - PUT - Actualizar el registro
@@ -10047,6 +10099,3 @@ crearHeroe( heroe: HeroeModel ) {
 ## 227. Código fuente de la sección
 
 [Volver al Índice](#%C3%ADndice-del-curso)
-test
-
-
