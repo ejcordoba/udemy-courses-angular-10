@@ -10047,6 +10047,6 @@ crearHeroe( heroe: HeroeModel ) {
 ## 227. Código fuente de la sección
 
 [Volver al Índice](#%C3%ADndice-del-curso)
-
+test
 
 
