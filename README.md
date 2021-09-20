@@ -10069,10 +10069,11 @@ crearHeroe( heroe: HeroeModel ) {
   }
 ```
 
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 221. HTTP - PUT - Actualizar el registro
+
+Para actualizar el registro es similar al método de creación que tenemos en el servicio, pero no tendremos que procesar la respuesta del observable, puesto que ya tendremos un id a actualizar.  
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
