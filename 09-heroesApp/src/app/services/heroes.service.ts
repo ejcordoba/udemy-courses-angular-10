@@ -14,7 +14,7 @@ export class HeroesService {
 
   crearHeroe( heroe: HeroeModel ) {
 
-    return this.http.post(`${this.url}/heroes.json`, heroe ) //el metodo post requiere, al menos, la url y el cuerpo
+    return this.http.post(`${this.url}/heroes.json`, heroe ) // el metodo post requiere, al menos, la url y el cuerpo
       .pipe(
         map( (resp: any ) => {
           heroe.id = resp.name;

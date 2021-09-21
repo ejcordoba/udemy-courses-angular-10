@@ -10148,6 +10148,73 @@ actualizarHeroe( heroe: HeroeModel ) {
 
 ## 222. Información del estado de las peticiones
 
+Vamos a informar al usuario de cuando se crea o actualiza la información, para ello vamos a usar SweetAlert2 que ya usamos anteriormente en la lección del Login.`npm install sweetalert2`. Posteriormente en heroe.component.ts tendremos que hacer la importación de la librería para poder usarla `import Swal from 'sweetalert2';`
+
+Al objeto SweetAlert lo llamaremos antes y después de que se resuelva la petición http. Recordar revisar la documentación de SweetAlert2 porque pudieran cambiar algunas cosas.Usaremos esto como prueba:
+
+```
+guardar( form: NgForm ) {
+
+    if ( form.invalid ) {
+      console.log('Formulario no válido');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Espere',
+      allowOutsideClick: false,
+      icon: 'info',
+      text: 'Guardando información'
+    });
+
+    Swal.showLoading();
+```
+
+Para no repetir código lo que haremos será guardar las peticiones http en una nueva variable de tipo "Observable" (Tendremos que importar la librería de rxjs para ello `import { Observable } from 'rxjs';`), y sobre esa petición haremos la observación de los response de las request:
+
+```
+guardar( form: NgForm ) {
+
+    if ( form.invalid ) {
+      console.log('Formulario no válido');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Espere',
+      allowOutsideClick: false,
+      icon: 'info',
+      text: 'Guardando información'
+    });
+
+    Swal.showLoading();
+
+    let peticion: Observable<any>;
+
+    if ( this.heroe.id ) {
+
+      peticion = this.heroesService.actualizarHeroe( this.heroe );
+
+    } else {
+
+      peticion = this.heroesService.crearHeroe( this.heroe );
+
+    }
+
+    peticion.subscribe( resp => {
+
+      Swal.fire({
+
+        title: this.heroe.nombre,
+        text: 'Se actualizó correctamente',
+        icon: 'success'
+
+      });
+    });
+
+  }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 223. HTTP - GET - Obtener un listado de todos los héroes
