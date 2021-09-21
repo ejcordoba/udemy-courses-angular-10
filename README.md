@@ -10073,7 +10073,76 @@ crearHeroe( heroe: HeroeModel ) {
 
 ## 221. HTTP - PUT - Actualizar el registro
 
-Para actualizar el registro es similar al método de creación que tenemos en el servicio, pero no tendremos que procesar la respuesta del observable, puesto que ya tendremos un id a actualizar.  
+Para actualizar el registro es similar al método de creación que tenemos en el servicio, pero no tendremos que procesar la respuesta del observable, puesto que ya tendremos un id a actualizar.
+
+Así que en heroes.service.ts vamos a crear un método para realizar la actualización. El método recibirá un objeto Heroe de tipo HeroeModel, lo que devolverá será el método http put (para actualizar el registro), teniendo por url el url de firebase/heroes/id-del-heroe, para saber qué registro debemos actualizar. (https://********-default-rtdb.europe-west1.firebasedatabase.app/heroes/-MjVsOc4l4JmuT8XSbSz)
+
+```
+actualizarHeroe( heroe: HeroeModel ) {
+
+    return this.http.put(`${this.url}/heroes/${ heroe.id }.json`, heroe );
+    
+  }
+```
+
+Ahora en heroe.component.ts vamos a determinar si lo que queremos es guardar o actualizar. Para ello haremos un simple "if" determinando si ya existe un ID para ese objeto, en función de eso se creará uno nuevo o se actualizará el existente.
+
+```
+  guardar( form: NgForm ) {
+
+    if ( form.invalid ){
+      console.log('Formulario no válido');
+      return;
+    }
+
+    if ( this.heroe.id ) {
+
+      this.heroesService.actualizarHeroe( this.heroe )
+        .subscribe( resp => {
+          console.log(resp);
+
+        });
+
+    } else {
+
+      this.heroesService.crearHeroe( this.heroe )
+        .subscribe( resp => {
+          console.log(resp);
+          this.heroe = resp;
+        });
+
+    }
+
+  }
+```
+
+Llegados a este punto surge un problema, y es que si tratamos de actualizar un registro ya creado añade el id como un atributo más del objeto, y queremos el id como referencia del objeto, no como un atributo en si mismo disponible y visible.
+
+Si usáramos para esto "delete" sobre heroe.id perderíamos el atributo de referencia, y esto no nos interesa. Así que crearemos una constante que contendrá todos los datos exceptuando el id, que lo mantendremos por referencia, pero no el dato en sí mismo.
+
+Vamos a usar la sintaxis de propagación (...) que nos permite crear la lista de atributos del objeto heroe para la constante, sin tener que definir todos los atributo/valor (en este caso son pocos atributos, pero se podría dar un objeto con muchos atributos)
+
+```
+const heroeTemp = {
+      ...heroe
+    };
+```
+
+Y ahora podemos eliminar el id del objeto temporal, conservando el id en su instancia original, y pasarle el objeto temporal para actualizar los datos:
+
+```
+actualizarHeroe( heroe: HeroeModel ) {
+
+    const heroeTemp = {
+      ...heroe
+    };
+
+    delete heroeTemp.id;
+
+    return this.http.put(`${this.url}/heroes/${ heroe.id }.json`, heroeTemp );
+
+  }
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
