@@ -35,4 +35,27 @@ export class HeroesService {
     return this.http.put(`${this.url}/heroes/${ heroe.id }.json`, heroeTemp );
 
   }
+
+  getHeroes() {
+    return this.http.get(`${ this.url }/heroes.json`)
+      .pipe(
+        map( this.crearArray)
+      );
+  }
+
+  private crearArray( heroesObj: object ) {
+
+    const heroes: HeroeModel[] = []; // Creamos un array vacio que será el que devolvamos con todos los heroes
+
+    if ( heroesObj === null ) { return []; } // Verificamos que si la respuesta http está vacía (no hay heroes en la BD) no de error
+
+    Object.keys( heroesObj ).forEach( key => { // Recorremos el objeto de la respuesta usando su referencia (key) y añadiendolos al array
+
+      const heroe: HeroeModel = heroesObj[key];
+      heroe.id = key;
+      heroes.push( heroe );
+    });
+
+    return heroes;
+  }
 }

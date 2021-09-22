@@ -10219,6 +10219,132 @@ guardar( form: NgForm ) {
 
 ## 223. HTTP - GET - Obtener un listado de todos los héroes
 
+Ahora vamos a trabajar con la página de listado de heroes, que la teníamos aún en template, para eso vamos a hacer petición GET a Firebase, por tanto crearemos un método para ello en nuestro servicio heroes.service.ts.
+
+```
+getHeroes() {
+    return this.http.get(`${ this.url }/heroes.json`);
+  }
+```
+
+Para usarlo vamos a ir a la página de listado de héroes, heroes.component.ts. Inyectaremos el servicio en el constructor, trayéndolo de la libreria correspondiente (la ruta donde se encuentra nuestro servicio personalizado) y haciendo llamada al método getHeroes en el ngOnInit y le añadiremos el método subscribe para poder escuchar las respuestas de solicitudes http.
+
+```
+import { Component, OnInit } from '@angular/core';
+import { HeroesService } from '../../services/heroes.service';
+
+@Component({
+  selector: 'app-heroes',
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.css']
+})
+export class HeroesComponent implements OnInit {
+
+  constructor( private heroesService: HeroesService ) { }
+
+  ngOnInit(): void {
+    this.heroesService.getHeroes()
+    .subscribe( resp => {
+      console.log( resp );
+    });
+  }
+}
+```
+
+Si observamos la consola veremos que la respuesta que recibe al hacer el get es un "object", esto es porque lo que recibe es un json, y si queremos trabajar con el (con ngFor etc) en el frontal no vamos a poder, por tanto tendremos que hacer un mapeado para poder pasar la información del json a array o colecciones con las que poder trabajar. Así que volvemos al método getHeroes de nuestro heroes.service.ts para aplicar el mapeado al método. Para pasarle la respuesta que necesita como argumento map, que a su vez es un argumento de pipe, vamos a crear un método que haga la lógica de crear el array que vamos a necesitar. Crearemos para ello una constante que será un array de tipo HeroeModel, y haremos una validación para que si no hay datos en la base de datos cree un array vacio y no de error de null. Para trabajar un con "object" usaremos los métodos que nos permiten manipular las key/value del objeto y así poder tenerlas en el array.
+
+```
+  getHeroes() {
+    return this.http.get(`${ this.url }/heroes.json`)
+      .pipe(
+        map( this.crearArray)
+      );
+  }
+
+  private crearArray( heroesObj: object ) {
+
+    const heroes: HeroeModel[] = []; // Creamos un array vacio que será el que devolvamos con todos los heroes
+
+    if ( heroesObj === null ) { return []; } // Verificamos que si la respuesta http está vacía (no hay heroes en la BD) no de error
+
+    Object.keys( heroesObj ).forEach( key => { // Recorremos el objeto de la respuesta usando su referencia (key) y añadiendolos al array
+
+      const heroe: HeroeModel = heroesObj[key];
+      heroe.id = key;
+      heroes.push( heroe );
+    });
+
+    return heroes;
+  }
+```
+
+Consejo: Para que el código quede más limpio en lugar de
+
+```
+getHeroes() {
+    return this.http.get(`${ this.url }/heroes.json`)
+      .pipe(
+        map( resp => this.crearArray( resp ))
+      );
+  }
+```
+
+Podemos usar
+
+```
+getHeroes() {
+    return this.http.get(`${ this.url }/heroes.json`)
+      .pipe(
+        map( this.crearArray)
+      );
+  }
+```
+
+Porque se asume que el primer argumento de map (que es la respuesta 'resp') va a ser el argumento que use la función 'this.crearArray'.
+
+Ya podemos usar los datos del servicio en el frontal, así que volvemos a heroes.component.ts para manipular los datos y mostrarlos. Simplemente crearemos un array heroes de tipo HeroeModel (asegurándonos de importar la librería) para almacenar ahí los datos que nos devuelve el método getHeroes que habíamos invocado en el ngOnInit.
+
+```
+import { HeroeModel } from 'src/app/models/heroe.model';
+...
+heroes: HeroeModel[] = [];
+```
+
+```
+ngOnInit(): void {
+    this.heroesService.getHeroes()
+    .subscribe( resp => this.heroes = resp );
+  }
+```
+
+Una vez tenemos esto podemos modificar la tabla html para renderizar los datos:
+
+```
+<table class="table mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Poder</th>
+            <th scope="col">Vivo</th>
+            <th scope="col">Tools</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let heroe of heroes; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ heroe.nombre }}</td>
+            <td>{{ heroe.poder }}</td>
+            <td>
+                <label *ngIf="heroe.vivo" class="badge bg-success">Vivo</label>
+                <label *ngIf="!heroe.vivo" class="badge bg-danger">Muerto</label>
+            </td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 224. HTTP - GET - Obtener un nodo específico
