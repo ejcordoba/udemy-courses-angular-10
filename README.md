@@ -10349,6 +10349,10 @@ Una vez tenemos esto podemos modificar la tabla html para renderizar los datos:
 
 ## 224. HTTP - GET - Obtener un nodo específico
 
+Vamos a trabajar en la edición del héroe, vamos a hacer que al igual que cuando vamos a agregar vaya a la edición de héroe, cuando hagamos click en un registro de un héroe nos lleve a esa pantalla con la información para que sea editada. En la url en lugar de heroe/nuevo será heroe/idDelHeroe
+
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 225. HTTP - DELETE - Para eliminar registros
