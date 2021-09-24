@@ -10458,10 +10458,111 @@ borrarHeroe( heroe: HeroeModel , i: number) {
 
 Lo siguiente será introducir un alert de verificación con SweetAlert2, para así prevenir eliminaciones indeseadas de registros. Algo bueno que tiene SweetAlert2 es que devuelve una promesa, por tanto con .then() podemos controlar si borrar el registro o no. Esto se controla porque el alert tiene un value y en función de ese value haremos la eliminación o no (el código que teníamos antes con el splice y borrarHeroe)
 
+```
+  borrarHeroe( heroe: HeroeModel , i: number) {
+
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: `Está seguro que desea borrar a ${ heroe.nombre }`,
+      icon: 'question',
+      showConfirmButton: true,
+      showCancelButton: true
+    }).then( resp => {
+
+      if ( resp.value ) {
+
+        this.heroesService.borrarHeroe( heroe.id ).subscribe();
+        this.heroes.splice(i, 1);
+
+      }
+    });
+
+  }
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 226. Maquillaje para nuestra pantalla de héroes
+
+Al comienzo de la sección, cuando maquetamos la página principal con el listado de héroes, dejamos preparadas un par de "cajas" o "banners" que indicaban si no había registros o si estos estaban en proceso de carga. Vamos a trabajar en su renderización.
+
+En primer lugar vamos a heroes.component.ts, donde necesitaré saber en que momento fue cargada la información para renderizar o no esa "caja". Para ello vamos a crear una nueva propiedad del componente llamada 'cargando', que será un booleano que usaremos de flag, de tal manera que cuando tenga valor 'true' se muestre esa caja de loading. `cargando = false`.
+
+La primera llamada a la propiedad va a ser en el ngOnInit antes de realizar la llamada al servicio que nos devuelve todos los héroes, ahí pasará a tener valor 'true'. Deberá volver a false inmediatamente después, cuando en el subscribe de getHeroes devuelve la respuesta.
+
+```
+export class HeroesComponent implements OnInit {
+
+  heroes: HeroeModel[] = [];
+  cargando = false;
+
+  constructor( private heroesService: HeroesService ) { }
+
+  ngOnInit() {
+    this.cargando = true;
+    this.heroesService.getHeroes()
+    .subscribe( resp => {
+      this.heroes = resp;
+      this.cargando = false;
+    });
+  }
+  ...
+  ```
+
+  Ahora podemos usar la propiedad cargando en el html para mediante ngIf, con la propiedad cargando y la longitud del objeto heroes controlar estas renderizaciones.
+
+  ```
+  <div *ngIf="cargando" class="alert alert-info text-center mt-3">
+    <h4 class="alert-heading">Cargando </h4>
+    <p>
+        <i class="fa fa-sync-alt fa-spin fa-2x"></i>
+    </p>
+    <p class="mb-0">
+        Espere por favor
+    </p>
+</div>
+  ```
+
+  Como tenemos poca información y la renderización se hace muy rápido como para testear el efecto, vamos a alterar en el servicio la recepción de datos para que se ralentice, sólo a efectos de testeo. En heroes.service.ts vamos a importar una librería de rxjs/operators llamada 'delay' `import { map , delay } from 'rxjs/operators';` que nos permite crear una ralentización de recepción de datos (en milisegundos)
+
+  ```
+  getHeroes() {
+    return this.http.get(`${ this.url }/heroes.json`)
+      .pipe(
+        map( this.crearArray),
+        delay(3000)
+      );
+  }
+  ```
+
+  Podemos perfilar añadiendo a los elementos además del condicional ngIf algunas clases css para hacer fundidos animados, y que se muestre y desaparezca la información de manera más amable visualmente.
+
+  ```
+  <table *ngIf="!cargando" class="table mt-3 animate__fadeIn animate__animated animate__faster">
+  ```
+
+  Para 'no hay registros' y, de paso, actualizar la condición de la tabla de héroes:
+
+  ```
+<table *ngIf="!cargando && heroes.length > 0" class="table mt-3 animate__fadeIn animate__animated animate__faster">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Poder</th>
+            <th scope="col">Vivo</th>
+            <th scope="col">Tools</th>
+        </tr>
+
+        ...
+
+<div *ngIf="!cargando && heroes.length === 0" class="alert alert-warning text-center mt-3 animate__fadeIn animate__animated animate__faster">
+    <h4 class="alert-heading">No hay registros</h4>
+    <p>
+        <i class="fa fa-exclamation fa-2x"></i>
+    </p>
+</div>
+  ```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
