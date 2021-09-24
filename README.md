@@ -10570,13 +10570,29 @@ export class HeroesComponent implements OnInit {
 
 ## 228. Introducción a la sección
 
+Haremos un chat en tiempo real usando Firebase, usando AngularFire2 que es una libreria oficial para usar con Firebase.
+
+También haremos que nuestro chat tenga autenticación por Twitter y Google.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 229. ¿Qué aprenderemos en esta sección?
 
+A continuación vamos a trabajar con los siguientes temas:
+
+1. Uso de AngularFire2 - Librería oficial de angular para conectarse a Firebase.
+2. Crear observables para escuchar mediante sockets los cambios en Firebase.
+3. Utilizaremos la autenticación de Google y Twitter para nuestro chat.
+4. Uso de AngularFire2 para manejar las inserciones.
+5. Uso de promesas para poder ejecutar funciones cuando detectamos cambios en la base de datos.
+6. Usaremos el local storage para almacenar información del login para mantener las sesión.
+7. Entre otras cosas útiles.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 230. Demostración de lo que lograremos al finalizar la sección
+
+Ver vídeo.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
