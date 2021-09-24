@@ -10566,6 +10566,54 @@ export class HeroesComponent implements OnInit {
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 227. Código fuente de la sección
+# Sección 13: Aplicación #7: FireChat - AngularFire2
+
+## 228. Introducción a la sección
 
 [Volver al Índice](#%C3%ADndice-del-curso)
+
+## 229. ¿Qué aprenderemos en esta sección?
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 230. Demostración de lo que lograremos al finalizar la sección
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 231. Iniciando el proyecto - FireChat
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 232. Instalación del AngularFire2 - Uso de la librería
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 233. Componente del Chat
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 234. Servicio para controlar las acciones del chat
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 235. Cargar y agregar mensajes al chat
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 236. Desplegar mensajes en la caja del chat correctamente
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 237. Autenticación con Google
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 238. Autenticación con Twitter
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 239. Toques finales a nuestro chat
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 240. Código de la sección
