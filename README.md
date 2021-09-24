@@ -10409,6 +10409,56 @@ Para perfilar esta inicialización de valores habría que controlar la posibilid
 
 ## 225. HTTP - DELETE - Para eliminar registros
 
+A continuación, para eliminar registros, haremos algo similar a la lección anterior, solo que en lugar de usar el método http 'put' usaremos el 'delete'. Empezamos yendo al servicio para crear el método.
+
+Para nuestro método necesitaremos saber el id del registro a borrar, así que queda un método igual que el de recibir un registro pero usando 'delete' en lugar de 'put' o 'post'. En heroes.service.ts:
+
+```
+borrarHeroe ( id: string ) {
+    return this.http.delete(`${ this.url }/heroes/${ id }.json`);
+  }
+```
+
+Ahora tendremos que ir a heroes.component.ts para definir un método que pueda usar esta funcionalidad del servicio. Necesitaremos subscribirnos para que funcione.
+
+```
+borrarHeroe( heroe: HeroeModel ) {
+      
+    this.heroesService.borrarHeroe( heroe.id ).subscribe();
+
+  }
+```
+
+Para llamar a dicha función, en el html de heroes:
+
+```
+<button class="btn btn-danger">
+  <i class="fa fa-trash" (click)="borrarHeroe( heroe )"></i>
+</button>
+```
+
+Y con esto ya se eliminaría el registro, pero el html no se refresca mostrando la lista actualizada sin el registro eliminado, hay varias maneras de poder hacer esto, una de ellas sería en el heroes.component.ts, cuando hacemos el subscribe sobre la función borrarHeroe que posteriormente volviese a hacer petición get de todos los héroes (como está hecho en el ngOnInit). Pero más correcto sería controlar la posición del objeto heroe en el array de héroes y eliminarlo de ahí. Para ello vamos a hacer un par de modificaciones.
+
+Como en el html ya tenemos controlado el índice (let i = index ), tendremos que pasárselo a la función borrarHeroe, para así poder hacer un splice en el array de héroes.
+
+```
+<button class="btn btn-danger">
+    <i class="fa fa-trash" (click)="borrarHeroe( heroe, i )"></i>
+</button>
+```
+
+```
+borrarHeroe( heroe: HeroeModel , i: number) {
+    
+  this.heroes.splice(i,1);
+  this.heroesService.borrarHeroe( heroe.id ).subscribe();
+
+}
+```
+
+Lo siguiente será introducir un alert de verificación con SweetAlert2, para así prevenir eliminaciones indeseadas de registros. Algo bueno que tiene SweetAlert2 es que devuelve una promesa, por tanto con .then() podemos controlar si borrar el registro o no. Esto se controla porque el alert tiene un value y en función de ese value haremos la eliminación o no (el código que teníamos antes con el splice y borrarHeroe)
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 226. Maquillaje para nuestra pantalla de héroes
