@@ -1,5 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
-.fa {
+
+/* .fa {
+    padding-right: 5px;
+} */
+
+.fa-plus,
+.fa-arrow-left,
+.fa-save,
+.fa-smile-wink,
+.fa-dizzy {
     padding-right: 5px;
 }

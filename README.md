@@ -10349,9 +10349,61 @@ Una vez tenemos esto podemos modificar la tabla html para renderizar los datos:
 
 ## 224. HTTP - GET - Obtener un nodo específico
 
-Vamos a trabajar en la edición del héroe, vamos a hacer que al igual que cuando vamos a agregar vaya a la edición de héroe, cuando hagamos click en un registro de un héroe nos lleve a esa pantalla con la información para que sea editada. En la url en lugar de heroe/nuevo será heroe/idDelHeroe
+Vamos a trabajar en la edición del héroe, vamos a hacer que al igual que cuando pulsamos el boton agregar vaya a la edición de héroe, cuando hagamos click en un registro de un héroe nos lleve a esa pantalla con la información para que sea editada. En la url en lugar de heroe/nuevo será heroe/idDelHeroe.
 
+Lo primero que haremos será en la página principal de listado de héroes añadir en el td que nos falta las "tools", donde definiremos unos "botones" para editar y eliminar registros.
 
+Para el botón de editar añadiremos un RouterLink, previamente en nuestro archivo de rutas habíamos dejado especificado que podía existir una ruta tipo `{ path: 'heroe/:id', component: HeroeComponent },`, por tanto vamos a definir la ruta como `<button class="btn btn-info" [routerLink]="['/heroe',heroe.id]">`, para que en la url de héroe se incluya el id. Si bien esto no es suficiente porque necesitamos recibir ese id para mostrar en la página de héroe los datos a editar para ese id.
+
+```
+<td>
+                <button class="btn btn-info" [routerLink]="['/heroe',heroe.id]">
+                    <i class="fa fa-pen"></i>
+                </button>
+                <button class="btn btn-danger">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+```
+
+Para poder recibir el id volvemos a nuestro servicio y generaremos un nuevo método que nos permita recibir un héroe en concreto por su id. Sencillamente es aplicar el metodo get de http sobre la url de firebase, que si nos fijamos en la consola comprende heroes/idDelHeroe:
+
+```
+getHeroe ( id: string ) {
+    return this.http.get(`${ this.url }/heroes/${ id }.json`);
+  }
+```
+
+Tras esto volvemos al componente de heroe, pues vamos a necesitar controlar cuando se cargue esa página si está siendo un heroe nuevo o si viene de la página anterior tras pulsar el botón de editar. Así que lo primero será posibilitar que se lea de la url el id, esto será posible importando el servicio route de ActivatedRoute `constructor( private heroesService: HeroesService, private route: ActivatedRoute ) { }`, con esto podemos crear en el ngOnInit una constante que se cargue con el id del url:
+
+```
+ngOnInit() {
+
+    const id = this.route.snapshot.paramMap.get('id');
+
+  }
+```
+
+En otras partes del curso nos hemos subscrito a los cambios que puede tener el snapshot de rutas, esta es otra manera de hacerlo.
+
+Con este id ya podemos llamar al servicio, pero antes tenemos que comprobar si estamos en el heroe nuevo o venimos del listado. Como el botón de agregar del listado lo definimos con una url constante (/heroe/nuevo), se toma como que el atributo id de router link es 'nuevo' cuando se trata de un nuevo registro, por tanto la discriminación es sencilla, si el id es distinto de 'nuevo' entonces haremos la llamada al metodo getHeroe del servicio pasándole el id que hemos almacenado en la constante (que viene de la url), nos tendremos que suscribir para poder recibir la respuesta, a la cual le podemos indicar que es de tipo HeroeModel, para así poder acceder al atributo id del objeto y almacenarlo también:
+
+```
+ngOnInit() {
+
+    const id = this.route.snapshot.paramMap.get('id');
+    
+    if ( id !== 'nuevo' ) {
+      this.heroesService.getHeroe( id )
+        .subscribe( (resp: HeroeModel) => {
+          this.heroe = resp;
+          this.heroe.id = id;
+        });
+    }
+  }
+```
+
+Para perfilar esta inicialización de valores habría que controlar la posibilidad de un id en url que no se encuentre en la base de datos (por ejemplo mediante manipulación directa de la url), en tal caso tendríamos que sacar al usuario de esa pantalla y redirigirlo a inicio, por ejemplo.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 

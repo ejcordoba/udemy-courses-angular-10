@@ -2,7 +2,7 @@
 <hr>
 <div class="row">
     <div class="col text-end">
-        <button routerLink="/heroe/nuevo" class="btn btn-primary">
+        <button routerLink="/heroe/nuevo" class="btn btn-success">
             <i class="fa fa-plus"></i>Agregar
         </button>
     </div>
@@ -27,7 +27,14 @@
                 <label *ngIf="heroe.vivo" class="badge bg-success">Vivo</label>
                 <label *ngIf="!heroe.vivo" class="badge bg-danger">Muerto</label>
             </td>
-            <td></td>
+            <td>
+                <button class="btn btn-info" [routerLink]="['/heroe',heroe.id]">
+                    <i class="fa fa-pen"></i>
+                </button>
+                <button class="btn btn-danger">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
         </tr>
     </tbody>
 </table>
