@@ -10598,11 +10598,20 @@ Ver vídeo.
 
 ## 231. Iniciando el proyecto - FireChat
 
+<<<<<<< HEAD
 Vamos a crear un nuevo proyecto en nuestro workspace `ng new firechat`, que luego renombraremos a `10-firechat` para seguir la lógica de los proyectos, también descargaremos como material adjunto `styles.css`, y en nuestra cuenta de Firebase crearemos un nuevo proyecto que llamaremos Firechat.
 
 El archivo /src/styles.css lo reemplazaremos por el que hemos descargado.
 
 Instalaremos Bootstrap usando el CDN: 
+=======
+`ng new firechat` Para crear el nuevo proyecto mediante Angular CLI, posteriormente lo renombraremos a `10-firechat` para seguir la lógica del curso.
+
+Descargaremos un archivo `styles.css` del material adjunto, que una vez tengamos el proyecto creado y renombrado, copiaremos en /src/styles.css.
+
+Por último instalaremos bootstrap en el proyecto a través de los CDN en el /src/index.html:
+
+>>>>>>> cb3893019e98a7a7c70577bd6878a9b0985a2df6
 ```
 <!doctype html>
 <html lang="en">
@@ -10625,9 +10634,18 @@ Instalaremos Bootstrap usando el CDN:
 
 </html>
 ```
+<<<<<<< HEAD
 ubicándolo en nuestro index.html
 
 Ejecutaremos con `ng serve` en el directorio del proyecto para comprobar que todo funciona correctamente y pasamos a la siguiente lección.
+=======
+
+Iremos a firebase.com para ir a nuestra consola de administración, añadiremos un nuevo proyecto de nombre 'Firechat', seleccionando además nuestro país.
+
+Volvemos al proyecto y ejecutamos para comprobar que todo está bien `ng serve`
+
+En mi caso da un error en el link al popper.js de Bootstrap, así que lo dejé comentado.
+>>>>>>> cb3893019e98a7a7c70577bd6878a9b0985a2df6
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 

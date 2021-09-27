@@ -1,6 +1,10 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+<<<<<<< HEAD
   "version": 1,
+=======
+  "version": 1, 
+>>>>>>> cb3893019e98a7a7c70577bd6878a9b0985a2df6
   "newProjectRoot": "projects",
   "projects": {
     "firechat": {
@@ -117,6 +121,7 @@
               "devServerTarget": "firechat:serve:production"
             }
           }
+<<<<<<< HEAD
         },
         "deploy": {
           "builder": "@angular/fire:deploy",
@@ -127,3 +132,10 @@
   },
   "defaultProject": "firechat"
 }
+=======
+        }
+      }
+    }},
+  "defaultProject": "firechat"
+}
+>>>>>>> cb3893019e98a7a7c70577bd6878a9b0985a2df6

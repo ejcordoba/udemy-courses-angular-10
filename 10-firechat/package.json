@@ -15,15 +15,22 @@
     "@angular/common": "~9.0.0",
     "@angular/compiler": "~9.0.0",
     "@angular/core": "~9.0.0",
+<<<<<<< HEAD
     "@angular/fire": "^6.1.5",
+=======
+>>>>>>> cb3893019e98a7a7c70577bd6878a9b0985a2df6
     "@angular/forms": "~9.0.0",
     "@angular/platform-browser": "~9.0.0",
     "@angular/platform-browser-dynamic": "~9.0.0",
     "@angular/router": "~9.0.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
+<<<<<<< HEAD
     "zone.js": "~0.10.2",
     "firebase": "^7.0 || ^8.0"
+=======
+    "zone.js": "~0.10.2"
+>>>>>>> cb3893019e98a7a7c70577bd6878a9b0985a2df6
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.900.1",
@@ -44,6 +51,7 @@
     "protractor": "~5.4.3",
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
+<<<<<<< HEAD
     "typescript": "~3.7.5",
     "@angular-devkit/architect": ">= 0.900 < 0.1300",
     "firebase-tools": "^8.0.0 || ^9.0.0",
@@ -52,5 +60,8 @@
     "inquirer-autocomplete-prompt": "^1.0.1",
     "open": "^7.0.3",
     "jsonc-parser": "^3.0.0"
+=======
+    "typescript": "~3.7.5"
+>>>>>>> cb3893019e98a7a7c70577bd6878a9b0985a2df6
   }
 }
