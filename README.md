@@ -11058,6 +11058,72 @@ export class ChatComponent{
 
 ## 235. Cargar y agregar mensajes al chat
 
+Ahora que ya estamos suscritos a la colección de mensajes necesitamos gestionarlos de una manera eficiente, por ejemplo si tenemos muchos mensajes (tipo 1000) que los cargue segmentadamente y temas de ese estilo.
+
+Por tanto lo mejor es gestionar la lógica en el metodo cargarMensajes y así no sobrecargar la lógica del componente, así que el componente lo dejaremos de tal manera que simplemente esté escuchando el observable:
+
+```
+export class ChatComponent{
+
+  mensaje: string = "";
+  constructor( public _cs: ChatService ) { 
+
+    this._cs.cargarMensajes()
+      .subscribe();
+  }
+
+  enviar_mensaje() {
+    console.log(this.mensaje);
+  }
+  
+}
+```
+
+Antes de nada, como en el servicio teníamos declaradas las instancias tipo <any> nos vamos a crear una interfaz (tipo de dato) para manejar esto de manera mas lógica y eficiente.
+
+Crearemos un directorio /src/app/interface y en él un archivo mensaje.interface.ts. En nuestra colección tenemos hasta ahora sólo un atributo 'mensaje', pero sería conveniente tener más atributos tipo quien envió el mensaje, cuando lo envió, un ID único, etc. Así que la interfaz tendrá el nombre de la persona de tipo string, el mensaje que ya estamos manejando de tipo string también, una fecha opcional que la vamos a manejar como number y un uid tipo string, que será la key del usuario que mandó el mensaje, también opcional porque no lo tendré hasta que haga la autenticación.
+
+```
+export interface Mensaje {
+  nombre: string;
+  mensaje: string;
+  fecha?: number;
+  uid?: string;
+}
+```
+
+Una vez creado y guardado lo importaremos en nuestro provider para poder usar el tipado y ya podremos cambiar los tipos <any> por <Mensaje>:
+
+```
+import { Injectable } from '@angular/core';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { Mensaje } from '../interfaces/mensaje.interface';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChatService {
+
+  private itemsCollection: AngularFirestoreCollection<Mensaje>;
+
+  public chats: Mensaje[] = [];
+
+  constructor( private afs: AngularFirestore ) { }
+
+  cargarMensajes() {
+
+    this.itemsCollection = this.afs.collection<Mensaje>('chats');
+
+    return this.itemsCollection.valueChanges();
+
+  }
+}
+```
+
+
+
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 236. Desplegar mensajes en la caja del chat correctamente
