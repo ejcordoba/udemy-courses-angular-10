@@ -10598,6 +10598,41 @@ Ver vídeo.
 
 ## 231. Iniciando el proyecto - FireChat
 
+`ng new firechat` Para crear el nuevo proyecto mediante Angular CLI, posteriormente lo renombraremos a `10-firechat` para seguir la lógica del curso.
+
+Descargaremos un archivo `styles.css` del material adjunto, que una vez tengamos el proyecto creado y renombrado, copiaremos en /src/styles.css.
+
+Por último instalaremos bootstrap en el proyecto a través de los CDN en el /src/index.html:
+
+```
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Firechat</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+</head>
+
+<body>
+    <app-root></app-root>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
+</body>
+
+</html>
+```
+
+Iremos a firebase.com para ir a nuestra consola de administración, añadiremos un nuevo proyecto de nombre 'Firechat', seleccionando además nuestro país.
+
+Volvemos al proyecto y ejecutamos para comprobar que todo está bien `ng serve`
+
+En mi caso da un error en el link al popper.js de Bootstrap, así que lo dejé comentado.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 232. Instalación del AngularFire2 - Uso de la librería
