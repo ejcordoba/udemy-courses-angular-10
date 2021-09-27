@@ -10938,11 +10938,121 @@ chat.component.html
 
 <input class="form-control" type="text" name="mensaje" [(ngModel)]="mensaje" placeholder="Enviar mensaje" (keyup.enter)="enviar_mensaje()">
 ```
-```
-```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 234. Servicio para controlar las acciones del chat
+
+Vamos a generar un servicio para nuestro chat con el Angular CLI `ng g s providers/chat --skip-tests=true`. Una vez creado tenemos que añadirlo a los providers de app.module.ts:
+
+```
+// Servicios
+import { ChatService } from "./providers/chat.service"
+...
+providers: [
+    ChatService
+  ],
+```
+
+Lo siguiente será ir a `https://github.com/angular/angularfire/blob/master/docs/firestore/collections.md` para ver la documentación sobre cómo trabajar con colecciones. En los ejemplos usan componentes, pero nosotros lo vamos a trabajar en nuestro servicio recién creado.
+
+Lo primero que haremos será importar las librerías necesarias en nuestro chat.service.ts:
+
+```
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+```
+
+Tras esto deberemos inyectar en el constructor una instancia de AngularFirestore:
+
+```
+constructor( private afs: AngularFirestore ) { }
+```
+
+Lo siguiente será declarar un array de objetos que usaremos con un observable, para trabajarlo sin el pipe async:
+
+```
+public chats: any[] = [];
+```
+
+Podríamos crear una interfaz, lo haremos más adelante, para no ir declarando todo de tipo <any>. Tras esto declararemos una variable que hará de referencia a las colecciones de items que tengamos en Firestore, esta actúa como observable:
+
+```
+private itemsCollection: AngularFirestoreCollection<any>;
+```
+
+La funcionalidad no la vamos a definir en el constructor, porque queremos que el servicio sea llamado desde distintos lugares, por tanto solo se disparará el servicio cuando nosotros queramos (en el constructor ya se dispararía al ejecutarse por primera vez la app). Por tanto vamos a crear un método en particular que se llame cargarMensaje() para ello.
+
+Como hemos dicho este método se deberá ejecutar a nuestra voluntad, y deberá devolver una promesa u observable que nos permita saber que los mensajes se cargaron y podamos continuar con la ejecución.
+
+Por tanto el método en primer lugar lo que hará será definir el objeto itemsCollection con nuestra colección 'chats', que recibiremos a través de la instancia afs de AngularFirestore:
+
+```
+this.itemsCollection = this.afs.collection<any>('chats');
+```
+
+Como hemos dicho, el método cargarMensajes() deberá devolver una promesa, así que añadiendo la función valueChanges() a itemCollection podremos hacer un return de este objeto, pues nos subscribiremos a él en chat.component.ts:
+
+```
+return this.itemsCollection.valueChanges();
+```
+
+Quedando chat.service.ts así:
+
+```
+import { Injectable } from '@angular/core';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChatService {
+
+  private itemsCollection: AngularFirestoreCollection<any>;
+
+  public chats: any[] = [];
+
+  constructor( private afs: AngularFirestore ) { }
+
+  cargarMensajes() {
+    
+    this.itemsCollection = this.afs.collection<any>('chats');
+
+    return this.itemsCollection.valueChanges();
+
+  }
+}
+```
+
+Ahora podemos inyectar el servicio en chat.component.ts `import { ChatService } from '../../providers/chat.service';` y lo inyectaremos en el constructor del componente `constructor( public _cs: ChatService )`.
+
+En el constructor nos subscribiremos al método cargarMensajes del servicio, para así estar recibiendo la colección y sus cambios. La suscripción a la colección la volcaremos en una variable 'mensajes' que será de tipo array de objetos. Haremos con console log de la variable mensajes para ver su contenido en la consola, quedando chat.component.ts así:
+
+```
+import { Component } from '@angular/core';
+import { ChatService } from '../../providers/chat.service';
+
+@Component({
+  selector: 'app-chat',
+  templateUrl: './chat.component.html',
+  styles: []
+})
+export class ChatComponent{
+
+  mensaje: string = "";
+  constructor( public _cs: ChatService ) { 
+
+    this._cs.cargarMensajes()
+      .subscribe( (mensajes:any[])=>{
+        console.log(mensajes);
+      })
+  }
+
+  enviar_mensaje() {
+    console.log(this.mensaje);
+  }
+  
+}
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
