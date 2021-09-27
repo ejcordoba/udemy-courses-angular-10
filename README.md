@@ -10598,9 +10598,213 @@ Ver vídeo.
 
 ## 231. Iniciando el proyecto - FireChat
 
+Vamos a crear un nuevo proyecto en nuestro workspace `ng new firechat`, que luego renombraremos a `10-firechat` para seguir la lógica de los proyectos, también descargaremos como material adjunto `styles.css`, y en nuestra cuenta de Firebase crearemos un nuevo proyecto que llamaremos Firechat.
+
+El archivo /src/styles.css lo reemplazaremos por el que hemos descargado.
+
+Instalaremos Bootstrap usando el CDN: 
+```
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Firechat</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+</head>
+
+<body>
+    <app-root></app-root>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
+</body>
+
+</html>
+```
+ubicándolo en nuestro index.html
+
+Ejecutaremos con `ng serve` en el directorio del proyecto para comprobar que todo funciona correctamente y pasamos a la siguiente lección.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 232. Instalación del AngularFire2 - Uso de la librería
+
+Para instalar AngularFire2 buscamos en google y veremos el repositorio en GitHub. Ha cambiado tanto el nombre (ahora es AngularFire a secas) como la manera de instalarlo, lo voy a hacer distinto al curso, a través del CLI directamente escribiendo:
+
+```
+ng add @angular/fire
+```
+
+Durante la instalación se nos abrirá el navegador con un token único que deberemos copiar y pegar en la terminal cuando nos lo solicite, es importante tener creado el proyecto que vamos a usar en Firebase, puesto que en la instalación también nos pedirá que proyecto es el que vamos a usar en nuestra aplicación.
+
+A continuación iremos en nuestro proyecto al archivo /src/enviroments/environment.ts y, usando los datos que encontraremos en nuestro proyecto de Firebase, lo dejaremos tal que así. Enviroment.ts:
+
+```
+export const environment = {
+  production: false,
+  firebase: {
+    apiKey: '<your-key>',
+    authDomain: '<your-project-authdomain>',
+    databaseURL: '<your-database-URL>',
+    projectId: '<your-project-id>',
+    storageBucket: '<your-storage-bucket>',
+    messagingSenderId: '<your-messaging-sender-id>',
+    appId: '<your-app-id>',
+    measurementId: '<your-measurement-id>'
+  }
+};
+```
+
+Cabe destacar que para que nos aparezca en el objeto la propiedad 'databaseURL' tendremos que tener creada una base de datos (yo creé una realtime database). En el caso de que no la tuviéramos tendríamos que crear una, volver a la configuración y refrescar la información del archivo de configuración.
+
+Lo siguiente será actualizar con nueva configuración el archivo src/app/app.module.ts
+
+En él añadiremos a los imports:
+
+```
+import { AngularFireModule } from '@angular/fire';
+import { environment } from '../environments/environment';
+```
+
+Nota: de AngularFireModule tuve que quitar el /compat de la ruta, quedando: import { AngularFireModule } from '@angular/fire';
+
+Añadiremos módulos adicionales, parece ser que el módulo AngularFireAuthModule ya no existe así que añadiremos AngularFirestoreModule y AngularFireAnalyticsModule, aunque este último módulo lo voy a instalar por volutad propia de investigación, no creo que en esta lección se hable de Google Analytics (porque deduzco que será usado para ello)
+
+```
+import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+```
+
+Y añadiremos a los imports:
+
+```
+AngularFireAnalyticsModule,
+AngularFirestoreModule
+```
+
+Lo siguiente será inyectar el AngularFirestore, una base de datos orientada a documentos y colecciones. Abriremos /src/app/app.component.ts
+
+Añadimos la librería `import { AngularFirestore } from '@angular/fire/firestore';` y la inyectaremos en el constructor:
+
+```
+import { Component } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  constructor(firestore: AngularFirestore) { }
+  title = 'firechat';
+}
+```
+
+Lo siguiente será crear un enlace de una lista a una colección de Firebase, es decir, para poder leer un nodo de Firebase y mostrarlo en pantalla.
+
+Vamos a usar para ello el observable de Reactive Extensions `import { Observable } from 'rxjs';`, declarando en la clase de AppComponent un objeto items de tipo Observable que puede recibir cualquier tipo de valor, y actualizando el constructor para que los items se actualicen si hay cambios en el observable.
+
+```
+export class AppComponent {
+  public items: Observable<any[]>;
+  constructor(firestore: AngularFirestore) {
+    this.items = firestore.collection('items').valueChanges();
+  }
+  title = 'firechat';
+}
+```
+
+Lo siguiente será ir a app.component.html y reemplazar toda la plantilla por el siguiente código html:
+
+```
+<ul>
+  <li class="text" *ngFor="let item of items | async">
+    {{item.name}}
+  </li>
+</ul>
+```
+
+Por último correremos la aplicación: `ng serve`
+
+Seguramente nos de algún error, observaremos que la web se ve en blanco, si abrimos las herramientas de desarrollador y vamos a la consola veremos varios errores.
+
+En mi caso me dio un error con el popper.js del index.html, así que dejé comentada esa línea: `<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>-->``
+
+Y luego me dio el siguiente error:
+
+```
+[2021-09-25T19:26:16.191Z]  @firebase/firestore: Firestore (8.10.0): Could not reach Cloud Firestore backend. Connection failed 1 times. Most recent error: FirebaseError: [code=permission-denied]: Cloud Firestore API has not been used in project 32*****3877 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=329785*** then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+This typically indicates that your device does not have a healthy Internet connection at the moment. The client will operate in offline mode until it is able to successfully connect to the backend.
+```
+
+En el error hay un enlace en el cual pulsé como solicitan. Esto nos llevará a Cloud Firestore API, aceptando los términos me sale una encuesta que omito. Entonces se puede ver un botón que dice "Habilitar API", le damos quedando así habilitada la API.
+
+Tras esto, recargando la aplicación web, me sale otro error, esta vez yendo a `https://console.cloud.google.com/datastore/setup?project=*****` selecciono Habilitar Nodo Nativo, y tras esto selecciono Europa como ubicación y pulso en Crear Base de Datos.
+
+Realmente y resumiendo, lo único que debemos hacer es ir a nuestro proyecto y añadir una Firestore Database, y una nueva colección que llamemos 'chats', lo siguiente sería definir la estructura de la base de datos, que pese a que es tipo "documento" recuerda mucho a una base de datos al uso. Como prueba vamos a añadir el siguiente patrón de configuración:
+
+```
+ID del documento: 1
+Campo: mensaje
+Tipo: string
+Valor: Hola Mundo
+```
+
+Y guardamos. Podemos seguir añadiendo documentos (nodos) a la colección, repitiendo el paso anterior.
+
+Lo siguiente será ir a Reglas de la base de datos para poder leer desde cualquier lado sin autenticación, cambiando el valor de 'false' a 'true'
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+
+Y pulsamos en Publicar.
+
+Si recargamos ahora de nuevo la aplicación web ya no deberíamos tener errores. Aunque sigue sin salir nada porque en app.component.ts dejamos definido que como colección buscase 'items' y nosotros la hemos llamado 'chats', así que actualizaremos todo donde esté definido 'items' y lo amoldaremos a chats y guardamos, en app.component.ts:
+
+```
+import { Component } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  public chats: Observable<any[]>;
+  constructor(firestore: AngularFirestore) {
+    this.chats = firestore.collection('chats').valueChanges();
+  }
+  title = 'firechat';
+}
+
+```
+
+Y en el app.component.html:
+
+```
+<ul>
+    <li class="text" *ngFor="let chat of chats | async">
+        {{chat.mensaje}}
+    </li>
+</ul>
+```
+
+Ahora ya aparecerán los datos, y lo mejor de todo es que si vamos a la consola de Firebase y añadimos más documentos a la colección se actualizará automáticamente la aplicación web, puesto que estamos trabajando con un observable e intervienen sockets, etc.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
