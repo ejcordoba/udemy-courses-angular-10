@@ -10813,6 +10813,133 @@ Ahora ya aparecerán los datos, y lo mejor de todo es que si vamos a la consola 
 
 ## 233. Componente del Chat
 
+Vamos a crear un nuevo componente para el chat, comentaremos el código html que teníamos de prueba en app.component.html, con Angular CLI lo crearemos de tal manera que sea inline style y sin archivos de prueba.
+
+`$ ng g c components/chat -is --skip-tests=true`
+
+Esto nos crea los archivos y nos actualiza el app.module.ts (verificar por si no lo hiciera bien, pero no debería).
+
+Yendo a src/app/components/chat/chat.components.ts veremos que nuestro selector es 'app-chat'. Así que podemos ir a app.component.ts y añadir el selector '<app-chat></app-chat>'.
+
+Vamos a hacer una pequeña maquetación en app.component.ts para albergar nuestro componente 'chat'. La clase 'chat-window' es del archivo styles.css de los recursos compartidos de curso.
+
+```
+<div class="container main-container">
+    <h1>Firechat</h1>
+    <div class="chat-window">
+        <app-chat></app-chat>
+    </div>
+</div>
+```
+
+Yendo a chat.component.html haremos una maquetación para el componente (la clase app-mensajes la tenemos definidas en el styles.css proporcionado en los recursos que copiamos en la creación del proyecto), definiremos un id que usaremos más adelante, usaremos badges de Bootstrap para los nombres, y alinearemos los mensajes con la clase 'text-end' de bootstrap. También añadiremos un input para enviar los mensajes, definiendo el ngModel con una variable 'mensaje' que tendremos que declarar en el componente para el intercambio de datos, y un evento de pulsar intro para que se ejecute una función 'enviar_mensaje' que definiremos en chat.component.ts:
+
+```
+<h1>Chat</h1>
+<hr>
+
+<div class="app-mensajes" id="app-mensajes">
+    <div class="text-end">
+        <span class="badge bg-primary">Eduardo</span>
+        <p>
+            Hola María
+        </p>
+    </div>
+    <div>
+        <span class="badge bg-success">Maria</span>
+        <p>
+            Hola Edu
+        </p>
+    </div>
+</div>
+
+<input type="text" name="mensaje" [(ngModel)]="mensaje" placeholder="Enviar mensaje" (keyup.enter)="enviar_mensaje()">
+```
+
+chat.component.ts:
+
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-chat',
+  templateUrl: './chat.component.html',
+  styles: []
+})
+export class ChatComponent{
+
+  mensaje: string = "";
+  constructor() { }
+
+  enviar_mensaje() {
+    console.log(this.mensaje);
+  }
+  
+}
+```
+
+Nos dará un error, porque ngModel forma parte de la librería 'forms' y no la tenemos incluída, así que en app.module.ts:
+
+```
+import { FormsModule } from '@angular/forms';
+...
+imports: [
+    BrowserModule,
+    AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAnalyticsModule,
+    AngularFirestoreModule,
+    FormsModule
+  ],
+```
+
+Haremos un par de retoques estéticos más y quedan el html y el ts tal que así:
+
+chat.component.ts
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-chat',
+  templateUrl: './chat.component.html',
+  styles: []
+})
+export class ChatComponent{
+
+  mensaje: string = "";
+  constructor() { }
+
+  enviar_mensaje() {
+    console.log(this.mensaje);
+  }
+  
+}
+```
+
+chat.component.html
+```
+<h1>Chat</h1>
+<hr>
+
+<div class="app-mensajes" id="app-mensajes">
+    <div class="text-end">
+        <span class="badge bg-primary">Eduardo</span>
+        <p>
+            Hola María
+        </p>
+    </div>
+    <div>
+        <span class="badge bg-success">Maria</span>
+        <p>
+            Hola Edu
+        </p>
+    </div>
+</div>
+
+<input class="form-control" type="text" name="mensaje" [(ngModel)]="mensaje" placeholder="Enviar mensaje" (keyup.enter)="enviar_mensaje()">
+```
+```
+```
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 234. Servicio para controlar las acciones del chat
