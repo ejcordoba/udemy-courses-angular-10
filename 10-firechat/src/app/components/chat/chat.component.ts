@@ -12,9 +12,7 @@ export class ChatComponent{
   constructor( public _cs: ChatService ) { 
 
     this._cs.cargarMensajes()
-      .subscribe( (mensajes:any[])=>{
-        console.log(mensajes);
-      })
+      .subscribe();
   }
 
   enviar_mensaje() {
