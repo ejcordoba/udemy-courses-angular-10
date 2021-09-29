@@ -11120,6 +11120,18 @@ export class ChatService {
 }
 ```
 
+No nos interesa que el subscribe en chat.component.ts esté cargado con mucha lógica, así que empezaremos a desarrollarla en nuestro servicio para luego ir accediendo a ella cuando nos interese.
+
+En el método cargarMensajes estamos observando si cambia de valor la colección de items, vamos a usar el operador map de pipe para formatear la respuesta que nos dé y tenerla accesible como un array de objetos que podremos iterar, así pues tendremos la variable chats que se irá actualizando y que podremos usar en el frontal.
+
+```
+return this.itemsCollection.valueChanges().pipe(map( (mensajes: Mensaje[]) => {
+  console.log(mensajes);
+  this.chats = mensajes;
+}));
+```
+
+
 
 
 

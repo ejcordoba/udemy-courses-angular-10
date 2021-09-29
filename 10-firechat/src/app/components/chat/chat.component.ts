@@ -8,8 +8,8 @@ import { ChatService } from '../../providers/chat.service';
 })
 export class ChatComponent{
 
-  mensaje: string = "";
-  constructor( public _cs: ChatService ) { 
+  mensaje: string = '';
+  constructor( public _cs: ChatService ) {
 
     this._cs.cargarMensajes()
       .subscribe();
@@ -18,5 +18,5 @@ export class ChatComponent{
   enviar_mensaje() {
     console.log(this.mensaje);
   }
-  
+
 }
