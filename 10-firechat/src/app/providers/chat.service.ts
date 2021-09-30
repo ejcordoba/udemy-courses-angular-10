@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Mensaje } from '../interfaces/mensaje.interface';
+import { Mensaje } from '../interface/mensaje.interface';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 @Injectable({
@@ -22,6 +22,18 @@ export class ChatService {
         console.log(mensajes);
         this.chats = mensajes;
       }));
+
+  }
+  agregarMensaje( texto: string ) {
+
+    // TODO falta el UID del usuario
+    let mensaje: Mensaje = {
+      nombre: 'Demo',
+      mensaje: texto,
+      fecha: new Date().getTime()
+    }
+
+    return this.itemsCollection.add( mensaje );
 
   }
 }

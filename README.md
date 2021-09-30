@@ -11131,6 +11131,50 @@ return this.itemsCollection.valueChanges().pipe(map( (mensajes: Mensaje[]) => {
 }));
 ```
 
+Por tanto vamos maquetar el frontar para poder recibir esta información, comentaremos la sección que teníamos maquetada provisional y haremos un solo <div> que se replique su renderización en función de la cantidad de información que vayamos teniendo usando ngFor.
+
+La información de los chats la estamos recibiendo del servicio, y el html está esperando por defecto que venga del componente relativo a ese html, así que tendremos que indicarlo correctamente en el ngFor `<div class="text-end" *ngFor="let chat of _cs.chats">`, puesto que 'chats' es una propiedad del servicio. Recordar que la convención para los nombre de servicios es nombrarlos empezando por "_".
+
+También podremos ahora cambiar el mensaje que teníamos literal por `{{ chat.mensaje }}`. Quedando el html del componente de esta manera:
+
+```
+<h1>Chat</h1>
+<hr>
+
+<div class="app-mensajes" id="app-mensajes">
+    <div class="text-end" *ngFor="let chat of _cs.chats">
+        <span class="badge bg-primary">Eduardo</span>
+        <p>
+            {{ chat.mensaje }}
+        </p>
+    </div>
+</div>
+
+<input class="form-control" type="text" name="mensaje" [(ngModel)]="mensaje" placeholder="Enviar mensaje" (keyup.enter)="enviar_mensaje()">
+```
+
+La siguiente funcionalidad que vamos a implementar va a ser el hacer inserciones de datos en Firebase. Regresamos a chat.service.ts para agregar una nueva función agregarMensaje(), la función recibiría el texto del mensaje que será añadido a una instancia de objeto Mensaje que será enviada a Firebase. Esta instancia de momento la vamos a inicializar con un nombre 'dummy' y como fecha será la fecha actual, el UUID lo dejaremos pendiente porque lo veremos en la lección sobre autenticación de esta sección, y por último el texto que recibimos de la función (llamada en el input donde escribimos el texto). Finalmente usaremos la función add de itemsCollection para añadir el mensaje a la colección de Firebase. Nótese que esta función devuelve una promesa (recordar que está ligada a un observable), por tanto podremos hacer then/catch para atrapar errores. Así que vamos a hacer un return de la función add `` para así poder manejar el then/catch de la respuesta allá donde se esté llamando a la función 'agregar mensaje', nuestro componente, por ejemplo.
+
+Ya en nuestro componente chat.component.ts podemos llamar a la función agregarMensaje(), haremos una validación del mensaje para que no se envíe vacío, en su lugar no haga nada mediante return. Cuando ejecutamos la función agregarMensaje del servicio podemos ya hacer el then/catch que mencionamos anteriormente. Definiendo como 'then' que no devuelva nada y que haga un console log del texto 'Mensaje enviado', y como catch podemos definir que haga un console.error y nos devuelva el error de Firebase, quedando la llamada a la función:
+
+```
+enviar_mensaje() {
+    console.log(this.mensaje);
+
+    if (this.mensaje.length === 0 ){
+      return;
+    }
+
+    this._cs.agregarMensaje( this.mensaje )
+      .then( () => console.log('Mensaje enviado'))
+      .catch((err) => console.error('Error al enviar', err ));
+  }
+```
+
+Ya podemos insertar documentos en la colección a través de un input, lo último que haremos será que desaparezca el mensaje una vez enviado, esto lo podemos hacer cuando se ejecuta el then (mensaje enviado correctamente) `.then( () => this.mensaje = '')`
+
+
+
 
 
 
