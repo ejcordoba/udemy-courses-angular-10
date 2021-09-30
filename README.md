@@ -11171,18 +11171,98 @@ enviar_mensaje() {
   }
 ```
 
-Ya podemos insertar documentos en la colección a través de un input, lo último que haremos será que desaparezca el mensaje una vez enviado, esto lo podemos hacer cuando se ejecuta el then (mensaje enviado correctamente) `.then( () => this.mensaje = '')`
-
-
-
-
-
-
-
+Ya podemos insertar documentos en la colección a través de un input, lo último que haremos será que desaparezca el mensaje una vez enviado, esto lo podemos hacer cuando se ejecuta el then (mensaje enviado correctamente) `.then( () => this.mensaje = '')`, inicializando la variable a vacío.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 236. Desplegar mensajes en la caja del chat correctamente
+
+Habremos observado que los mensajes aparecen de manera desordenada en el chat, no por orden de momento de envío, vamos a solucionar esto.
+
+Tenemos que hacer queries a Firebase. Como ya hemos comentado no queremos sobrecargar los subscribe de código, así que estas queries como el resto de funciones las definiremos en nuestro servicio.
+
+El orden lo haremos en nuestra función cargarMensajes() del servicio, que es a la que nos estamos suscribiendo en el componente.
+
+En el momento en el que llamamos a la colección de Firestore (en nuestro caso 'chats') es cuando tendremos que hacer la query. Teníamos sólo el parámetro en el que indicabamos el nombre de la colección, añadiremos un segundo parámetro que será la referencia y dentro de él definiremos la query.
+
+Sobre ese objeto 'ref' podremos ejecutar funciones de query tipo 'orderBy', pasándole por argumento el campo de ordenación y si lo haremos de forma ascendente o descendente, o por ejemplo limitando la respuesta a un número de registros con 'limit', pasándole por argumento dicho número de registros, esto nos servirá par no sobrecargar la pantalla cuando tengamos muchos mensajes.
+
+Si ordenamos ascendentemente para que el último mensaje escrito siempre esté al final tendremos un problema al limitar a 5 (como hicimos en nuestro ejemplo), y es que si tenemos más de 5 mensajes los que se mostrarán serán los 5 primeros, el resto se quedarán fuera, por tanto tendremos que ordenar descendentemente para que los 5 que limite sean los 5 últimos (cronológicamente, no posicionalmente).
+
+Así que una vez ordenados cronológicamente tendremos que reordenarlos de nuevo posicionalmente en el array, para que así queden renderizados correctamente en la pantalla. Vamos a hacer esto mediante JavaScript, así que en el return de cargarMensajes antes de cargar el objeto 'chats' lo inicializaremos a vacio y haremos un bucle for para rellenarlo con los datos de 'mensajes' (la instancia de la colección que se nos devuelve), pero no podemos hacerlo con 'push' porque nos quedaría en el mismo orden, para hacer que cada registro sea incluído siempre en la primera posición (empujando/sobreescribiendo-añadiendo el resto) usaremos el método unshift(). Si queremos devolver los mensajes para manipularlos podemos hacer un return, pero teniendo solamente el objeto inicializado al estar suscritos a él tenemos acceso a los datos para renderizarlos, si de todas maneras quisieramos hacer ese return tendremos que tener en cuenta que habría que definir la función como que devuelve un tipo Observable<Mensaje[]>, que es un objeto de nuestro tipo de interfaz personalizado. Quedaría así el método cargarMensajes() de nuestro servicio chat.service.ts:
+
+```
+  cargarMensajes(): Observable<Mensaje[]> {
+
+    this.itemsCollection = this.afs.collection<Mensaje>('chats', ref => ref.orderBy('fecha', 'desc')
+                                                                            .limit(5));
+
+    return this.itemsCollection.valueChanges().pipe(map( (mensajes: Mensaje[]) => {
+        console.log(mensajes);
+
+        this.chats = [];
+        // this.chats = mensajes;
+
+        for ( let mensaje of mensajes ){
+          this.chats.unshift( mensaje );
+        }
+
+        return this.chats;
+
+      }));
+  }
+```
+
+Notamos ahora que está solucionado esto que al seguir introduciendo valores que sobrepasan la pantalla el scroll no se actualiza manteniendose abajo, para ello vamos a manipular el html con programación. Recordemos que a nuestro elemento html le habíamos asignado un id, esto es para poder hacer referencia a él.
+
+Necesitaremos declarar una variable donde almacenaremos la referencia al elemento html, a este elemento se hará referencia cada vez que se cargue el componente, por tanto tendremos que importar OnInit de @angular/core, implementarlo en la clase y declarar el método ngOnInit() justo después del constructor, donde realizaremos la lógica de manipulación del html con `this.elemento = document.getElementById('app-mensajes');`.
+
+Cuando en el constructor se llame al servicio para cargarMensajes() podemos hacer que en la respuesta de la promesa se atribuya al elemento html como propiedad de scroll desplazado el valor de la altura del elemento html, de tal manera que empieza siempre 'enrollado' hacia arriba. Cuando introduzcamos mensajes veremos que funciona, pero al recargar la página no, y esto es porque lo hace demasiado rápida la renderización primera y no le da tiempo a la manipulación a realizarse, haremos un timeout antes para que pueda suceder esto. Quedaría nuestro componente así:
+
+```
+import { Component , OnInit } from '@angular/core';
+import { setTimeout } from 'timers';
+import { ChatService } from '../../providers/chat.service';
+
+@Component({
+  selector: 'app-chat',
+  templateUrl: './chat.component.html',
+  styles: []
+})
+export class ChatComponent implements OnInit {
+
+  mensaje: string = '';
+  elemento: any;
+  // tslint:disable-next-line: variable-name
+  constructor( public _cs: ChatService ) {
+
+    this._cs.cargarMensajes()
+      .subscribe( () => {
+        setTimeout( () => {
+          this.elemento.scrollTop = this.elemento.scrollHeight;
+        }, 20 );
+      });
+  }
+
+  ngOnInit(){
+    this.elemento = document.getElementById('app-mensajes');
+  }
+  enviar_mensaje() {
+    console.log(this.mensaje);
+
+    if (this.mensaje.length === 0 ){
+      return;
+    }
+
+    this._cs.agregarMensaje( this.mensaje )
+      .then( () => this.mensaje = '')
+      .catch((err) => console.error('Error al enviar', err ));
+  }
+
+}
+
+```
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
