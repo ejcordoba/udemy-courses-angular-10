@@ -11263,10 +11263,89 @@ export class ChatComponent implements OnInit {
 
 ```
 
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 237. Autenticación con Google
+
+En esta lección definiremos que al chat sólo se pueda acceder haciendo una autenticación previa, recibiendo un nombre y un uuid en ese proceso. Nosotros lo vamos a configurar todo para Google y Twitter, pero el proceso sería similar para otras plataformas que permiten autenticación a través de sus servicios.
+
+Vamos a crear un nuevo componente mediante Angular CLI que tenga el botón de login con Google y Twitter `ng g c components/login -is --skip-tests=true`. Como siempre verificaremos el app.module.ts para ver que se haya actualizado correctamente y organizaremos las librerías.
+
+Una vez creado iremos a app.component.html para comentar nuestro div donde se alberga el componente de chat (ahora que funciona lo que tenemos hasta el momento) e invocar al componente de login <app-login>.
+
+```
+<!-- <ul>
+    <li class="text" *ngFor="let chat of chats | async">
+        {{chat.mensaje}}
+    </li>
+</ul> -->
+
+<div class="container main-container">
+    <h1>Firechat</h1>
+    <app-login></app-login>
+    <!-- <div class="chat-window">
+        <app-chat></app-chat>
+    </div> -->
+</div>
+```
+
+En login.component.html haremos una maquetación sencilla en la que incluiremos un par de botones, ambos tendran llamada a la misma función, solo que a cada función le pasaremos un argumento diferente para luego actuar en consecuencia en la ejecución de la función. Del componente login.component.ts quitaremos el OnInit de librería, implementación y la llamada a la función pues no lo necesitaremos. De momento dejaremos la función para que sólo muestre por consola el argumento que se está pasando:
+
+```
+<div class="row">
+    <div class="col-md-12 text-center">
+        <p>Ingrese al chat con su cuenta favorita</p>
+        <button type="button" class="btn btn-outline-primary" (click)="ingresar('google')">Google</button>
+        <button type="button" class="btn btn-outline-info" (click)="ingresar('twitter')">Twitter</button>
+    </div>
+</div>
+```
+
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styles: []
+})
+export class LoginComponent {
+
+  constructor() { }
+
+  ingresar( proveedor: string ){
+    console.log( proveedor );
+  }
+}
+```
+
+Empezaremos con la autenticación de Google que es la más sencilla, para ellos iremos a nuestra consola de Firebase a la sección de Authentication, haremos click en "Comenzar", esto nos abre un menú "Sign-in method" que nos ofertará una serie de Proveedores. Seleccionaremos Google y haremos click en "Habilitar". Nos proporcionará un Nombre público del proyecto y nos pedirá un correo electrónico de asistencia del proyecto, guardamos. Hay una serie de configuraciones adicionales que se puede hacer para otro tipo de proyectos, pero para nuestro caso con que esté Habilitado es suficiente.
+
+Tras esto volveremos a la documentación de AngularFire de GitHub, para consultar [Getting started with Firebase Authentication](https://github.com/angular/angularfire/blob/master/docs/auth/getting-started.md)
+
+Tendremos que asegurarnos de tener `import { AngularFireAuth } from '@angular/fire/auth';` y su llamada en los imports en app.module.ts. Esto nos creará todo lo necesario para la autenticación, creandonos incluso un servicio para gestionar todo.
+
+Nosotros la autenticación no la haremos en el propio componente, ya que estamos tratando de centralizar toda la funcionalidad en nuestro servicio. Así que vamos a chat.service.ts e importaremos las librerías necesarias e inyectaremos en el constructor una instancia de AngularFireAuth `constructor( private afs: AngularFirestore, public auth: AngularFireAuth ) { }`
+
+```
+import { AngularFireAuth } from '@angular/fire/auth';
+import firebase from 'firebase/app';
+```
+
+En la documentación se nos proporciona también como definir las funciones de login y logout, esta última la incluiremos pero la terminaremos después. Teniendo ya inyectado la instancia como 'auth' podemos incluir las definiciones de las funciones en nuestro servicio, lo haremos a continuación del constructor:
+
+```
+login() {
+    this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+  logout() {
+    this.auth.signOut();
+  }
+```
+
+Nótese que se llama a un método 'GoogleAuthProvider()' esto sera lo que usaremos cuando queramos manipular métodos de autenticación de otros proveedores (GitHub, Facebook...). 
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 

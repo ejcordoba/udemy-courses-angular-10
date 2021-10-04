@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
+import firebase from 'firebase/app';
 import { Mensaje } from '../interface/mensaje.interface';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -12,7 +14,14 @@ export class ChatService {
 
   public chats: Mensaje[] = [];
 
-  constructor( private afs: AngularFirestore ) { }
+  constructor( private afs: AngularFirestore, public auth: AngularFireAuth ) { }
+
+  login() {
+    this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+  logout() {
+    this.auth.signOut();
+  }
 
   cargarMensajes(): Observable<Mensaje[]> {
 

@@ -10,17 +10,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAnalyticsModule } from '@angular/fire/analytics';
+import { AngularFireAuth } from '@angular/fire/auth';
+
 
 import { environment } from '../environments/environment';
 // Componentes
 import { ChatComponent } from './components/chat/chat.component';
+import { LoginComponent } from './components/login/login.component'
 // Servicios
-import { ChatService } from "./providers/chat.service"
+import { ChatService } from './providers/chat.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ChatComponent
+    ChatComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -28,6 +32,7 @@ import { ChatService } from "./providers/chat.service"
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAnalyticsModule,
     AngularFirestoreModule,
+    AngularFireAuth,
     FormsModule
   ],
   providers: [
