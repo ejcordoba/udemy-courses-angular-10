@@ -11437,7 +11437,7 @@ logout() {
 
 Ahora cuando lo pulsemos podremos observar en la consola que el estado del usuario cambia a null. Maquetaremos el botón de logout para que se muestre sólo si existe un uid de usuario, también lo haremos para los botones de login pero en el caso contrario.
 
-````
+```
 <div class="container main-container">
     <h1>Firechat</h1>
     <div class="col-md-12 text-end" *ngIf="_cs.usuario.uid">
@@ -11472,6 +11472,58 @@ login( proveedor: string ) {
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 239. Toques finales a nuestro chat
+
+Vamos a dar los toques finales a nuestro chat, para eso lo primero que haremos será volver a mostrar la ventana de chat, yendo a app.component.html descomentaremos el bloque de "chat-window". La renderización de este bloque tendrá la misma condición que el botón de logout, que exista un uid de usuario activo.
+
+```
+<div class="container main-container">
+    <h1>Firechat</h1>
+    <div class="col-md-12 text-end" *ngIf="_cs.usuario.uid">
+        <button type="button" class="btn btn-outline-danger" (click)="_cs.logout()">Salir</button>
+    </div>
+    <app-login *ngIf="!_cs.usuario.uid"></app-login>
+    <div class="chat-window" *ngIf="_cs.usuario.uid">
+        <app-chat></app-chat>
+    </div>
+</div>
+```
+
+Ahora tenemos que pulir algunas cosas, en chat.service.ts vamos a editar el método agregarMensaje(), puesto que ya disponemos de acceso a datos y podemos eliminar los datos 'dummy' que teníamos. Podríamos hacer validaciones para confirmar que tenemos los datos, de momento vamos a asumir (porque lo sabemos), que disponemos de esos datos. Así que llamaremos a los atributos del objeto 'usuario' que habíamos creado para ello.
+
+```
+agregarMensaje( texto: string ) {
+
+    let mensaje: Mensaje = {
+      nombre: this.usuario.nombre,
+      mensaje: texto,
+      fecha: new Date().getTime(),
+      uid: this.usuario.uid
+    }
+
+    return this.itemsCollection.add( mensaje );
+
+  }
+```
+
+Ahora si vamos a la consola de Firebase, a la base de datos, e introducimos texto en el chat, veremos que se añaden todos los datos correctamente.
+
+Por último vamos a realizar cambios estéticos para saber si el mensaje que se esta enviando es el mío o el de otra persona. Vamos a chat.component.html.
+
+Vamos a usar [ngClass] para definir si el mensaje estará ubicado a la derecha o izquierda (emisor/receptor), para ello compararemos el uid del chat con el uid del login (si coinciden es que el mensaje es el nuestro, sino sería el de la otra persona) y aplicaremos estilos en función de esto, también podemos llamar ya a atributos del objeto 'chats' (que albergaba los datos de la colección de Firebase) para renderizar datos como el nombre y el mensaje:
+
+```
+<div class="app-mensajes" id="app-mensajes">
+    <div *ngFor="let chat of _cs.chats" [ngClass]="{'text-end': _cs.usuario.uid == chat.uid}">
+        <span class="badge" [ngClass]="{'bg-primary': _cs.usuario.uid == chat.uid,
+                    'bg-success': _cs.usuario.uid != chat.uid}">{{ chat.nombre }}</span>
+        <p>
+            {{ chat.mensaje }}
+        </p>
+    </div>
+</div>
+```
+
+Para comprobar esto podemos abrir otro navegador, ir a la url del proyecto y autenticar con el otro proveedor distinto al que ya estemos conectado.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
