@@ -11527,4 +11527,168 @@ Para comprobar esto podemos abrir otro navegador, ir a la url del proyecto y aut
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 240. Código de la sección
+# Sección 14: Aplicación #8: PelículasApp
+
+
+## 241. Introducción a la sección y objetivo de la misma
+
+Vamos a crear una aplicación de películas con scroll infinito en la cual podremos ver un slideshow, las portadas de las películas y controlar errores si no existen imágenes, el detalle de las fichas de películas, valoraciones, sinopsis, lista de actores principales con sus fotografías, incluso un buscador integrado
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 242. Temas puntuales de la sección
+
+En esta sección trabajaremos con una API muy popular llamada TheMovieDB API, para hacer una aplicación de búsqueda de películas, puntualmente tocaremos temas como:
+
+- Http Get
+
+- Operadores de RXJS como el Tap y Map
+
+- Combinar observables
+
+- Módulos
+
+- Estructura de un proyecto real
+
+- Servicios
+
+- Slideshow
+
+- Swiper
+
+- Y muchos temas mas!
+
+
+## 243. Inicio de proyecto - PeliculasApp
+
+Crearemos un nuevo proyecto con Angular CLI: `ng new peliculasApp`, el routing lo crearemos nosotros y usaremos CSS. Una vez creado renombraremos el directorio del proyecto a 11-peliculasApp
+
+Vamos a usar la versión 5 de Bootstrap, como ya sabemos añadiremos los CDN a nuestro index.html
+
+```
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>PeliculasApp</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+</head>
+
+<body>
+    <app-root></app-root>
+</body>
+
+</html>
+```
+
+Y dejaremos un simple h1 con Hola Mundo en el app.component.html
+
+## 244. Recursos de la sección
+
+**Importante**:
+
+Abran los siguientes enlaces, los necesitaremos en las próximas lecciones, y también descarguen la imagen adjunta, también la necesitaremos.
+
+- [TheMovieDB.com - Documentación](https://developers.themoviedb.org/3/getting-started)
+
+- [TheMovieDB.com](https://www.themoviedb.org/?language=es)
+
+También descarguen el material adjunto
+
+- [Material de las próximas clases - descargar*](https://fernando-herrera.com/otros/material-peliculas.zip)
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 245. TheMovieDB
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 246. Módulos en Angular
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 247. Obtener películas en cartelera
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 248. Implementar rutas en nuestra aplicación
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 249. Implementar una barra de navegación
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 250. Componente Slideshow - Estructura y argumentos
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 251. Swiper - Slideshow de películas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 252. Controles del swiper
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 253. PosterGrid Component
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 254. Star-Rating - Paquete de Npm
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 255. Calificación con estrellas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 256. InfiniteScroll de películas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 257. Prevenir múltiples llamadas al API
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 258. Poster Pipe
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 259. Buscador de películas
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 260. Diseño de la pantalla de búsqueda
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 261. Pantalla de detalle
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 262. Diseño de la pantalla de detalle
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 263. Actores de la película y manejo de errores
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 264. Slideshow de los actores
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 265. RXJS - CombineLatest
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 266. Agregando animaciones y FadeIn
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 267. Código fuente de la sección
