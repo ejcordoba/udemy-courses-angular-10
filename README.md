@@ -11385,15 +11385,89 @@ constructor( private afs: AngularFirestore, public auth: AngularFireAuth ) {
    }
 ```
 
-
-
-
-
-
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 238. Autenticación con Twitter
+
+En esta clase haremos la autenticación con Twitter y el método logout(). Empezaremos con el método logout() para así poder desconectar de Google y trabajar con Twitter.
+
+Volvemos momentáneamente a app.component.html para maquetar un botón de logout:
+
+```
+<div class="container main-container">
+    <h1>Firechat</h1>
+    <div class="col-md-12 text-end">
+        <button type="button" class="btn btn-outline-danger">Salir</button>
+    </div>
+    <app-login></app-login>
+    <!-- <div class="chat-window">
+        <app-chat></app-chat>
+    </div> -->
+</div>
+```
+
+Lo siguiente será controlar cuando mostrar el login, para eso tendremos que importar el servicio de login a app.component.ts, como ya estamos centralizando todo en chat.service.ts muchas de las importaciones y acciones en el constructor no las necesitamos, se quedará nuestro servicio tal que:
+
+```
+import { Component } from '@angular/core';
+import { ChatService } from './providers/chat.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  constructor( public _cs: ChatService ) { }
+}
+```
+
+Así ya podemos llamar al método logout() del servicio en el html, considerar que en el método logout() tendremos que inicializar a vacío el objeto cuando se ejecute el método.
+
+```
+logout() {
+    this.usuario = {};
+    this.auth.signOut();
+  }
+```
+
+```
+<button type="button" class="btn btn-outline-danger" (click)="_cs.logout()">Salir</button>
+```
+
+Ahora cuando lo pulsemos podremos observar en la consola que el estado del usuario cambia a null. Maquetaremos el botón de logout para que se muestre sólo si existe un uid de usuario, también lo haremos para los botones de login pero en el caso contrario.
+
+````
+<div class="container main-container">
+    <h1>Firechat</h1>
+    <div class="col-md-12 text-end" *ngIf="_cs.usuario.uid">
+        <button type="button" class="btn btn-outline-danger" (click)="_cs.logout()">Salir</button>
+    </div>
+    <app-login *ngIf="!_cs.usuario.uid"></app-login>
+    <!-- <div class="chat-window">
+        <app-chat></app-chat>
+    </div> -->
+</div>
+```
+
+Una vez definido esto podemos pasar a trabajar con la autenticación en Twitter, para ello vamos a la consola de Firebase / Authentication y habilitamos Twitter en Sign-in method / Agregar proveedor nuevo / Twitter. Vamos a necesitar una Clave de API y Clave de API secreta. Si hacemos click en el enlace de "más información" se nos abrirá una página con toda la documentación (muy interesante y recomendable dedicar un tiempo a leerla), en nuestro caso concreto miraremos el índice izquierdo en Authentication/Web/Twitter. Veremos que en los pasos a seguir está registrar la app para recibir esas claves a través de un enlace sobre el cual haremos click y nos llevará a https://developer.twitter.com/en/apps (tendremos que tener una cuenta de Twitter). Le daremos a "create app" y nos pedirá que apliquemos como desarrollador, le damos a "apply". Nos saldrá un formulario largo y tedioso para poder tener acceso a crear una app de Twitter.
+
+A la hora de crearla tendremos que crear un proyecto antes, rellenaremos todo el formulario y una vez terminada la creación de la app podremos acceder finalmente a los datos. Tendremos que ir también a la configuración y añadir la url de callback que se nos proporciona en la configuración de autenticación de Twitter en Firebase. Los datos de API los introduciremos en la parte de Firebase donde nos lo pedían, guardamos, y ya estaría.
+
+Antes de seguir decir que en la app de Twitter podemos realizar más configuraciones si investigamos, tipo permisos (por defecto viene 'read-only'), icono de la aplicación, etc.
+
+Por último quedaría discriminar en el método ingresar con qué plataforma lo estamos haciendo, para ello vamos a chat.service.ts y en login() haremos el condicional del proveedor, si tuvieramos muchos proveedores podríamos hacer un switch/case, else/if, etc.
+
+```
+login( proveedor: string ) {
+
+    if ( proveedor === 'google') {
+      this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    } else {
+      this.auth.signInWithPopup(new firebase.auth.TwitterAuthProvider());
+    }
+  }
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
