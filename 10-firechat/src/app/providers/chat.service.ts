@@ -13,10 +13,26 @@ export class ChatService {
   private itemsCollection: AngularFirestoreCollection<Mensaje>;
 
   public chats: Mensaje[] = [];
+  public usuario: any = {};
 
-  constructor( private afs: AngularFirestore, public auth: AngularFireAuth ) { }
+  constructor( private afs: AngularFirestore, public auth: AngularFireAuth ) {
 
-  login() {
+    this.auth.authState.subscribe( user => {
+
+      console.log("Estado del usuario: ", user);
+      
+      if (!user) {
+        return;
+      }
+
+      this.usuario.nombre = user.displayName;
+      this.usuario.uid = user.uid;
+
+    });
+
+   }
+
+  login( proveedor: string ) {
     this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
   }
   logout() {

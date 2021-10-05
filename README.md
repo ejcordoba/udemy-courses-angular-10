@@ -11343,7 +11343,51 @@ login() {
   }
 ```
 
-Nótese que se llama a un método 'GoogleAuthProvider()' esto sera lo que usaremos cuando queramos manipular métodos de autenticación de otros proveedores (GitHub, Facebook...). 
+Nótese que se llama a un método 'GoogleAuthProvider()' esto sera lo que usaremos cuando queramos manipular métodos de autenticación de otros proveedores (GitHub, Facebook...).
+
+NOTA: Los últimos trabajos en el curso los hice en mi ordenador de sobremesa, al tratar de seguir en el portátil, tras actualizar el proyecto con Git, me daba error de dependencias y no podía compilar el proyecto. Tuve que comentar en app.module.ts AngularFireAuth y deshabilitarlo, lo revisaré de nuevo con la versión de mi PC de sobremesa, pero es raro, no tenía yo problemas en mi versión de sobremesa.
+
+A continuación llamaremos al servicio desde login.component.ts `import { ChatService } from "../../providers/chat.service";` e inyectaremos una instancia en el constructor `constructor( public _cs:ChatService ) { }`.
+
+Una vez realizado esto, actualizaremos el método ingresar() invocando al método login() del servicio.
+
+ingresar( proveedor: string ){
+    console.log( proveedor );
+    this._cs.login( proveedor );
+  }
+
+Como el método ingresar está esperando recibir un proveedor tendremos que actualizar el método login() del servicio, de momento sólo lo indicaremos para luego discriminar cuando tengamos distintos proveedores disponibles (En nuestro caso el 2º ejemplo que haremos más tarde: Twitter). `login( proveedor: string ) {`.
+
+Haremos una prueba y veremos que se muestra en consola el string del proveedor y se abre una ventana emergente con el login de Google, podemos hacer login con una cuenta que tengamos de prueba y listo, queda conectado.
+
+Lo siguiente será manipular la información que obtenemos del usuario tras haber autenticado correctamente.
+
+En chat.service.ts vamos a crear una nueva propiedad de la clase ChatService llamada 'usuario' que será de tipo 'any' y la inicializaremos como un objeto vacío, en esta propiedad almacenaremos la información relativa a la autenticación. `public usuario: any = {};`
+
+Para acceder a esos datos en el constructor nos suscribiremos al estado de la autenticación del observable AngularFireAuth, de esta manera estaremos escuchando cualquier cambio que suceda en el estado de la autenticación. Recibiremos un 'user' (que no es nuestra propiedad declarada 'usuario') y crearemos una función de flecha, en esta función vamos a considerar dos cuestiones, cuando se ejecute por primera vez no tendremos ningun estado del usuario y lo que recibiremos será 'null', así que haremos una comprobación de que si no existe el usuario haga un 'return', en caso contrario sobre la marcha crearemos propiedades del objeto 'usuario' que habíamos creado para almacenar valores tipo 'displayName', el uid, foto, etc de 'user', esto lo podemos saber a través del console log que hemos hecho de user (O leyendo la documentación de Firebase ;-) ), ahí podemos ver toda la información que alberga ese objeto. Así pues por el momento guardaremos el nombre de usuario y su uid. El uid nos servirá para saber que mensajes se han registrado para ese usuario, recordemos que en nuestro tipado 'Mensaje' tenemos una propiedad 'uuid' que será este valor:
+
+```
+constructor( private afs: AngularFirestore, public auth: AngularFireAuth ) {
+
+    this.auth.authState.subscribe( user => {
+
+      console.log("Estado del usuario: ", user);
+      
+      if (!user) {
+        return;
+      }
+
+      this.usuario.nombre = user.displayName;
+      this.usuario.uid = user.uid;
+
+    });
+
+   }
+```
+
+
+
+
 
 
 
