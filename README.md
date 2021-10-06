@@ -11605,21 +11605,395 @@ También descarguen el material adjunto
 
 ## 245. TheMovieDB
 
+Empezaremos copiando la hoja de estilos proporcionada en el material adjunto en la de nuestro proyecto /src/styles.css. También copiaremos el archivo no-image.jpg en src/assets/.
+
+A continuación nos registraremos en https://www.themoviedb.org/, pues nos hará falta para la sección.
+
+Es recomendable también echarle un ojo a la documentación https://developers.themoviedb.org/3/getting-started/introduction para ver todas las posibilidades que nos ofrece esta API.
+
+Vamos a necesitar generar una API key para poder manejar las solicitudes http de nuestro proyecto a la API. Para ello una vez que estamos registrados y hemos iniciado sesión en la web, vamos a nuestro perfil -> API (en el menú lateral izquierdo) y hacemos click en la sección derecha en Solicitar una clave de API, seleccionaremos Developer como tipo de usuario, y tendremos que rellenar un formulario, creo que no es necesario poner valores reales... pinta que es para efectos de marketing, yo rellené el formulario y ya me generó directamente la clave de la API y el token de acceso.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 246. Módulos en Angular
+
+Los módulos en Angular, como ya hemos ido viendo a lo largo del curso, nos permiten importar paquetes que contienen una serie de funcionalidades para la aplicación, puesto que hay muchos tipos de aplicaciones, no todas tienen las mismas necesidades, así que cada aplicación tendrá los módulos que requiera.
+
+Otra consideración es que en esta aplicación vamos a crear diferentes módulos en funcion de las secciones de la aplicación en la que estemos trabajando, para poder agruparlas y para tener nuestro app.module.ts de la manera más simple posible.
+
+Vamos a crear los módulos con Angular CLI, el primero se va a llamar components: `ng g m components`
+
+Por ejemplo, el CommonModule es el que nos permite hacer ngIf, ngFor, etc (Este viene importado por defecto en el módulo que acabamos de crear, digamos que las librerías básicas). Otra utilidad de los módulos personalizados es, por ejemplo, importar módulos de terceros.
+
+Otra cuestión a tener en cuenta es que si acabamos importando módulos en distintos sitios Angular lo detecta y no lo carga dos veces, usa el que ya esté en memoria.
+
+Creemos otro módulo `ng g m pipes` , para tener centralizados todos los pipes que creemos en un sólo módulo, y así poder tenerlos disponibles con solo tener el módulo importado.
+
+Otro más `ng g m pages`, que nos servirá para tener ahí definidas todas las páginas que tenga nuestra aplicación.
+
+También dentro del directorio src/app vamos a crear dos directorios más: 'services' e 'interfaces', en interfaces tendremos el tipado de nuestras peticiones http.
+
+Se recomienda consultar la documentación acerca de los módulos en Angular, pero básicamente son agrupadores de contenido.
+
+Antes de finalizar la lección vamos a crear las páginas que vamos a usar, pese a que las denominemos páginas realmente son componentes, que dentro de esos componentes hay mas componentes. Generemos los tres componentes que vamos a necesitar:
+
+>ng g c pages/home --skipTests
+>ng g c pages/pelicula --skipTests
+>ng g c pages/buscar --skipTests
+
+Interesante observar que actualiza pages.module.ts en lugar de app.module.ts, Angular detecta que el componente está siendo creado dento de un directorio donde está definido un módulo, por tanto lo asocia a él.
+
+```
+CREATE src/app/pages/home/home.component.html (19 bytes)
+CREATE src/app/pages/home/home.component.ts (267 bytes)
+CREATE src/app/pages/home/home.component.css (0 bytes)
+UPDATE src/app/pages/pages.module.ts (259 bytes)
+```
+
+Finalmente bajaremos y subiremos el servicio 'ng serve' para asegurarnos de que los módulos son incluidos en el bundle y, de paso, ver que todo está correcto y no hay ningún error en la aplicación.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 247. Obtener películas en cartelera
 
+Nos dirigimos a la documentación de themoviedb, yendo a la sección izquierda 'MOVIES' y seleccionamos 'GET Now Playing', en la ficha podemos ver la Definición del endpoint y una sección Try Out en la cual podemos probar pues nos proporciona el endpoint que tenemos que usar para esa solicitud http, para probarlo nos pide que introduzcamos nuestra API key. Podemos cambiar algunos datos de configuración del endpoint, como el idioma y generar la url y probarla desde esa misma página, si aun con el Ad-block desactivado no resuelve la petición http (como fue mi caso), podemos simplemente copiar la url y pegarla en el navegador o usarla en Postman y veremos la respuesta en formato JSON.
+
+Lo siguiente va a ser crear un tipo para esa información, podríamos tratarla como tipo 'any' a la hora de recibirla, pero puede ser incómodo y muy propenso a errores, estando trabajando en Typescript lo ideal es tener un tipo para nuestra respuesta de datos.
+
+Entramos ahora en conocimiento de una web extremadamente útil, que nos permite incluir un JSON y que nos lo 'traduzca' a algún tipado de lenguaje: https://app.quicktype.io/
+
+Así que podemos pegar ahí el JSON que obtuvimos anteriormente y generar el código, incluyendo un nombre intuitivo para la clase y en las opciones seleccionando Intefaces Only y Verify JSON parse.
+
+Ahora con ese código podemos crear un archivo cartelera-response.ts dentro de nuestro directorio 'interfaces', haremos algunas modificaciones para adecuarlo a nuestro proyecto, la propiedad 'Result' la cambiaremos por 'Movie'.
+
+```
+export interface CarteleraResponse {
+    dates:         Dates;
+    page:          number;
+    results:       Movie[];
+    total_pages:   number;
+    total_results: number;
+}
+
+export interface Dates {
+    maximum: Date;
+    minimum: Date;
+}
+
+export interface Movie {
+    adult:             boolean;
+    backdrop_path:     string;
+    genre_ids:         number[];
+    id:                number;
+    original_language: OriginalLanguage;
+    original_title:    string;
+    overview:          string;
+    popularity:        number;
+    poster_path:       string;
+    release_date:      Date;
+    title:             string;
+    video:             boolean;
+    vote_average:      number;
+    vote_count:        number;
+}
+
+export enum OriginalLanguage {
+    En = "en",
+    Fr = "fr",
+}
+```
+
+Antes de seguir con el resto de tareas vamos a hacer una rápida y divertida que es consumir ese endpoint, así que nos vamos a app.module.ts para importar la libreria de Angular common/http:
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from "@angular/common/http";
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+A continuación vamos a crear un servicio para centralizar toda la información que va hacia ese endpoint `ng g s services/peliculas`, nótese que no actualiza ningún módulo en la creación porque los servicios son accesibles de manera global por defecto mediante el providedIn: 'root', eliminaremos el archivo de pruebas del servicio que se genera también.
+
+Así pues, una vez creado nuestro servicio inyectaremos en el constructor una instancia privada de HttpClient. También crearemos un método getCartelera() para hacer la petición, de momento lo haremos funcional a lo "bruto" y lo optimizaremos más tarde:
+
+```
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PeliculasService {
+
+  constructor( private http: HttpClient ) { }
+
+  getCartelera() {
+
+    return this.http.get('https://api.themoviedb.org/3/movie/now_playing?api_key=12ae4d30f546c9e157e41765e82c2a5e&language=es-ES&page=1');
+    
+  }
+}
+```
+
+Ahora para consumirlo nos vamos a app.component.ts y crearemos el constructor, inyectaremos una instancia privada de nuestro servicio recién creado, y dentro llamaremos al método getCartelera, recordar que para que se dispare la petición http de un observable hay que hacer el método subscribe en él, teniendo una respuesta que imprimiremos en consola de momento.
+
+El tipo de la respuesta por el momento no sabíamos cual era, al hacer el console log vemos que devuelve un tipo 'Object' genérico, el problema de esto es que si la respuesta la guardamos en una variable 'resp' y poniéndole punto tratamos de acceder a sus propiedades veremos que no podremos, lo ideal entonces sería definir que nuestra respuesta va a ser del tipo que hemos creado CarteleraResponse, podríamos especificar esto en la misma llamada al método getCartelera, pero entonces cada vez que hagamos la llamada al método tendremos que especificar el tipo que devuelve, siendo al final redundante, lo más lógico sería especificar en la creación del método en nuestro servicio de qué tipo va a ser, definiendo que devolverá un Observable de tipo CarteleraRsponse (hay que asegurarse de importar bien la librería de rxjs para Observable y nuestra interface para CarteleraResponse), así de esta manera podemos llamar al método get tal que `get<CarteleraResponse>` todo esto lo vamos a ver mas claro con los dos archivos terminados:
+
+peliculas.service.ts:
+
+```
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { CarteleraResponse } from '../interfaces/cartelera-response';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PeliculasService {
+
+  constructor( private http: HttpClient ) { }
+
+  getCartelera():Observable<CarteleraResponse> {
+
+    return this.http.get<CarteleraResponse>('https://api.themoviedb.org/3/movie/now_playing?api_key=12ae4d30f546c9e157e41765e82c2a5e&language=es-ES&page=1');
+
+  }
+}
+```
+
+app.component.ts:
+
+```
+import { Component } from '@angular/core';
+import { PeliculasService } from './services/peliculas.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  
+  constructor ( private peliculasService: PeliculasService ) {
+
+
+    this.peliculasService.getCartelera()
+      .subscribe( resp => {
+        console.log(resp);
+      });
+  }
+}
+
+```
+
+De todas maneras esto no lo dejaremos así en app.component.ts (puesto que para eso hemos creado todos los módulos, para no sobrecargar), lo hicimos solo a modo de explicación, reestructuraremos en las siguientes lecciones.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 248. Implementar rutas en nuestra aplicación
 
+En esta lección implementaremos manualmente las rutas de nuestra aplicación para poder navegar entre nuestras tres rutas.
+
+Para ello crearemos un nuevo módulo en src/app: `ng g m appRouting --flat`
+
+El flag '--flat' crea los ficheros en el nivel superior de la raiz del actual proyecto, la misma raíz de la aplicación sin crear un directorio aparte, también podemos usar el flag '--help' para saber estas cosas.
+
+Abrimos el archivo creado app-routing.module.ts, que no deja de ser un archivo de módulo general, con la diferencia de que nosotros vamos a definir nuestras rutas en él. Como esto ya lo hicimos en alguna sección anterior simplemente recordar importar Routes de @angular/router, definir las rutas, los argumentos que se van a pasar por la url, el comodín de redirección si se trata de escribir una ruta no válida, hacer la importacion de las rutas padres (forRoot) y definir la exportación del módulo de rutas... quedando el módulo tal que:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Routes, RouterModule } from '@angular/router';
+import { HomeComponent } from './pages/home/home.component';
+import { PeliculaComponent } from './pages/pelicula/pelicula.component';
+import { BuscarComponent } from './pages/buscar/buscar.component';
+
+const routes: Routes = [
+
+  {
+    path: 'home',
+    component: HomeComponent
+  },
+  {
+    path: 'pelicula/:id',
+    component: PeliculaComponent
+  },
+  {
+    path: 'buscar/:texto',
+    component: BuscarComponent
+  },
+  {
+    path: '**',
+    redirectTo: '/home'
+  }
+];
+
+@NgModule({
+  declarations: [],
+  imports: [
+    CommonModule,
+    RouterModule.forRoot( routes )
+  ],
+  exports:[RouterModule]
+})
+export class AppRoutingModule { }
+
+```
+
+Una vez terminado lo importaremos en nuestro app.module.ts para nuestro módulo de rutas quede definido en la aplicación:
+
+```
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from "@angular/common/http";
+
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }:
+```
+
+Tras esto ya podemos borrar el h1 que teníamos en app.component.html e incluir el <router-outlet></router-outlet>, veremos home works! y el resto de url funcionando.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 249. Implementar una barra de navegación
+
+En esta lección vamos a implementar la barra de navegación y trabajar con el components.module.ts, puesto que el navbar será un componente, en app.component.html enmarcaremos el router-outlet en un div container, todos los componentes quedarán dentro de este div también.
+
+Creamos el componente: `ng g c components/navbar --skipTests`, esto nos creará el componente y actualizará nuestro components.module.ts, pero como el componente va a ser llamado fuera de este lugar tendremos que incluirlo también en los exports de components.module.ts:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NavbarComponent } from './navbar/navbar.component';
+
+
+
+@NgModule({
+  declarations: [NavbarComponent],
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    NavbarComponent
+  ]
+})
+export class ComponentsModule { }
+```
+
+Para poder tener accesibles nuestros componentes en la aplicación deberemos de importar nuestro módulo de componentes en app.module.ts:
+
+```
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from "@angular/common/http";
+
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { ComponentsModule } from './components/components.module';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    ComponentsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+Ahora ya si podremos incluir el componente del navbar en nuestro app.component.html:
+
+```
+<app-navbar></app-navbar>
+<div class="container mt-5">
+    <router-outlet></router-outlet>
+</div>
+```
+
+El navbar lo cojeremos de Bootstrap y lo manipularemos para dejarlo a nuestro gusto con solo lo necesario y que se vea bien, como dato ahora en los input hay un type 'search' que hace que cuando escribes en la caja aparezca la X para borrar el contenido de la caja.
+
+Para hacer funcionar el logo como link no vamos a usar el href de html, usaremos el routerLink de Angular, esto evita refrescos innecesarios de toda la aplicación, pero para poder usarlo necesitamos hacer previamente la importación pertinente en el módulo de componentes, para indicar que los componentes van a usar el routerLink, esto está en la librería RouterModule, que efectivamente estamos volviendo a llamar, pero solo la carga una vez, el resto de veces lo hará desde memoria.
+
+component.module.ts:
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NavbarComponent } from './navbar/navbar.component';
+import { RouterModule } from '@angular/router';
+
+
+
+@NgModule({
+  declarations: [NavbarComponent],
+  imports: [
+    CommonModule,
+    RouterModule
+  ],
+  exports: [
+    NavbarComponent
+  ]
+})
+export class ComponentsModule { }
+
+```
+
+Así pues el navbar.component.html queda de momento tal que:
+
+```
+<nav class="navbar navbar-expand-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand" routerLink="/home">Películas</a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Buscar película" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+</nav>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
