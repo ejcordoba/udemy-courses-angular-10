@@ -11999,6 +11999,8 @@ Así pues el navbar.component.html queda de momento tal que:
 
 ## 250. Componente Slideshow - Estructura y argumentos
 
+Para nuestro slider vamos a usar una librería de JS llamada swiper (swiperjs.com) que viene por defecto en IONIC.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 251. Swiper - Slideshow de películas
