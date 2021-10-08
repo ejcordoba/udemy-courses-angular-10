@@ -12189,6 +12189,49 @@ A continuación tendríamos que crear una instancia de Swiper enviando cierta co
 
 Aparecerá algo ya, pero no funciona porque como hemos comentado necesitamos inicializarlo. Seguiremos el ejemplo de la documentación "Initialize Swiper" y copiaremos el código, como el ngOnInit cuando se ejecuta puede ser que todavía este recibiendo información y pudiera fallar, lo mejor es implementar en la clase del componente slideshow.component.ts una implementación de ciclo de vida AfterViewInit que forma parte de @angular/core.
 
+Cuando hagamos esto veremos que en el nombre de la clase da un error, con control mas punto haremos la implementación automática, dentro del ngAfterViewInit() que nos crea pondremos el código que hemos copiado de la documentación, eliminando el throw error que creó por defecto.
+
+Al copiarlo veremos que el método Swiper() para crear una nueva instancia nos da un error porque no encuentra la librería necesaria, la tendremos que añadir o bien manualmente o bien seleccionando el método Swiper() y pulsando control mas punto.
+
+**NOTA IMPORTANTE**: Tras haber roto el proyecto varias veces tratando de instalar la librería al final lo solucioné haciendo un downgrade (Esto suele pasar a veces, el momento en el que estoy haciendo el curso es más avanzado a su publicación y pere a que se intenta actualizar el curso hay cosas que pueden fallar) a la versión 6.0.2:
+
+```
+npm uninstall swiper
+
+npm install swiper@6.0.2
+```
+
+Ya deberíamos ver un swipe vertical en nuestra app. En la documentación podemos ver todos los argumentos de configuración/maquetación que tiene swiper. Nosotros lo vamos a limpiar bastante y vamos a dejar slideshowcomponent.ts así de momento:
+
+```
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { Movie } from 'src/app/interfaces/cartelera-response';
+import { Swiper } from 'swiper';
+@Component({
+  selector: 'app-slideshow',
+  templateUrl: './slideshow.component.html',
+  styleUrls: ['./slideshow.component.css']
+})
+export class SlideshowComponent implements OnInit, AfterViewInit {
+
+  @Input() movies: Movie[];
+
+  constructor() { }
+  ngAfterViewInit(): void {
+    const swiper = new Swiper('.swiper', {
+      loop: true,    
+    });
+  }
+
+  ngOnInit(): void {
+    console.log(this.movies);
+  }
+
+}
+```
+
+El diseño ahora mismo deja bastante que desear así que vamos a ir a slideshow.component.css para solucionar esto.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 252. Controles del swiper
