@@ -12145,7 +12145,49 @@ Ahora podemos definir en el selector el envío del objeto de padre a hijo `<app-
 
 ## 251. Swiper - Slideshow de películas
 
+Iremos a la documentación de swiperjs.com para consultar get started e implementar la librería.
 
+La instalaremos a través del Node Package Manager, sobre todo porque la mayoría de librerías para Angular las vamos a instalar así, es una práctica habitual. Esto nos actualizará el directorio node_modules, una vez instalado necesitaremos apuntar a ese directorio y al subdirectorio swiper, para localizar swiper-bundle.css. Hay muchas maneras de trabajar con los módulos de Node, en este caso como necesitamos que forme parte del bundle de nuestra aplicación iremos al archivo de raíz angular.json y en "styles", cerca de "assets", incluiremos la versión minificada del archivo swiper-bundle.min.css, que es lo que se recomienda para entornos de "producción", además de que es un archivo css que no vamos a necesitar modificar (o no deberíamos necesitar):
+
+```
+"assets": [
+    "src/favicon.ico",
+    "src/assets"
+],
+"styles": [
+    "src/styles.css",
+    "node_modules/swiper/swiper-bundle.min.css"
+],
+```
+
+Al haber modificado un archivo fundamental como es angular.json necesitamos cancelar y volver a lanzar el servicio ng serve, si diera algun error en este caso sería porque el path al archivo no es correcto.
+
+A continuación tendríamos que crear una instancia de Swiper enviando cierta configuración, pero antes vamos a copiar un ejemplo html de la sección "Add Swiper HTML layout" de la documentación para maquetar nuestro componente:
+
+```
+<!-- Slider main container -->
+<div class="swiper">
+  <!-- Additional required wrapper -->
+  <div class="swiper-wrapper">
+    <!-- Slides -->
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+    ...
+  </div>
+  <!-- If we need pagination -->
+  <div class="swiper-pagination"></div>
+
+  <!-- If we need navigation buttons -->
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+
+  <!-- If we need scrollbar -->
+  <div class="swiper-scrollbar"></div>
+</div>
+```
+
+Aparecerá algo ya, pero no funciona porque como hemos comentado necesitamos inicializarlo. Seguiremos el ejemplo de la documentación "Initialize Swiper" y copiaremos el código, como el ngOnInit cuando se ejecuta puede ser que todavía este recibiendo información y pudiera fallar, lo mejor es implementar en la clase del componente slideshow.component.ts una implementación de ciclo de vida AfterViewInit que forma parte de @angular/core.
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
