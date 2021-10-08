@@ -11999,11 +11999,153 @@ Así pues el navbar.component.html queda de momento tal que:
 
 ## 250. Componente Slideshow - Estructura y argumentos
 
-Para nuestro slider vamos a usar una librería de JS llamada swiper (swiperjs.com) que viene por defecto en IONIC.
+Vamos a crear un slider que muestre las últimas películas en cartelera, estas películas irán cambiando dinámicamente conforme la API se vaya actualizando y vayamos recibiendo las respuestas http. Para ello vamos a usar una librería de JS llamada swiper (swiperjs.com) tan estable que viene por defecto en IONIC.
+
+Lo primero que haremos será crear un componente reutilizable que ubicaremos en nuestro directorio 'components' pensado para ello. No es una página, es un componente que podré llamar varias veces de distintas maneras en distintos sitios.
+
+> ng g c components/slideshow --skipTests
+
+Una vez creado nos actualiza el components.module.ts por haber creado el componente en ese directorio, abrimos el módulo para añadir el componente a los exports, pues necesitaremos que pueda ser llamado, como hemos comentado, el componente en distintos lugares, o al menos que tenga esa posibilidad.
+
+```
+@NgModule({
+  declarations: [NavbarComponent, SlideshowComponent],
+  imports: [
+    CommonModule,
+    RouterModule
+  ],
+  exports: [
+    NavbarComponent,
+    SlideshowComponent
+  ]
+})
+```
+
+En principio en nuestra página home es donde querremos mostrar ese slideshow, por tanto tendremos que ir a home.component.html e introducir el selector <app-slideshow>, si lo hacemos y guardamos veremos que nos da error la compilación, puesto que no está siendo reconocido, nos tenemos que asegurar que sea accesible en el módulo, por tanto en nuestro módulo de páginas pages.module.ts deberemos de incluir el módulo de componentes, en el cual se encuentra este componente y el de navbar.
+
+```
+import { ComponentsModule } from '../components/components.module';
+
+
+
+@NgModule({
+  declarations: [
+    HomeComponent,
+    PeliculaComponent,
+    BuscarComponent,
+  ],
+  imports: [
+    CommonModule,
+    ComponentsModule
+  ]
+})
+```
+
+Aun así seguirá dando error, y esto es porque nos falta por especificar en app.module.ts que tenemos un módulo de páginas, así que lo añadiremos en los imports de app.module.ts:
+
+```
+import { PagesModule } from './pages/pages.module';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    ComponentsModule,
+    PagesModule
+  ],
+```
+
+Si resultase que sigue sin verse el componente habría que bajar y subir el servicio ng serve, puesto que el webpack trata de cargar la última versión que funcionó correctamente.
+
+Lo que queremos a continuación es que la home sea la encargada de realizar la petición http para las películas, esto lo teníamos definido en app.component.ts y queremos este componente principal lo más limpio posible, así que vamos a migrar ese código a home, el servicio y el método get, para así tener la aplicación lo más modular posible. Quedando app.component.ts y home.component.ts respectivamente:
+
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  
+  constructor () {}
+}
+```
+
+```
+import { Component, OnInit } from '@angular/core';
+import { PeliculasService } from '../../services/peliculas.service';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+
+  constructor( private peliculasService: PeliculasService ) { }
+
+  ngOnInit(): void {
+
+    this.peliculasService.getCartelera()
+      .subscribe( resp => {
+        console.log(resp);
+      });
+      
+  }
+```
+
+Una vez teniendo accesible el objeto de películas necesitamos mandarselas al slideshow, que es un elemento hijo de home, por tanto se lo pasaremos a través del selector. Antes crearemos una variable tipo array que usaremos para almacenar el resultado de la respuesta http, para que después podamos enviar este objeto array de películas a través del selector.
+
+```
+export class HomeComponent implements OnInit {
+
+  public movies: Movie[] = []
+```
+
+Como nuestra respuesta http esta definida como tipo CarteleraResponse, podemos acceder a sus atributos, así que podemos ir al nodo principal del objeto que nos interesa (podemos ver esto en el console log del objeto) que es "results".
+
+```
+ this.peliculasService.getCartelera()
+      .subscribe( resp => {
+        console.log(resp.results);
+        this.movies = resp.results;
+      });
+      
+```
+
+Ahora podemos definir en el selector el envío del objeto de padre a hijo `<app-slideshow [movies]="movies"></app-slideshow>`, pero nos dará error porque aun no hemos definido en el componente slideshow el objeto movies que recibirá dicha información. Esto lo haremos a través del decorador Input que tendremos que importar de @angular/core, lo definiremos como un array, y no hará falta inicializarlo, vamos a hacer un console log de movies en el ngOnInit(), veremos que nos muestra un array vacío, esto es por ciclos de vida del componente, se renderiza antes de que home pueda enviarle los datos, para evitar esto y de paso poder controlar errores de carga, implementar loadings, etc, vamos a añadir un div contenedor del componente slideshow en home.component.html que verifique si estan llegando datos, esto activará el evento OnChange del ciclo de vida, ejecutándose antes del OnInit.
+
+```
+@Input() movies: Movie[];
+
+  constructor() { }
+
+  ngOnInit(): void {
+    console.log(this.movies);
+  }
+```
+
+```
+<p>home works!</p>
+
+<div class="row" *ngIf="movies.length > 0">
+    <div class="col">
+        <app-slideshow [movies]="movies"></app-slideshow>
+    </div>
+</div>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 251. Swiper - Slideshow de películas
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
