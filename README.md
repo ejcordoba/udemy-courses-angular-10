@@ -12232,6 +12232,62 @@ export class SlideshowComponent implements OnInit, AfterViewInit {
 
 El diseño ahora mismo deja bastante que desear así que vamos a ir a slideshow.component.css para solucionar esto.
 
+```
+.swiper {
+    height: 330px;
+    width: 100%;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+    color: white;
+}
+```
+
+Cambiaremos también los div contenedores de los slides, pondremos unos datos inventados para maquetar, nótese que en la configuración del slide tenemos loop: true, lo cual hace que aunque sólo haya un slide de opción de seguir pasando ese mismo slide una y otra vez.
+
+```
+<div class="swiper-wrapper">
+        <!-- Slides -->
+        <div class="swiper-slide">
+            <div class="movie-description">
+                <h3>Título película</h3>
+                <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum ratione nihil provident commodi aut consequatur consectetur? Rerum, voluptatum alias maiores, incidunt, error eos impedit quo consequatur dolorum illum molestias eligendi.</p>
+            </div>
+        </div>
+    </div>
+```
+
+Añadimos unos estilos más porque queremos que se vea abajo de los botones, los cuales todavía tenemos que configurar.
+
+```
+.movie-description {
+    background-color: rgba(0, 0, 0, 0.3);
+    bottom: 0;
+    padding: 5px 30px;
+    position: absolute;
+    width: 100%;
+}
+```
+
+Lo siguiente será multiplicar el slide por la cantidad de elementos que tenemos en el objeto 'movies', lo haremos mediante un *ngFor, para hacer que todo el texto de descripciones tenga un límite (puesto que pueden haber descripciones muy largas y ser distintas de otras, quedando descuadrados los div) aplicaremos el pipe 'slice' y añadiremos unos puntos suspensivos para que todo quede coherente. Con el console log del objeto sabremos a qué atributo del objeto tendremos que llamar a renderizar. Vamos a definir la imagen de la película como si fuera el background del slide, lo haremos con [ngStyle] en el mismo html, con imágenes esta suele ser una práctica común, aunque bien se podría hacer del lado de TypeScript, las url de las imágenes siempre tienen el mismo formato en tmdb, siendo el hash final el atributo backdrop_path del objeto movies, algo tipo https://image.tmdb.org/t/p/w500/iDLtDgxLiYsarfdQ4msUhUqoNPp.jpg , por tanto maquetaremos para que la ruta sea la constante + el hash del objeto en cuestión, definiremos el CSS para que la imagen cubra todo el div y tenga un ancho del 100%, de esta manera aunque cambie el tamaño de la pantalla se ajustará al div.
+
+```
+<div class="swiper-wrapper">
+        <!-- Slides -->
+        <div class="swiper-slide" *ngFor="let movie of movies" [ngStyle]="{
+            'background-size':'cover',
+            'background-image':'url(https://image.tmdb.org/t/p/w500'+ movie.backdrop_path +')'
+        }">
+            <div class="movie-description">
+                <h3>{{ movie.title }}</h3>
+                <p> {{ movie.overview | slice:0:130 }}...</p>
+            </div>
+        </div>
+    </div>
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 252. Controles del swiper
