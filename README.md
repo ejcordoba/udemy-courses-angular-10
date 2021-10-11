@@ -12412,9 +12412,40 @@ h3 {
 
 ## 254. Star-Rating - Paquete de Npm
 
+Nota para la siguiente clase
+
+En la próxima clase vamos a trabajar creando la calificación promedio con estrellas, por lo que usaremos el siguiente paquete:
+
+https://www.npmjs.com/package/ng-starrating
+
+Sólo necesito que abran el enlace y lo usaremos en la siguiente
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 255. Calificación con estrellas
+
+Instalaremos el paquete de rating con estrellas proporcionado a traves del Node Package Manager `npm i ng-starrating`. Leeremos la información de la documentación del repositorio y lo implementaremos donde teníamos los ***** en el html.
+
+Una vez instalados importaremos el módulo desde la libreria en components.module.ts (no en app.module.ts porque solo queremos que sea accesible en los componentes, no en toda la aplicación, nos estamos preocupando de que todo sea modular y centralizado.). Tras eso podremos llamar al componente dentro de nuestro html de posters:
+
+```
+import { RatingModule } from 'ng-starrating';
+
+
+@NgModule({
+  declarations: [NavbarComponent, SlideshowComponent, PeliculasPosterGridComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    RatingModule
+  ],
+```
+
+```
+    <star-rating [value]="movie.vote_average" totalstars="10" checkedcolor="yellow" uncheckedcolor="grey" size="14px" readonly="false"></star-rating>
+</div>
+<div class="col-2 text-white">{{ movie.vote_average | number:'1.1-2'}}</div>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
