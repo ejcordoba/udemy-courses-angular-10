@@ -12287,10 +12287,52 @@ Lo siguiente será multiplicar el slide por la cantidad de elementos que tenemos
     </div>
 ```
 
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 252. Controles del swiper
+
+Vamos a configurar la funcionalidad de los botones del slider, queremos tener control sobre ello, dentro de la documentación podremos ver todas las opciones que hay para esto (https://swiperjs.com/swiper-api), hay muchos parámetros con los que podemos trabajar, tenemos un objeto 'swiper' sobre el cual podemos aplicar métodos, por ejemplo swiper.slideNext() mueve al siguiente slide, podemos llamar a estos métodos en los eventos de los botones. Para ello definiremos en el html el evento click para que lance unas funciones que vamos a declarar en el componente, dichas funciones ejecutarán estos métodos, tendremos que crear una instancia de tipo Swiper que sea accesible, en lugar de tenerla como constante, que es como la teníamos hasta ahora, de esta manera podremos acceder al objeto y aplicar los métodos. No haremos validación de que exista el objeto puesto que se ejecuta muy rápido y prácticamente seguro ya estarán los datos para el momento en el que el usuario decida hacer click en los botones:
+
+```
+<div class="swiper-button-prev" (click)="onSlidePrev()"></div>
+    <div class="swiper-button-next" (click)="onSlideNext()"></div>
+```
+
+```
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { Movie } from 'src/app/interfaces/cartelera-response';
+import { Swiper } from 'swiper';
+@Component({
+  selector: 'app-slideshow',
+  templateUrl: './slideshow.component.html',
+  styleUrls: ['./slideshow.component.css']
+})
+export class SlideshowComponent implements OnInit, AfterViewInit {
+
+  @Input() movies: Movie[];
+
+  public swiper: Swiper;
+
+  constructor() { }
+  ngAfterViewInit(): void {
+    this.swiper = new Swiper('.swiper', {
+      loop: true,    
+    });
+  }
+
+  ngOnInit(): void {
+    console.log(this.movies);
+    
+  }
+
+  onSlidePrev() {
+    this.swiper.slidePrev();
+  }
+  onSlideNext() {
+    this.swiper.slideNext();
+  }
+}
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
