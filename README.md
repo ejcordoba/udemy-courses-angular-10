@@ -12451,6 +12451,123 @@ import { RatingModule } from 'ng-starrating';
 
 ## 256. InfiniteScroll de películas
 
+Vamos a hacer un infinite scroll, esto es que en el listado de peliculas cuando terminemos el scroll hacia abajo siga cargando más datos de la API, podemos dejar un threshold o espacio de gracia para que justo antes de que termine haya un espacio que permita seguir cargando más películas.
+
+Nos vamos al home.component.ts. El primer paso será saber cuando me encuentro al final de la pantalla, para ello vamos a usar el host listener, es un decorador tipo @Input, @HostListener va a estar escuchando un evento propio del host, va a estar escuchando 'window' el objeto global y de ese 'window' lo que nos interesa es el scroll, el argumento que nos interesa es el $event, con el decorador viene el nombre del método que queremos ejecutar cuando se haga scroll, vamos a crear un evento llamado onScroll(), este método se va a disparar cada vez que se haga scroll, pues lo hemos definido justo a continuación del decorador hay que ser eficientes con esto.
+
+En el método onScroll() vamos a necesitar saber algunas cosas, la posición del scroll la obtendremos del atributo scrollTop del documento, haremos una comprobación de esto porque puede ser que algun navegador no tenga esa propiedad, controlaremos dos maneras de obtenerlo en función de esto. Para saber cuando hemos llegado al tope haremos lo mismo pero controlando el atributo scrollHeight que es el alto máximo.
+
+Si hacemos console log de la posición y el máximo `console.log({pos, max});` veremos que no llega al máximo al bajar del todo el scroll, así que añadiremos pixeles (más vale que sobren que falten, algo exagerado), para así poder definir ese threshold, es decir, que se detecte que la posición "virtualmente" ya está superando el máximo. O dicho de otra manera, al ir bajando veremos que llegará un momento que el valor de la posición supere al valor máximo, en ese momento será cuando tendremos que hacer la petición http para que la API nos proporcione más datos.
+
+Si observamos la documentación y vemos la petición que tenemos en Postman observaremos que hay un atributo que es el número de la página, iremos a peliculas.service.ts para actualizar esto, observemos que el inicio de la url de petición es constante, normalmente esto se define en los enviroments cuando distinguimos entre entornos de desarrollo y de producción, en nuestro caso vamos a definir una constante en el servicio porque no necesitamos más en este momento con dicha raíz de la url, donde teníamos la url completa ahora con backticks ` podremos definir la url incluyendo la base en el metodo getCartelera(), usaremos un getter para separar los parametros de la query, aqui tendremos la api_key, el idioma y la página, que irá cambiando en función del scroll, estos parámetros los definiremos con el getter para luego pasarle el objeto como argumento adicional a la url del método http.get. Si hacemos una segunda (o tercera o cuarta...) llamada al metodo getCartelera queremos que consecutivamente vaya cambiando de página, esto lo haremos con un pipe y su operador 'tap', que tendremos que importar de rxjs/operators, que nos permitirá alterar el valor del parámetro 'page', incrementandolo en 1 cada vez que se haga la petición. Una vez definido todo esto podremos llamar al metodo del servicio en nuestro home component, recordando hacer .subscribe para que se dispare.
+
+Vamos a discriminar entre el objeto movies del slideshow y el del listado de películas, para que cuando hagamos las peticiones http no se nos colapse el slideshow (tambien podríamos hacer un slice o algo así para limitarlo), actualizaremos la variable nueva que le vamos a pasar al slideshow.
+
+En nuestro evento de scroll lo que haremos ahora será que cuando la posición supere al máximo se haga un push (usando el operador de TS spread (...)) al array de películas que ya tenemos, actualizando con la nueva respuesta (que al repetirse la llamada aumentará en 1 la página, como hemos definido en el servicio), en la siguiente lección prevendremos que se hagan excesivas llamadas a la API a consecuencia de esta funcionalidad.
+
+Nuestro código queda entonces así:
+
+home.component.html:
+
+```
+<h1>Cartelera</h1>
+
+<div class="row mt-3" *ngIf="movies.length > 0">
+    <div class="col">
+        <app-slideshow [movies]="moviesSlideShow"></app-slideshow>
+    </div>
+</div>
+
+<h1 class="mt-3">Películas</h1>
+<app-peliculas-poster-grid [movies]="movies" *ngIf="movies.length > 0"></app-peliculas-poster-grid>
+```
+
+home.component.ts:
+
+```
+import { Component, HostListener, OnInit } from '@angular/core';
+import { Movie } from 'src/app/interfaces/cartelera-response';
+import { PeliculasService } from '../../services/peliculas.service';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+
+  public movies: Movie[] = []
+  public moviesSlideShow: Movie[] = []
+
+  @HostListener('window:scroll', ['$event'])
+  onScroll(){
+    const pos = (document.documentElement.scrollTop || document.body.scrollTop) + 1300;
+    const max = (document.documentElement.scrollHeight || document.body.scrollHeight);
+    
+    if ( pos > max ) {
+      this.peliculasService.getCartelera()
+        .subscribe( resp => {
+          this.movies.push(...resp.results)
+        })
+    }
+  }
+  constructor( private peliculasService: PeliculasService ) { }
+
+  ngOnInit(): void {
+
+    this.peliculasService.getCartelera()
+      .subscribe( resp => {
+        this.moviesSlideShow = resp.results;
+        this.movies = resp.results;
+      });
+      
+  }
+
+}
+```
+
+peliculas.service.ts
+
+```
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { CarteleraResponse } from '../interfaces/cartelera-response';
+import { tap } from 'rxjs/operators'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PeliculasService {
+
+  private baseUrl: string = 'https://api.themoviedb.org/3'
+  private carteleraPage = 1;
+
+  constructor( private http: HttpClient ) { }
+
+  get params() {
+    return {
+      api_key: '12ae4d30f546c9e157e41765e82c2a5e',
+      language: 'es-ES',
+      page: this.carteleraPage.toString()
+    }
+  }
+
+  getCartelera():Observable<CarteleraResponse> {
+
+    return this.http.get<CarteleraResponse>(`${this.baseUrl}/movie/now_playing`, {
+      params: this.params
+    }).pipe(
+      tap( ()=>{
+        this.carteleraPage += 1;
+      })
+    );
+
+  }
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 257. Prevenir múltiples llamadas al API
