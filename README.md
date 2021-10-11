@@ -12338,6 +12338,76 @@ export class SlideshowComponent implements OnInit, AfterViewInit {
 
 ## 253. PosterGrid Component
 
+En esta clase crearemos una lista de posters de películas existentes, lo cual usaremos para hacer un infinite-scroll. Para ello crearemos otro componente, queremos que todo sea modular y reutilizable. Añadiremos una nueva sección a nuestro home, `ng g c components/peliculasPosterGrid --skipTests` para crear el componente, que en components.module.ts tendremos que añadir a los exports una vez creado, y de esta manera podremos llamarlo en el html de home con el selector <app-peliculas-poster-grid>
+
+```
+<h1>Cartelera</h1>
+
+<div class="row mt-3" *ngIf="movies.length > 0">
+    <div class="col">
+        <app-slideshow [movies]="movies"></app-slideshow>
+    </div>
+</div>
+
+<h1 class="mt-3">Películas</h1>
+<app-peliculas-poster-grid></app-peliculas-poster-grid>
+```
+
+Ahora necesitamos que las películas de home que enviamos al slidershow se las enviemos a este componente recién creado, para ello usaremos el decorador @Input e instanciaremos un objeto de tipo movies en el componente peliculas-poster-grid.component.ts, tendremos que importar las librería Input y nuestra interfaz de tipo personalizado, despues en el html de home tendremos que pasar el valor del objeto movies a través del selector <app-peliculas-poster-grid [movies]="movies" *ngIf="movies.length > 0"></app-peliculas-poster-grid>, haremos el ngIf para asegurarnos que de tiempo a obtener los datos del array:
+
+```
+import { Component, Input, OnInit } from '@angular/core';
+import { Movie } from 'src/app/interfaces/cartelera-response';
+
+@Component({
+  selector: 'app-peliculas-poster-grid',
+  templateUrl: './peliculas-poster-grid.component.html',
+  styleUrls: ['./peliculas-poster-grid.component.css']
+})
+export class PeliculasPosterGridComponent implements OnInit {
+
+  @Input() movies: Movie[];
+
+  constructor() { }
+
+  ngOnInit(): void {
+    console.log(this.movies);
+  }
+
+}
+
+```
+
+Lo siguiente será maquetar el html del componente, la imagen del poster la recibiremos del atributo "poster_path" del objeto movies, así que usaremos esto para el atributo source del tag 'img' del html, usando la clase de bootstrap "img-fluid" nos aseguraremos de que la imagen quede responsive. Crearemos también una clase CSS llamada 'poster' para añadir algunos efectos estéticos bonitos, lo definiremos en la propia hoja de estilo del componente peliculas-poster-grid.component.css, también añadiremos estilo para h3 que será el título de las películas bajo el poster, incluiremos un número de estrellas de momento maquetado dummy y sacaremos la nota media del objeto, pasándolo por un pipe para que se vean decimales incluso cuando sea un valor entero:
+
+```
+<div class="row">
+    <div class="col-md-3 mb-5" *ngFor="let movie of movies">
+        <img src="https://image.tmdb.org/t/p/w500{{movie.poster_path}}" alt="{{movie.title}}" class="img-fluid poster">
+        <div>
+            <h3>{{ movie.title }}</h3>
+            <div class="row">
+                <div class="col-10 text-white">*****</div>
+                <div class="col-2 text-white">{{ movie.vote_average | number:'1.1-2'}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+```
+h3 {
+    font-size: 15px;
+}
+
+.poster {
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    margin: 5px;
+}
+```
+
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 254. Star-Rating - Paquete de Npm
