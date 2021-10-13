@@ -12834,9 +12834,135 @@ export class PosterPipe implements PipeTransform {
 
 ## 259. Buscador de películas
 
+Ahora nos ocuparemos en escribir algo en el input del buscador, pulsar enter y obtener esa información sin que refresque la página entera, lo está haciando hasta el momento porque no tenemos importados los módulos de Angular Forms, y por eso hace un posteo "normal" como en html. Ya hemos visto varias maneras de conseguir esto a lo largo del curso.
+
+Vamos a alterar el navbar.component.html, no vamos a importar todos los módulos y configurarlos para sólo ese pequeño "form", así que vamos a cambiar el <form> por un <div> y le añadiremos una referencia local al input #txtBuscar, así como un método buscarPelícula() que tendrá como argumento el valor del input y que se disparará tanto cuando pulsemos enter en el input como cuando pulsemos el botón buscar.
+
+```
+<div class="d-flex">
+    <input #txtBuscar (keyup.enter)="buscarPelicula(txtBuscar.values" class="form-control me-2" type="search" placeholder="Buscar película" aria-label="Search">
+    <button (click)="buscarPelicula(txtBuscar.value)" class="btn btn-outline-success" type="submit">Buscar</button>
+</div>
+```
+
+Así pues vamos a declarar la función en navbar.component.ts
+
+```
+buscarPelicula( texto: string ) {
+    console.log(texto);
+  }
+```
+
+Haremos unas pequeñas validaciones como eliminar espacios delante y detras de la cadena de texto a buscar con trim(), y que si no se escribe nada pues no haga nada y simplemente haga un return:
+
+```
+buscarPelicula( texto: string ) {
+    
+    texto = texto.trim();
+    if ( texto.length === 0 ) {
+      return;
+    }
+    console.log(texto);
+  }
+```
+
+Para navegar vamos a usar Router importándolo e inyectándolo en el constructor del componente navbar, navegando con el método buscar a la ruta que ya tenemos definida en nuestro archivo de rutas, para ello usaremos el método navigate de router, como argumento tendrá un array que tendrá la ruta y el parámetro a pasar a través de la ruta.
+
+```
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.css']
+})
+export class NavbarComponent implements OnInit {
+
+  constructor( private router: Router ) { }
+
+  ngOnInit(): void {
+  }
+
+  buscarPelicula( texto: string ) {
+    
+    texto = texto.trim();
+    if ( texto.length === 0 ) {
+      return;
+    }
+    
+    this.router.navigate(['/buscar', texto ]);
+
+  }
+}
+
+```
+
+Probamos y veremos que navega correctamente a la página buscar, necesitamos que su componente reciba ese valor, recordemos que para recibir valores desde una url necesitamos el ActivatedRoute (importado de @angular/router), tendremos que hacerlo mediante un observable puesto que es posible que ya estemos en esa página y que el valor cambie, es decir, que desde la página de resultado de búsqueda se haga otra búsqueda.
+
+Así que nos suscribiremos a los parámetros que se pasen por url, podemos hacer un console.log para saber de cuales se tratan, esto lo declararemos en el ngOnInit para que esté escuchando desde que se carga el componente buscar:
+
+```
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-buscar',
+  templateUrl: './buscar.component.html',
+  styleUrls: ['./buscar.component.css']
+})
+export class BuscarComponent implements OnInit {
+
+  constructor( private activatedRoute: ActivatedRoute ) { }
+
+  ngOnInit(): void {
+
+    this.activatedRoute.params.subscribe( params => {
+      console.log( params.texto )
+    })
+  }
+
+}
+```
+
+En este punto lo siguiente será llamar al servicio, crearemos un método para poder hacer una petición http a la API teniendo esta búsqueda como criterio, así pues en peliculas.service.ts declararemos un método buscarPeliculas() que reciba como argumento el texto de la película a buscar.
+
+En la documentación de la API veremos en el índice izquierdo la funcionalidad "SEARCH"-> search movies, y veremos el endpoint que necesitamos para esto, así pues crearemos algo muy parecido a getCartelera pero usando el endpoint necesario.
+
+Por lo tanto haremos un get de la base_url mas los parámetros, pero como aquí no vamos a necesitar paginación en principio vamos a desestructurar los parámetros con el spread (...) para que la página sea 1. También es buena práctica probar la url con Postman, si lo hicieramos en este punto veríamos que la query (El texto a buscar), también tiene que formar parte de los parámetros. Con Postman podemos ver que la respuesta es la misma que ya nos devolvía CarteleraResponse, así que podemos reutilizarlo y mediante pipe quedarnos con sólo las películas.
+
+```
+  buscarPeliculas( texto: string ):Observable<Movie[]> {
+
+    const params = {...this.params, page: '1', query: texto};
+
+    return this.http.get<CarteleraResponse>(`${ this.baseUrl }/search/movie`, {
+      params
+    }).pipe(
+      map ( resp => resp.results)
+    )
+  }
+```
+
+Así que volvemos a buscar.component.ts para hacer la llamada al servicio con el método buscarPelicula(), suscribiéndonos a él y esperando una respuesta de tipo movies, de momento haremos un console.log para ver el resultado del array de respuesta por consola.
+
+```
+  ngOnInit(): void {
+
+    this.activatedRoute.params.subscribe( params => {
+      console.log( params.texto )
+      this.peliculasService.buscarPeliculas( params.texto ).subscribe( movies => {
+        console.log(movies);
+      })
+    })
+  }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 260. Diseño de la pantalla de búsqueda
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
