@@ -12730,6 +12730,106 @@ Si ponemos el cursor sobre 'of' en la importación de la libreria veremos que la
 
 ## 258. Poster Pipe
 
+Estamos obteniendo errores en consola puesto que algunas películas no tienen imagen, y en peliculas-poster-grid.component.html estamos renderizando una información que está viniendo como null, en esos casos. Hay muchas maneras de resolver esto, una muy sencilla sería usando *ngIf, y en función de si viene imagen o no cargar la imagen de la API o una por defecto (que nosotros hemos descargado de los recursos de la sección(assets/no-image.jpg)).
+
+Sin embargo vamos a usar otra manera, para que el código quede más limpio y sea reutilizable para las imágenes con la clase CSS 'poster', mediante pipes.
+
+Ya teníamos creado nuestro directorio y módulo de pipes, así que vamos a crear e importar un pipe allí mediante el CLI: `ng g pipe pipes/poster`. El archivo de pruebas lo podemos eliminar, y en el pipes.module.ts tendremos que exportarlo (puesto que en los imports ya lo tuvo que actualizar)
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PosterPipe } from './poster.pipe';
+
+
+
+@NgModule({
+  declarations: [PosterPipe],
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    PosterPipe
+  ]
+})
+export class PipesModule { }
+```
+
+También deberíamos tenerlo importado el módulo de pipes en el módulo de los componentes, puesto que va a ser requerido por ellos (principalmente, o como mínimo, el peliculas-poster-grid.component), importaremos el pipe y lo incluiremos en los exports para que sea accesible por los componentes:
+
+```
+@NgModule({
+  declarations: [NavbarComponent, SlideshowComponent, PeliculasPosterGridComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    RatingModule,
+    PipesModule
+  ],
+  exports: [
+    NavbarComponent,
+    SlideshowComponent,
+    PeliculasPosterGridComponent
+  ]
+})
+```
+
+Ya lo tenemos listo para trabajarlo, así que vamos a poster.pipe.ts, recibiría como valor una variable de tipo string llamada 'poster', sin recibir ningún argumento adicional y lo que devolverá será un string, de momento para ver cómo funciona haremos un console.log y return de 'poster'.
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'poster'
+})
+export class PosterPipe implements PipeTransform {
+
+  transform( poster: string): string {
+    console.log(poster);
+    return poster;
+  }
+
+}
+```
+
+Haremos una prueba en peliculas-poster-grid.component.html, el nombre del pipe lo tenemos definido en este atributo name del pipe:
+
+```
+@Pipe({
+  name: 'poster'
+})
+```
+
+En el html guardaremos el path que teníamos para no olvidarlo y en su lugar dejaremos el tag de esta manera:
+
+```
+<img [src]="movie.poster_path | poster" alt="{{movie.title}}" class="img-fluid poster">
+```
+
+Recordemos que 'poster_path era el tramo final o hash de la url de la imagen, por tanto en consola veremos todos esos final de url y en algún momento veremos que aparece null, para aquellas imágenes que nos han venido dando error.
+
+Así que es sencillo, volviendo a poster.pipe.ts podremos verificar si el string es null o no, devolviendo como ruta nuestra imagen por defecto no-imagen o devolviendo esa misma si es válida:
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'poster'
+})
+export class PosterPipe implements PipeTransform {
+
+  transform( poster: string): string {
+
+    if ( poster ) {
+      return `https://image.tmdb.org/t/p/w500${poster}`
+    } else {
+      return './assets/no-image.jpg'
+    }
+  }
+}
+
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 259. Buscador de películas
