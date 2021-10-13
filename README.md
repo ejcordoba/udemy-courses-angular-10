@@ -12572,6 +12572,160 @@ export class PeliculasService {
 
 ## 257. Prevenir múltiples llamadas al API
 
+En este punto nuestra app esta haciendo muchísimas llamadas a la API cuando hacemos scroll. Para resolver esto hay varias formas, una sería saber cuando estamos cargando información para eso podríamos crearnos una propiedad en el servicio que fuera de tipo booleano para que haga de flag.
+
+```
+export class PeliculasService {
+
+  private baseUrl: string = 'https://api.themoviedb.org/3'
+  private carteleraPage = 1;
+  public cargando: boolean = false;
+```
+
+En el momento en que empezamos a cargar datos en el método getCartelera() cambiaríamos su valor a verdadero.
+
+```
+  getCartelera():Observable<CarteleraResponse> {
+
+    this.cargando = true;
+```
+
+A partir de aquí podemos decidir si continuar con la carga o bloquearla. En el momento en el que tenemos una respuesta e incrementamos el carteleraPage en uno mediante el método tap() podemos volver a darle valor false a 'cargando', porque ya terminamos de cargar y si se volviera a disparar tendría que dejarlo pasar.
+
+```
+  getCartelera():Observable<CarteleraResponse> {
+
+    this.cargando = true;
+
+    return this.http.get<CarteleraResponse>(`${this.baseUrl}/movie/now_playing`, {
+      params: this.params
+    }).pipe(
+      tap( ()=>{
+        this.carteleraPage += 1;
+        this.cargando = false;
+      })
+    );
+
+  }
+```
+
+Hay varias formas de trabajar con esto, vamos a hacer una y sobre la explicación de la misma vamos a ir optimizándola. Regresamos a home.component.ts, cuando hacemos la verificación de si ha llegado al final de la pantalla comparando la posición con el máximo de la altura de pantalla, podemos preguntar si está cargando antes de hacer el push adicional al array de películas, si está en verdadero haremos un return para que no haga nada más, si estuviera en false haría el push.
+
+```
+onScroll(){
+    const pos = (document.documentElement.scrollTop || document.body.scrollTop) + 1300;
+    const max = (document.documentElement.scrollHeight || document.body.scrollHeight);
+    
+    if ( pos > max ) {
+
+      if ( this.peliculasService.cargando ) { return; }
+      
+      this.peliculasService.getCartelera()
+        .subscribe( resp => {
+          this.movies.push(...resp.results)
+        })
+    }
+  }
+```
+
+En este punto seguirá haciendo más de una petición http, pero ya son menos que antes. Otra cosa que podemos hacer para asegurarnos de que no se hacen múltiples peticiones http es preguntar en el método getCartelera() del servicio, nada mas iniciarlo, si cargando está en true, en tal caso ni siquiera haría la petición http, haría un return sin más de nuevo.
+
+```
+  getCartelera():Observable<CarteleraResponse> {
+
+    if ( this.cargando ) {
+      return;
+    }
+```
+
+Pero esto no es optimo, porque el método está esperando recibir algo de tipo CarteleraResponse, y con el return 'a secas' lo que está recibiendo es un null, esto nos puede dar problemas.
+
+Por tanto, si nos fijamos en home.component.ts, no estamos manejando la información de la respuesta al completo, recordemos que nos devuelve un objeto con varios nodos principales, uno de ellos es el "results", que nosotros hemos adaptado a nuestro tipado movies. Por tanto vamos a afinar el código que teníamos hasta ahora para espeficicar el tipo concreto del tipo de dato que estamos usando de toda la respuesta http, esto nos permitirá en lugar de hacer 'returns' sin mas, poder devolver objetos vacíos de ese tipo, etc, y así podremos también manejar los posibles errores que surjan.
+
+Así que vamos a actualizar el código, en peliculas.service.ts, el método getCartelera vamos a definir que el observable va a ser de tipo array de Movie, nuestro tipado, en lugar de CarteleraResponse, por tanto tendremos que importar el tipo desde nuestra interfaz.
+
+```
+import { CarteleraResponse, Movie } from '../interfaces/cartelera-response';
+...
+getCartelera():Observable<Movie[]> {
+```
+
+Al hacer ese cambio el return de la respuesta nos dará un error en su totalidad, puesto que está devolviendo un CarteleraResponse, así que usando el método map que ya conocemos (Recordar importarlo de rxjs/operators) podemos filtrarlo para quedarnos de toda la respuesta de CarteleraResponse el nodo "results"
+
+```
+  getCartelera():Observable<Movie[]> {
+
+    if ( this.cargando ) {
+      return;
+    }
+
+    this.cargando = true;
+
+    return this.http.get<CarteleraResponse>(`${this.baseUrl}/movie/now_playing`, {
+      params: this.params
+    }).pipe(
+      map( ( resp ) => resp.results ),
+      tap( ()=>{
+        this.carteleraPage += 1;
+        this.cargando = false;
+      })
+    );
+
+  }
+```
+
+Nos dará un nuevo error, porque ahora estamos devolviendo en lugar del objeto de respuesta http un array de tipo Movie, por tanto toda la información que estamos manejando en home.component.ts dará error, puesto que ahí estabamos manipulando el nodo results del objeto de respuesta CarteleraResponse, tendremos que actualizar esto en home.component.ts, todas las devoluciones de 'resp' de los observables lo cambiaremos por las 'movies', quedando el código mucho más claro y limpio, además.
+
+```
+@HostListener('window:scroll', ['$event'])
+onScroll(){
+  const pos = (document.documentElement.scrollTop || document.body.scrollTop) + 1300;
+  const max = (document.documentElement.scrollHeight || document.body.scrollHeight);
+  
+  if ( pos > max ) {
+
+    if ( this.peliculasService.cargando ) { return; }
+
+    this.peliculasService.getCartelera()
+      .subscribe( movies => {
+        this.movies.push(...movies)
+      })
+  }
+}
+constructor( private peliculasService: PeliculasService ) { }
+
+ngOnInit(): void {
+
+  this.peliculasService.getCartelera()
+    .subscribe( movies => {
+      this.moviesSlideShow = movies;
+      this.movies = movies;
+    });      
+}
+```
+
+Por último regresamos a peliculas.services.ts y recordamos el siguiente código que habíamos dejado.
+
+```
+  getCartelera():Observable<Movie[]> {
+
+    if ( this.cargando ) {
+      return;
+    }
+```
+
+Ahí se está haciendo un return de 'undefined', y además el método devuelve un observable que emite array de tipo Movies[], en lugar de devolver directamente el array de Movies[], podríamos hacer que el return fuese de un array vacío sin mas, pero eso entonces entraría en conflicto, por suerte en rxjs existe un parámetro para crear observables llamado 'of' (que importaremos de dicha librería), el argumento que recibirá 'of' será lo que nosotros queramos que sea entendido como un observable, en este caso un array vacío, quedando así:
+
+```
+import { Observable, of } from 'rxjs';
+...
+if ( this.cargando ) {
+      return of ([]);
+    }
+```
+
+Si ponemos el cursor sobre 'of' en la importación de la libreria veremos que la marca como "deprecated", pero en realidad son algunas de las funciones de esta librería las que están deprecated, la funcionalidad básica (a día de hoy), sigue funcionando.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 258. Poster Pipe
