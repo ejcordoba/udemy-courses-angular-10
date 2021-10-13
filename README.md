@@ -12962,6 +12962,12 @@ Así que volvemos a buscar.component.ts para hacer la llamada al servicio con el
 
 ## 260. Diseño de la pantalla de búsqueda
 
+Vamos a maquetar buscar.component.html para poder renderizar la respuesta http de la búsqueda en la API.
+
+Mostraremos un h1 que nos muestre el texto buscado, para ello tendremos que almacenar en el componente el params.texto en una variable y así llamarla en el html.
+
+A continuacion, enmarcado en row y col, llamaremos al selector del componente de posters <app-peliculas-poster-grid> que es el que usaremos para renderizar los resultados, recordemos que en home le pasábamos através del decorador @Input el array de películas al hijo, en este caso tendremos que hacer parecido, pasarle el array con el resultado de las búsquedas, por tanto haremos lo mismo que con el texto, declararemos una variable de tipo movie[] donde almacenar el resultado de la respuesta http.
+
 
 
 [Volver al Índice](#%C3%ADndice-del-curso)
