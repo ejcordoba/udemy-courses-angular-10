@@ -13116,7 +13116,126 @@ Más adelante haremos validaciones para que no se introduzca en la url un id inv
 
 ## 262. Diseño de la pantalla de detalle
 
+Vamos a pelicula.component.html, colocaremos un row dos col, uno para la imagen y otro para el detalle.
 
+```
+<div class="row">
+    <div class="col-md-6">
+        <img src="" alt="">
+    </div>
+    <div class="col-md-6">
+
+    </div>
+</div>
+```
+
+Vamos al componente, pues vamos a necesitar disponer del objeto movie que nos devuelve la petición http que tenemos (la que precisa del id de película), declararemos una variable pelicula que será del tipo que habíamos creado, MovieResponse `public pelicula: MovieResponse;`, así que la respuesta ya la podemos almacenar ahí
+
+```
+  ngOnInit(): void {
+
+    const { id } = this.activatedRoute.snapshot.params;
+    this.peliculasService.getPeliculaDetalle( id ).subscribe( movie => {
+      console.log( movie );
+      this.pelicula = movie;
+    });
+  }
+```
+
+Volviendo al html haremos un *ngIf en el row para verificar que sea renderizado sólo si hay una película. Para renderizar la imagen de la película le vamos a aplicar el pipe personalizado que hicimos en una lección anterior, para esto tenemos que añadirlo a nuestro módulo de páginas, para así tenerlo disponible en esta página 'pelicula'. También tendremos que importar el módulo de la puntuación con estrellas que usamos en el componente de posters
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HomeComponent } from './home/home.component';
+import { PeliculaComponent } from './pelicula/pelicula.component';
+import { BuscarComponent } from './buscar/buscar.component';
+import { ComponentsModule } from '../components/components.module';
+import { PipesModule } from '../pipes/pipes.module';
+import { RatingModule } from 'ng-starrating';
+
+
+
+@NgModule({
+  declarations: [
+    HomeComponent,
+    PeliculaComponent,
+    BuscarComponent,
+  ],
+  imports: [
+    CommonModule,
+    ComponentsModule,
+    PipesModule,
+    RatingModule
+  ]
+})
+export class PagesModule { }
+```
+
+El html tendrá diversos datos que recogeremos del objeto, como titulos, etc, todo lo hemos visto ya, así que simplemente pondré el código html finalizado, añadiremos al final un botón para regresar al home, definiendo una función para ello, que se dispare con un evento click en el botón.
+
+```
+<div class="row" *ngIf="pelicula">
+    <div class="col-md-6">
+        <img [src]="pelicula.poster_path | poster" [alt]="pelicula.title" class="img-thumbnail">
+    </div>
+    <div class="col-md-6">
+        <h3>{{ pelicula.title }}</h3>
+        <div class="row">
+            <div class="col">
+                <star-rating [value]="pelicula.vote_average" totalstars="10" checkedcolor="yellow" uncheckedcolor="grey" size="15px" readonly="false"></star-rating>
+            </div>
+            <div class="col text-white">
+                {{ pelicula.vote_average | number:'1.1-2'}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-white">{{pelicula.overview}}</div>
+        </div>
+        <div class="row mt-5">
+            <div class="col">
+                <button (click)="onRegresar()" class="btn btn-outline-info">Regresar</button>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+Para la funcion onRegresar del botón vamos a usar algo no visto hasta ahora que es la libreria Location de @angular/common, la importaremos e inyectaremos una instancia en el constructor, con la función back() de esta librería podremos ir a la pantalla anterior del usuario
+
+```
+import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { MovieResponse } from 'src/app/interfaces/movie-response';
+import { PeliculasService } from 'src/app/services/peliculas.service';
+
+@Component({
+  selector: 'app-pelicula',
+  templateUrl: './pelicula.component.html',
+  styleUrls: ['./pelicula.component.css']
+})
+export class PeliculaComponent implements OnInit {
+
+  public pelicula: MovieResponse;
+
+  constructor( private activatedRoute: ActivatedRoute, private peliculasService: PeliculasService, private location: Location) { }
+
+  ngOnInit(): void {
+
+    const { id } = this.activatedRoute.snapshot.params;
+    this.peliculasService.getPeliculaDetalle( id ).subscribe( movie => {
+      console.log( movie );
+      this.pelicula = movie;
+    });
+  }
+
+  onRegresar() {
+    this.location.back();
+  }
+
+}
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
