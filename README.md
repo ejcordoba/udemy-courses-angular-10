@@ -12964,9 +12964,71 @@ Así que volvemos a buscar.component.ts para hacer la llamada al servicio con el
 
 Vamos a maquetar buscar.component.html para poder renderizar la respuesta http de la búsqueda en la API.
 
-Mostraremos un h1 que nos muestre el texto buscado, para ello tendremos que almacenar en el componente el params.texto en una variable y así llamarla en el html.
+Mostraremos un h1 que nos muestre el texto buscado, para ello tendremos que almacenar en el componente el params.texto en una variable de tipo string textoBusqueda y así llamarla en el html.
 
-A continuacion, enmarcado en row y col, llamaremos al selector del componente de posters <app-peliculas-poster-grid> que es el que usaremos para renderizar los resultados, recordemos que en home le pasábamos através del decorador @Input el array de películas al hijo, en este caso tendremos que hacer parecido, pasarle el array con el resultado de las búsquedas, por tanto haremos lo mismo que con el texto, declararemos una variable de tipo movie[] donde almacenar el resultado de la respuesta http.
+A continuacion, enmarcado en row y col, llamaremos al selector del componente de posters <app-peliculas-poster-grid> que es el que usaremos para renderizar los resultados, recordemos que en home le pasábamos através del decorador @Input el array de películas al hijo, en este caso tendremos que hacer parecido, pasarle el array con el resultado de las búsquedas, por tanto haremos lo mismo que con el texto, declararemos una variable de tipo movie[] moviesResult donde almacenar el resultado de la respuesta http.
+
+```
+<h1>Resultado de la búsqueda: <small class="text-capitalize">{{ textoBusqueda }}</small></h1>
+<hr>
+<div class="row">
+    <div class="col">
+        <app-peliculas-poster-grid [movies]="moviesResult"></app-peliculas-poster-grid>
+    </div>
+</div>
+```
+
+```
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Movie } from 'src/app/interfaces/cartelera-response';
+import { PeliculasService } from 'src/app/services/peliculas.service';
+
+@Component({
+  selector: 'app-buscar',
+  templateUrl: './buscar.component.html',
+  styleUrls: ['./buscar.component.css']
+})
+export class BuscarComponent implements OnInit {
+
+  public textoBusqueda: string = '';
+  public moviesResult: Movie[] = [];
+  constructor( private activatedRoute: ActivatedRoute, private peliculasService: PeliculasService ) { }
+
+  ngOnInit(): void {
+
+    this.activatedRoute.params.subscribe( params => {
+      this.textoBusqueda = params.texto;
+      this.peliculasService.buscarPeliculas( params.texto ).subscribe( movies => {
+        this.moviesResult = movies;
+      })
+    })
+  }
+
+}
+```
+
+Podríamos incluir en la página de búsqueda funcionalidades ya aprendidas anteriormente, como el infinite scroll, un loading etc.
+
+En la siguiente lección aprenderemos la funcionalidad de que al pulsar en una película del componente de posters nos abra el detalle de la misma.
+
+Nótese que cuando cambiamos de página de la home a búsqueda y viceversa cambia el slider, esto es porque en el servicio estamos aumentando la página, tendríamos que controlar esto, vamos a resolver ese pequeño inconveniente.
+
+Hay muchas maneras de hacerlo, como siempre, una opción sería tener en películas service una variable que fuese sólo para las películas de cartelera, es lo más sencillo y funcional.
+
+Sin embargo vamos a aplicar unos cambios para aprender más sobre el ciclo de vida en Angular, por tanto vamos a home.component.ts, y añadiremos en la implementación OnDestroy de @angular/core en la declaración del componente, a continuación de ngOnInit() haremos la declaración de ngOnDestroy(), esa función se ejecutará cuando el componente va a ser destruido, esto sucede también cuando navego a otra ruta, haremos algo en nuestro servicio que resetee el cartelera page cuando se active el OnDestroy, vamos a peliculas.service.ts, antes del método getCartelera() declararemos un método tipo resetCarteleraPage() que lo único que hará será volver a poner el valor de la variable carteleraPage a 1. (Recordemos que cada vez que hacemos scroll hacia abajo y llegamos al final este valor se va incrementando en 1, así empezamos desde el principio otra vez cada vez que regresemos al home).
+
+```
+resetCarteleraPage() {
+    this.carteleraPage = 1;
+  }
+```
+
+```
+ngOnDestroy() {
+    this.peliculasService.resetCarteleraPage();
+  }
+```
 
 
 
