@@ -13030,15 +13030,93 @@ ngOnDestroy() {
   }
 ```
 
-
-
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 261. Pantalla de detalle
 
+Como hemos comentado al final de la lección anterior, en esta lección vamos a implementar la funcionalidad de poder hacer click en una de las películas del componente de posters para que nos lleve a una página donde podremos ver su detalle e información adicional.
+
+Comenzaremos por hacer la navegación, si abrimos el app-routing.module.ts veremos que ya teníamos definido el path 'pelicula/:id'. Ese id ya lo tenemos en el objeto de la respuesta http.
+
+Vamos a pelicular-poster-grid.component.html y haremos un evento click en la imagen del poster para que ejecute una función tipo onMovieClick() que tenga como argumento el array de esa misma película.`<img (click)="onMovieClick( movie )" [src]="movie.poster_path | poster" alt="{{movie.title}}" class="img-fluid poster">`. Esto se podría hacer perfectamente mediante RouterLink, en este caso estamos optarlo por hacerlo manualmente.
+
+Nos vamos al componente para declarar el método.
+
+```
+onMovieClick( movie: Movie) {
+    console.log(movie);
+  }
+```
+
+Si tocamos la imagen de cualquier poster podremos ver en consola toda la información del objeto. Así que ahora en el componente importaremos (@angular/router) e inyectaremos el Router para poder navegar.`constructor( private router: Router ) { }` y aplicaremos sobre router el método navigate pasandole el path y el argumento, que es el id de la película
+
+```
+onMovieClick( movie: Movie) {
+    console.log(movie);
+    this.router.navigate(['/pelicula', movie.id ]);
+  }
+```
+
+Podríamos trabajar con esa información que estamos manejando, pero si en la página de detalle de película se recargase la página necesitamos no sólo esa información, sino información adicional que no está en ese objeto, como información de los actores.
+
+Necesitamos poder usar el argumento que llega por la url, a diferencia de la página de búsqueda no va a cambiar de manera dinámica (sin hacer refresh), si se hace una alteración del argumento en el url hará un full refresh y lo volverá a leer. Vamos a ver otra manera de leer los argumentos del url más sencilla sin usar observadores, vamos a pelicula.component.ts e importaremos (@angular/router) e inyectaremos en el constructor una instancia de ActivatedRoute y en el ngOnInit obtendremos ese id almacenándolo en una constante a traves del metodo snapshot.params de activatedRoute
+
+```
+  ngOnInit(): void {
+
+    const id = this.activatedRoute.snapshot.params.id;
+    console.log(id);
+
+  }
+```
+
+Tendríamos que hacer una validación por si alguien altera la url y pone algún id que no existe en la respuesta http.
+
+También podríamos obtenerlo mediante desestructuración, esto es útil para cuando tengamos más de un argumento en el url, nótese que entre las llaves pondríamos separados por comas todos los argumentos a extraer (nos quedaría un objeto de argumentos, pero en este caso sólo tenemos uno:
+
+```
+  ngOnInit(): void {
+
+    const { id } = this.activatedRoute.snapshot.params;
+    console.log(id);
+
+  }
+```
+
+Necesitamos llamar al servicio a continuación, realmente son dos llamadas, el de la información de la película y el casting de la misma. Vamos a localizar el endpoint necesario en la documentación de la api en MOVIES-> Get Details, el cual recibe como argumento el id de la película a obtener. Podemos testearlo ahí o en Postman para ver la url del endpoint a utilizar y los datos que devuelve, la respuesta es un poco diferente a la que hemos obtenido anteriormente, así que también nos vamos a crear un tipo de interfaz para esta respuesta, reutilizaremos la herramienta app.quicktype.io para usar una respuesta como material a trabajar, recordemos dar un nombre que identifique bien la interfaz, tipo MovieResponse, y marcar las opciones Interfaces only & Verify JSON. Copiemos el código para TypeScript resultante.
+
+Crearemos en interfaces un nuevo archivo llamado movie-response.ts y pegaremos el código copiado.
+
+Vamos a peliculas.service.ts para hacer la petición http, y crearemos un método getPeliculaDetalle que recibirá como argumento el id, haremos el return de la petición get, como ya hemos hecho antes, pero con la composición que toca, no hay que preocuparse si le pasamos todos los params, si hay algún parámetro que no va a utizar (nosotros tenemos definido el número de página y en este endpoint no se trata) lo ignora, pero podríamos desestructurarlo si quisiéramos. Indicaremos que el get va a recibir un tipo MovieResponse, tipo que tendremos que importar de nuestra interfaz recién creada. No vamos a hacer map ni nada más pues la respuesta es un objeto donde ya viene toda la información que vamos a necesitar.
+
+```
+  getPeliculaDetalle( id: string ) {
+
+    return this.http.get<MovieResponse>(`${this.baseUrl}/movie/${ id }`, {
+      params: this.params
+    });
+  }
+```
+
+Regresamos al componente pelicula.component.ts, importaremos e inyectaremos en el constructor peliculasService. y en ngOnInit invocaremos al método del servicio pasándole el id de la url, suscribiéndonos a él, recibiendo una película como respuesta.
+
+```
+  ngOnInit(): void {
+
+    const { id } = this.activatedRoute.snapshot.params;
+    this.peliculasService.getPeliculaDetalle( id ).subscribe( movie => {
+      console.log( movie );
+    });
+  }
+```
+
+Más adelante haremos validaciones para que no se introduzca en la url un id inválido y nos de un error 404 en la respuesta.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 262. Diseño de la pantalla de detalle
+
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
