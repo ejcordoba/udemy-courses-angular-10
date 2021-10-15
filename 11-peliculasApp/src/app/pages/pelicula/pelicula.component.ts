@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreditsResponse } from 'src/app/interfaces/credits-response';
+import { Cast, CreditsResponse } from 'src/app/interfaces/credits-response';
 import { MovieResponse } from 'src/app/interfaces/movie-response';
 import { PeliculasService } from 'src/app/services/peliculas.service';
 
@@ -13,6 +13,7 @@ import { PeliculasService } from 'src/app/services/peliculas.service';
 export class PeliculaComponent implements OnInit {
 
   public pelicula: MovieResponse;
+  public cast: Cast[] = [];
 
   constructor( private activatedRoute: ActivatedRoute, 
                private peliculasService: PeliculasService, 
@@ -30,12 +31,9 @@ export class PeliculaComponent implements OnInit {
       }
       this.pelicula = movie;
     });
-    this.peliculasService.getCast( id ).subscribe( credits => {
-      console.log( credits );
-      if ( !credits ) {
-        this.router.navigateByUrl('/');
-        return;
-      }
+    this.peliculasService.getCast( id ).subscribe( cast => {
+      console.log( cast );
+      this.cast = cast.filter( actor => actor.profile_path );
     });
   }
 

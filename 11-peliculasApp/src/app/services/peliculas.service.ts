@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { CarteleraResponse, Movie } from '../interfaces/cartelera-response';
 import { catchError, map, tap } from 'rxjs/operators'
 import { MovieResponse } from '../interfaces/movie-response';
-import { CreditsResponse } from '../interfaces/credits-response';
+import { Cast, CreditsResponse } from '../interfaces/credits-response';
 
 @Injectable({
   providedIn: 'root'
@@ -49,7 +49,7 @@ export class PeliculasService {
 
   }
 
-  buscarPeliculas( texto: string ):Observable<Movie[]> {
+  buscarPeliculas( texto: string ): Observable<Movie[]> {
 
     const params = {...this.params, page: '1', query: texto};
 
@@ -65,17 +65,17 @@ export class PeliculasService {
     return this.http.get<MovieResponse>(`${this.baseUrl}/movie/${ id }`, {
       params: this.params
     }).pipe(
-      catchError( err => of(null) )
-    );
+      catchError( err => of( null ) )
+      );
   }
 
-  getCast( id: string ) {
+  getCast( id: string ): Observable<Cast[]> {
 
     return this.http.get<CreditsResponse>(`${this.baseUrl}/movie/${ id }/credits`, {
       params: this.params
     }).pipe(
       map( resp => resp.cast ),
-      catchError( err => of(null) )
+      catchError( err => of([]) )
     );
   }
 }

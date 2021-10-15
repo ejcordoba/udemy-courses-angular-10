@@ -13297,11 +13297,234 @@ Para ello regresamos al servicio y actualizaremos los dos métodos que hacen pet
   }
 ```
 
-Si probamos a poner un id falso veremos que ahora devuelve el error y el null, para manejar la excepción vamos a pelicula.component.ts de nuevo, y en la invocación al metodo del servicio comprobaremos si existe el objeto (si no, sería null), e importando una instancia de router en el constructor del componente haremos una redirección más un return si se da este caso.
+Si probamos a poner un id falso veremos que ahora devuelve el error y el null, para manejar la excepción vamos a pelicula.component.ts de nuevo, y en la invocación al metodo del servicio comprobaremos si existe el objeto (si no, sería null), e importando una instancia de router en el constructor del componente haremos una redirección más un return si se da este caso. Para el casting haremos lo mismo con una diferencia, en el servicio lo que devolveremos con el error será un array vacío.
+
+```
+  getCast( id: string ) {
+
+    return this.http.get<CreditsResponse>(`${this.baseUrl}/movie/${ id }/credits`, {
+      params: this.params
+    }).pipe(
+      map( resp => resp.cast ),
+      catchError( err => of([]) )
+    );
+  }
+```
+
+Crearemos en el componente peliculas.component.ts una nueva propiedad cast de tipo Cast[] (importado de nuestra interfaz), que usaremos para almacenar la información de la respuesta http en el get y así poder hacer la comprobación comparando si hay un error `public cast: Cast[];`, como en el servicio ya tenemos que esto sea un array vacío si se dispara un error, no habría que hacer nada más.
+
+```
+import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Cast, CreditsResponse } from 'src/app/interfaces/credits-response';
+import { MovieResponse } from 'src/app/interfaces/movie-response';
+import { PeliculasService } from 'src/app/services/peliculas.service';
+
+@Component({
+  selector: 'app-pelicula',
+  templateUrl: './pelicula.component.html',
+  styleUrls: ['./pelicula.component.css']
+})
+export class PeliculaComponent implements OnInit {
+
+  public pelicula: MovieResponse;
+  public cast: Cast[];
+
+  constructor( private activatedRoute: ActivatedRoute, 
+               private peliculasService: PeliculasService, 
+               private location: Location,
+               private router: Router) { }
+
+  ngOnInit(): void {
+
+    const { id } = this.activatedRoute.snapshot.params;
+    this.peliculasService.getPeliculaDetalle( id ).subscribe( movie => {
+      console.log( movie );
+      if ( !movie ) {
+        this.router.navigateByUrl('/');
+        return;
+      }
+      this.pelicula = movie;
+    });
+    this.peliculasService.getCast( id ).subscribe( cast => {
+      console.log( cast );
+      this.cast = cast;
+      /* if ( !credits ) {
+        this.router.navigateByUrl('/');
+        return;
+      } */
+    });
+  }
+
+  onRegresar() {
+    this.location.back();
+  }
+
+}
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 264. Slideshow de los actores
+
+Vamos a crear el slideshow, podemos hacer validaciones por si algunos atributos del objeto llegasen vacíos, tipo el cast.profile_path (que es una imagen y ya tenemos pipe para esto), etc.
+
+Vamos a crear un nuevo componente `ng g c components/castSlideshow --skipTests`, esto nos actualiza también el módulo de componentes components.module.ts, vamos a él y lo añadimos a los exports
+
+```
+@NgModule({
+  declarations: [NavbarComponent, SlideshowComponent, PeliculasPosterGridComponent, CastSlideshowComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    RatingModule,
+    PipesModule
+  ],
+  exports: [
+    NavbarComponent,
+    SlideshowComponent,
+    PeliculasPosterGridComponent,
+    CastSlideshowComponent
+  ]
+})
+export class ComponentsModule { }
+```
+
+Abrimos cast-slideshow.component.ts&html, empezaremos trabajando en el componente, que es un componente hijo de pelicula.component.ts, y recibirá el cast de él a través de un @input, como ya hemos hecho en ocasiones anteriores. Haremos un console log en el ngOnInit para ver que se recibe el cast desde el padre concretamente, yendo al html del padre incluiremos el selector del componente cast-slideshow.
+
+```
+import { Component, Input, OnInit } from '@angular/core';
+import { Cast } from 'src/app/interfaces/credits-response';
+
+@Component({
+  selector: 'app-cast-slideshow',
+  templateUrl: './cast-slideshow.component.html',
+  styleUrls: ['./cast-slideshow.component.css']
+})
+export class CastSlideshowComponent implements OnInit {
+
+  @Input() cast: Cast[];
+
+  constructor() { }
+
+  ngOnInit(): void {
+    console.log(this.cast);
+  }
+
+}
+```
+
+En el console log veremos que aparece como undefined, esto es porque no le da tiempo a incluir los datos en la renderización, lo controlaremos con un ngIf
+
+```
+<div class="row" *ngIf="cast.length > 0">
+    <div class="col">
+        <app-cast-slideshow [cast]="cast"></app-cast-slideshow>
+    </div>
+</div>
+```
+
+Pero aun así sigue dando error de undefined, así que inicializamos en pelicula.component.ts la variable cast como array vacío
+
+```
+export class PeliculaComponent implements OnInit {
+
+  public pelicula: MovieResponse;
+  public cast: Cast[] = [];
+```
+
+Y ahora ya funciona y podemos ver en el console log el objeto.
+
+Ahora siguiendo la documentación y/o el swiper que ya teníamos vamos a maquetar el html de cast-slideshow.component
+
+```
+<!-- Slider main container -->
+<div class="swiper">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+        <!-- Slides -->
+        <div class="swiper-slide text-white text-center">
+            Hola que pasa!
+        </div>
+    </div>
+</div>
+```
+
+Pero antes de seguir maquetando vamos a inicializar el swiper para asegurarnos de que todo funciona correctamente, implementaremos en la clase AfterViewInit como ya hicimos anteriormente e iniciaremos el método ngAfterViewInit configurándolo con algunos valores (revisar la documentación para saber de qué se trata).
+
+```
+import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
+import { Cast } from 'src/app/interfaces/credits-response';
+import { Swiper } from 'swiper';
+
+@Component({
+  selector: 'app-cast-slideshow',
+  templateUrl: './cast-slideshow.component.html',
+  styleUrls: ['./cast-slideshow.component.css']
+})
+export class CastSlideshowComponent implements OnInit, AfterViewInit {
+
+  @Input() cast: Cast[];
+
+  constructor() { }
+
+  ngOnInit(): void {
+    // console.log(this.cast);
+  }
+
+  ngAfterViewInit() {
+    const swiper = new Swiper('.swiper', {
+      slidesPerView: 5.3,
+      freeMode: true,
+      spaceBetween: 15
+    });
+  }
+
+}
+
+```
+
+Vamos ahora al html para añadir los slides, a través del ngFor generaremos cada slide y en ellos aparecerá la imagen del actor y su nombre, accediendo a los atributos de cada item del objeto cast. La imagen como ya tenemos preparado el pipe poster y este está siendo importado en los componentes, podemos simplemente llamar a la propiedad profile_path de cast. La imagen sale muy grande y para ello usamos la clase css de bootstrap 'img-thumbnail'.
+
+```
+<!-- Slider main container -->
+<div class="swiper">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+        <!-- Slides -->
+        <div *ngFor="let actor of cast" class="swiper-slide text-white text-center">
+            <img [src]="actor.profile_path | poster" [alt]="actor.name" class="img-thumbnail"> {{ actor.name }}
+        </div>
+    </div>
+</div>
+```
+
+Algunas imágenes no aparecen, así que vamos a hacer algun arreglo para evitar esto.
+
+Primero vamos a definir en peliculas.service.ts el método getCast como que devuelve un observable de tipo Cast[] que tendremos que importar.
+
+```
+  getCast( id: string ): Observable<Cast[]> {
+
+    return this.http.get<CreditsResponse>(`${this.baseUrl}/movie/${ id }/credits`, {
+      params: this.params
+    }).pipe(
+      map( resp => resp.cast ),
+      catchError( err => of([]) )
+    );
+  }
+```
+
+Ahora podremos filtrar en pelicula.component.ts la respuesta http del metodo getCast, almacenando mediante la función filter() sólo los actores que tengan foto (profile_path)
+
+```
+ this.peliculasService.getCast( id ).subscribe( cast => {
+      console.log( cast );
+      this.cast = cast.filter( actor => actor.profile_path );
+    });
+```
+
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
