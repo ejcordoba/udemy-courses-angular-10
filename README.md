@@ -13604,6 +13604,24 @@ combineLatest([
 
 ## 266. Agregando animaciones y FadeIn
 
+Vamos a implementar algunas animaciones para darle un estilo visual más bonito y elegante a la aplicación, para ello vamos a visitar la página web animate.style. Podríamos instalarlo con el Node Package Manager, en tal caso tendríamos que añadirlo al atributo de estilos del angular.json, pero quedaría muy grande la aplicación pues hay muchísimas animaciones y sólo vamos a usar algunas, en nuestro caso con el CDN será suficiente. Al final del head en nuestro index.html añadimos: `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />`
+
+Vamos a probar la clase css 'animate__animated animate__fadeIn' en peliculas-poster-grid.component.html
+
+```
+<div class="col-md-3 mb-5 animate__animated animate__fadeIn" *ngFor="let movie of movies">
+```
+
+Podemos incluirlo donde queramos e ir probando cómo se ve.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 267. Código fuente de la sección
+
+Código fuente
+
+Aquí les dejo el código fuente de la sección por si lo llegan a necesitar.
+
+https://github.com/Klerith/angular-peliculas
+
+Y también el repositorio de Github por si lo quieren clonar.
