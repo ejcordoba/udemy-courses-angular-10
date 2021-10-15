@@ -13625,3 +13625,17 @@ Aquí les dejo el código fuente de la sección por si lo llegan a necesitar.
 https://github.com/Klerith/angular-peliculas
 
 Y también el repositorio de Github por si lo quieren clonar.
+
+# Sección 15: Aplicación #8: PelículasApp
+
+Esta sección realmente es una versión antigua de la ya realizada, me he limitado a ver los vídeos y refrescar otras maneras de hacer algunas partes de la app.
+
+## 268. Búsqueda del Navbar
+
+## 269. Pantalla de película
+
+## 270. Detalles finales de la aplicación de películas
+
+## Cuestionario 6: Examen teórico sobre la aplicación de películas.
+
+Cuestionario realizado satisfactoriamente.
