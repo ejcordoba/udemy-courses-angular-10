@@ -13241,6 +13241,64 @@ export class PeliculaComponent implements OnInit {
 
 ## 263. Actores de la película y manejo de errores
 
+En esta lección manejaremos un par de cuestiones, una el poder recibir todo el casting de la película en la página de detalle, y otra manejar los errores, como controlar el uso de id falsos en la url, para esto último implementaremos una redirección que lo saque de esa página en lugar de lanzar el error.
+
+Empezamos con el casting de actores, yendo a la documentación de la api tenemos MOVIES-> Get Credits, como en ocasiones anteriores usaremos la sección Try Out y/o Postman para dilucidar que endpoint tendremos que usar. Vemos que el objeto tiene un nodo "Cast" que alberga los actores, que es el que a nosotros nos interesa (hay más datos de crédito que no vamos a usar en este ejemplo).
+
+Como hicimos en lecciones anteriores usaremos app.quicktype.io para generar una nueva interfaz, no voy a repetir todos los pasos para no ser mucho más redundante de lo que ya estoy siendo :) le daremos a la interfaz un nombre identitario tipo CreditsResponse y crearemos un nuevo archivo en nuestro directorio de interfaces llamado credits-response.ts donde incluiremos el código generado en app.quicktype.io.
+
+A continuación iremos a nuestro servicio para crear el método get para esa petición http, será un método prácticamente idéntico a getPeliculaDetalle(), lo llamaremos getCast(), cambiamos el argumento que falta en la url '/credits' y el tipo de get que devuelve lo definiremos como CreditsResponse (asegurándonos, como siempre, de importarlo de nuestra librería de interfaces personalizada). Como dijimos que no ibamos a usar toda la respuesta, vamos a filtrar para que sólo nos traiga el nodo "Cast".
+
+```
+  getCast( id: string ) {
+
+    return this.http.get<CreditsResponse>(`${this.baseUrl}/movie/${ id }/credits`, {
+      params: this.params
+    }).pipe(
+      map( resp => resp.cast )
+    );
+  }
+```
+
+Una vez definido esto podemos volver a pelicula.component.ts para invocar al servicio. Añadiremos al ngOnInit la invocación, similar a la que teníamos para el detalle, mas adelante veremos una manera de combinarlos para que se hagan ambas peticiones de manera "simultánea".
+
+```
+this.peliculasService.getPeliculaDetalle( id ).subscribe( movie => {
+      console.log( movie );
+      this.pelicula = movie;
+    });
+    this.peliculasService.getCast( id ).subscribe( credits => {
+      console.log( credits );
+    });
+```
+
+En la siguiente lección montaremos el slideshow con estos datos, ahora vamos a seguir con el manejo de errores.
+
+Para ello regresamos al servicio y actualizaremos los dos métodos que hacen petición http requiriendo el id, que es lo que queremos controlar, usaremos un pipe en el get que tenga el metodo catchError() que nos sirve para indicar que hacer si sucede un error, que en nuestro caso va a ser reutilizar el metodo 'of' para devolver un 'null'. Lo haremos tanto para getPeliculaDetalle como getCast().
+
+```
+ getPeliculaDetalle( id: string ) {
+
+    return this.http.get<MovieResponse>(`${this.baseUrl}/movie/${ id }`, {
+      params: this.params
+    }).pipe(
+      catchError( err => of(null) )
+    );
+  }
+
+  getCast( id: string ) {
+
+    return this.http.get<CreditsResponse>(`${this.baseUrl}/movie/${ id }/credits`, {
+      params: this.params
+    }).pipe(
+      map( resp => resp.cast ),
+      catchError( err => of(null) )
+    );
+  }
+```
+
+Si probamos a poner un id falso veremos que ahora devuelve el error y el null, para manejar la excepción vamos a pelicula.component.ts de nuevo, y en la invocación al metodo del servicio comprobaremos si existe el objeto (si no, sería null), e importando una instancia de router en el constructor del componente haremos una redirección más un return si se da este caso.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 264. Slideshow de los actores
