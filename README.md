@@ -13530,6 +13530,76 @@ Ahora podremos filtrar en pelicula.component.ts la respuesta http del metodo get
 
 ## 265. RXJS - CombineLatest
 
+Si recordamos, anteriormente hemos mencionado que en la página de detalle de película hacemos dos llamadas al servicio, uno para la película y otro para el reparto de la película (o créditos), ambos son observables , pudiera ser que carguen a velocidades distintas, o que uno de ellos de error, esto puede ser que se rendericen/carguen los componentes a distinto tiempo, etc.
+
+Vamos a usar la funcionalidad CombineLatest de RXJS para poder combinar ambos observables y reducir el código. Tendremos que importarlo de rxjs.
+
+```
+combineLatest([
+
+    ]).subscribe(objeto => {
+      console.log( objeto );
+    });
+```
+
+Aunque aparece como 'deprecated' realmente para lo que lo vamos a usar sigue funcionando, como podemos ver recibe como argumento una cantidad 'x' de observables y devuelve un objeto (que en realidad es un array) con todas las respuestas de los observables cuando ya han emitido al menos un valor todos ellos, de hecho el orden en que llamemos a los observables dentro de la función combineLatest() será el orden en que recibamos los datos, es decir, las posiciones del 'array de respuestas'.
+
+```
+ combineLatest([
+
+      this.peliculasService.getPeliculaDetalle( id ),
+      this.peliculasService.getCast( id )
+
+    ]).subscribe(objeto => {
+      console.log( objeto );
+    });
+```
+
+Para la respuesta de combineLatest() podemos hacer una desestructuración del array, dándole nombre a cada una de las respuestas, por ejemplo 'peliculas' y 'cast'
+
+```
+    combineLatest([
+
+      this.peliculasService.getPeliculaDetalle( id ),
+      this.peliculasService.getCast( id )
+
+    ]).subscribe( ( [pelicula, cast] ) => {
+      console.log( pelicula, cast );
+    });
+```
+
+Si no quisieramos desestructurar la respuesta, podríamos hacerlo de la manera clásica, asignando cada respuesta a una posición del array de respuestas:
+
+```
+    combineLatest([
+
+      this.peliculasService.getPeliculaDetalle( id ),
+      this.peliculasService.getCast( id )
+
+    ]).subscribe( ( obj ) => {
+      const pelicula = obj[0];
+      const cast = obj[1];
+    });
+```
+
+Finalmente podremos hacer las verificaciones que teníamos anteriormente, quedando todo el código en su conjunto mucho más sencillo de leer y compacto, y mucho más fácil de actualizar si en el futuro quisieramos combinar más observables.
+
+```
+combineLatest([
+
+      this.peliculasService.getPeliculaDetalle( id ),
+      this.peliculasService.getCast( id )
+
+    ]).subscribe( ( [pelicula, cast] ) => {
+      if ( !pelicula ) {
+        this.router.navigateByUrl('/');
+        return;
+      }
+      this.pelicula = pelicula;
+      this.cast = cast.filter( actor => actor.profile_path );
+    });
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 266. Agregando animaciones y FadeIn
