@@ -13885,6 +13885,30 @@ export class MaterialModule { }
 
 ## 277. Componente del mapa y su diseño
 
+Vamos a crear un nuevo componente que será para el mapa `ng g c components/mapa --module=app.module --skipTests`. Con --module estamos indicando que actualice automáticamente el archivo app.module.ts con el import del componente creado, de otra manera habría confusión porque en el directorio tenemos dos archivos de módulo, el app.module.ts y el material.module.ts, y no sabría en cual de los dos tendría que importarlo.
+
+Una vez creado ya podemos usar el selector para llamarlo en app.component.html
+
+```
+<mat-toolbar color="primary">
+    <span>Mis mapas</span>
+</mat-toolbar>
+<div class="main-container">
+    <app-mapa></app-mapa>
+</div>
+```
+
+Lo siguiente vamos a usar un componente "card" de Angular Material (recordemos las importaciones y tal) y lo añadiremos a mapa.component.html `<mat-card>`, en la documentación podemos ver el resto de sub-etiquetas que tiene este componente y maquetaremos una tarjeta de ejemplo.
+
+```
+<mat-card>
+    <mat-card-title> Mapa </mat-card-title>
+    <mat-card-content>
+        XYZ
+    </mat-card-content>
+</mat-card>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 278. Mostrando un mapa de Google
