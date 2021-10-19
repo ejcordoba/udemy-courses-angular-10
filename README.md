@@ -13626,6 +13626,8 @@ https://github.com/Klerith/angular-peliculas
 
 Y también el repositorio de Github por si lo quieren clonar.
 
+[Volver al Índice](#%C3%ADndice-del-curso)
+
 # Sección 15: Aplicación #8: PelículasApp
 
 Esta sección realmente es una versión antigua de la ya realizada, me he limitado a ver los vídeos y refrescar otras maneras de hacer algunas partes de la app.
@@ -13639,3 +13641,177 @@ Esta sección realmente es una versión antigua de la ya realizada, me he limita
 ## Cuestionario 6: Examen teórico sobre la aplicación de películas.
 
 Cuestionario realizado satisfactoriamente.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+# Sección 16: Aplicación #9: Uso de Google Maps
+
+## 271. Introducción a la sección*
+
+Vamos a tocar dos temas principales, crear un mapa, sus marcadores, funcionalidades de los marcadores... y otra que sería Angular Material, además de estos dos temas veremos como agrupar información en un módulo personalizado con la finalizad de que nuestro app.module.ts quede más sencillo.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 272. ¿Qué aprenderemos en esta sección?
+
+En esta sección aprenderemos sobre:
+
+1. Uso de Google Maps en un proyecto con Angular
+2. Creación del API KEY de Google Maps
+3. Uso de Reactive Forms - FormBuilder
+4. Creación de marcadores en el mapa
+5. Eventos y diversas interacciones con los mapas
+6. Edición de marcadores
+7. Uso de Angular Material en el proyecto
+- Dialogs
+- Snacks
+- Inputs
+- Toolbars
+- Themes
+
+Entre otras cosas
+
+Aquí nos enfocaremos en tener un control total del mapa para poder realizar acciones a la hora de colocarlo en nuestra aplicación.
+
+Es bastante sencillo!
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 273. Demostración del proyecto de GoogleMaps + Material
+
+Ver video explicativo.
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 274. Inicio del proyecto - GoogleMap + Material + VSC
+
+Crearemos el nuevo proyecto dentro de nuestro directorio, con `ng new mapas` en el CLI, posteriormente renombraremos el directorio del proyecto a 12-mapas para seguir la lógica, nos pregunta como siempre en esta versión de ángular si queremos el routing, como en el video del curso no se especifica yo seleccioné que no, por ahorrar código y porque siempre puedo añadirlo manualmente después, asimismo seleccionaremos puro CSS como hojas de estilo del proyecto.
+
+A continuación iremos a material.angular.io en internet, para entendernos es una especie de Bootstrap que también incluye componentes predefinidos y otra serie de materiales gráficos interesantes, todo con una estética de "aplicación de google". Vamos a Get Started.
+
+Siguiendo la documentación tendremos que escribir en consola `ng add @angular/material`. El proceso de instalación nos preguntará sobre varias opciones:
+
+1. Elegir un tema preconstruido o personalizado (un conjunto de colores para la aplicación)
+2. Configurar estilos tipográficos globales de Angular Material (y/N)
+3. Configurar animaciones de navegador para Angular Material.
+
+Esto es distinto en esta versión nueva de Angular Material respecto a lo que se enseña en el video del curso, a lo largo de esta sección tendré que adaptar las formas de realizar todo, en la nueva versión con este "wizard" ya quedaría todo configurado, aparentemente, en caso de que no fuese así lo iría indicando en este documento. Por ejemplo en el vídeo hay que hacer la importación de BrowserAnimationsModule manualmente en el app.module.ts, pero en esta versión nueva con la 3ª opción del wizard ya lo hace por nosotros Angular.
+
+En el video se indica instalar una librería hammerjs. En el pasado he tenido problemas con esta librería, quizás por temas de versionado... de momento yo no lo voy a instalar, si viera que esto en un futuro del proyecto me da problemas trataría de instalarlo, pero si veo que no afecta en el desarrollo lo dejaré sin instalar, si ya no se indica en la documentación de Angular Material por algo será ;)
+
+Lanzaremos la aplicación para probarla con `ng serve`
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 275. Utilizar componentes de Angular Material
+
+En la documentación de Angular Material vamos a la sección de componentes -> Toolbar, copiaremos el código en nuestro app.component.html.
+
+Nos dará error, esto es porque todo está segmentado, hay que hacer importaciones por cada componente que se quiera usar. Esto nos ayuda a que la aplicación tenga sólo los elementos que queremos, y no quede nuestra aplicación sobrecargada.
+
+Para ello, en la documentación del componente, tenemos una sección llamada API que nos indica qué librería hay que importar y cómo hacerlo, así pues en la api vemos `import {MatToolbarModule} from '@angular/material/toolbar';`, al tratarse de un módulo tendremos que ir a app.module.ts añadir la línea con las librerias y luego añadir MatToolbarModule a los imports, esto es como regla general, recordemos que si queremos descentralizar esto, como en la aplicacion de películas, podemos distribuir y anidar módulos.
+
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// Angular Material
+import {MatToolbarModule} from '@angular/material/toolbar';
+
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatToolbarModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+
+Para añadir el color de nuestro tema tendremos que añadir la clase 'primary'
+
+```
+<mat-toolbar color="primary">
+    <span>Mis mapas</span>
+</mat-toolbar>
+```
+
+Para más adelante vamos a definir en src/styles.css una clase para el contenedor principal.
+
+```
+.main-container {
+    margin-top: 10px;
+}
+```
+
+Sólo para practicar vamos a añadir unos botones:
+
+```
+<mat-toolbar color="primary">
+    <span>Mis mapas</span>
+</mat-toolbar>
+<div class="main-container">
+    <button mat-raised-button>Basic</button>
+    <button mat-raised-button color="primary">Primary</button>
+    <button mat-raised-button color="accent">Accent</button>
+    <button mat-raised-button color="warn">Warn</button>
+    <button mat-raised-button disabled>Disabled</button>
+    <a mat-raised-button href="https://www.google.com/" target="_blank">Link</a>
+</div>
+```
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 276. Módulos personalizados
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 277. Componente del mapa y su diseño
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 278. Mostrando un mapa de Google
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 279. Creando marcadores de forma dinámica
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 280. Guardando los marcadores en el LocalStorage
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 281. Borrar marcadores del mapa
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 282. SnackBar - Retro alimentación en pantalla
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 283. Dialog - Mostrar un modal para la edición del marcador
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 284. Pantalla para editar el marcador
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+
+## 285. Actualizar marcador con la información del dialog
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
+## 286. Código fuente de la sección
+
+
+[Volver al Índice](#%C3%ADndice-del-curso)
