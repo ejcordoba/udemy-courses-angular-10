@@ -13913,6 +13913,115 @@ Lo siguiente vamos a usar un componente "card" de Angular Material (recordemos l
 
 ## 278. Mostrando un mapa de Google
 
+Vamos a importar Angular Maps en nuestra aplicación, para ello visitamos la web https://angular-maps.com/ y vamos a Getting Started. Lo instalaremos en nuestra aplicación con npm `npm install @agm/core`. Tras esto tendremos que hacer la importación en app.module.ts, con una salvedad respecto a lo hecho hasta ahora, y es que tendremos que indicar a través del método forRoot la api key de google, en la misma página de la documentación se proporciona un enlace para adquirirla. Esto ha cambiado respecto a la fecha de edición del curso, tendremos que ir a Google Cloud Platform para adquirirla, necesitaremos Google Maps JavaScript API, para ello crearemos un proyecto si no lo tenemos creado e iremos a Credenciales para crear una nueva API key. Hay muchas opciones de configuración de privacidad sobre todo pensando en producción, que tendremos que tratar.
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material.module';
+import { MapaComponent } from './components/mapa/mapa.component';
+import { AgmCoreModule } from '@agm/core';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    MapaComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'tu API key'
+    })
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+
+Una vez definido esto vamos a abrir el ts, html & css de mapa.component para trabajar en ellos. Para el ts podremos definir varios valores, como el título, latitud, longitud, etc.
+NOTA: Por diferencias de versiones tuve que añadir:
+
+`npm i @types/googlemaps@3.39.13`
+
+mapa.component.ts
+```
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-mapa',
+  templateUrl: './mapa.component.html',
+  styleUrls: ['./mapa.component.css']
+})
+export class MapaComponent implements OnInit {
+
+  lat = 41.4072567;
+  lng = 2.1653522;
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+mapa.component.html
+
+```
+<mat-card>
+    <mat-card-title> Mapa </mat-card-title>
+    <mat-card-content>
+        <agm-map [latitude]="lat" [longitude]="lng">
+            <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+        </agm-map>
+    </mat-card-content>
+</mat-card>
+```
+
+mapa.component.css .Esto es importante porque sin el atributo height como mínimo no renderizará el mapa.
+
+```
+agm-map {
+    height: 300px;
+}
+```
+
+En adición podemos hacer algunas modificaciones más, por ejemplo que se cargue con un zoom para que se vea más cerca `<agm-map [latitude]="lat" [longitude]="lng" [zoom]="15">`. La etiqueta marker es un marcador con sus propiedades, con lo cual podremos trabajar también, replicándolo etc.
+
+Vamos a la sección de API DOCS de angular-maps.com y de ahí a @api/core https://angular-maps.com/api-docs/agm-core/modules/agmcoremodule Que es la documentación oficial del plugin, hay muchas cosas que se pueden hacer con él, como observaremos en dicha documentación.
+
+En Components -> AgmMap , ahí los Inputs son los [inputs] que tienen los selectores del componente, outputs serían eventos, mapClick, etc
+
+En Directives -> AgmMarker tenemos el marcador, por ejemplo.
+
+Vamos a trabajar con AgmInfoWindow de Components, que nos permitirá abrir una ventana de información cuando hagamos click en un marcador. Colocaremos el selector dentro del selector agm-marker, y añadiremos algunos valores dummy para maquetarlo, así como dos botones de Material.
+
+```
+<mat-card>
+    <mat-card-title> Mapa </mat-card-title>
+    <mat-card-content>
+        <agm-map [latitude]="lat" [longitude]="lng" [zoom]="15">
+            <agm-marker [latitude]="lat" [longitude]="lng">
+                <agm-info-window>
+                    <strong>Titulo</strong>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam suscipit iusto nesciunt corrupti assumenda error nobis, reiciendis quaerat, hic, ipsa voluptatum inventore sunt sequi molestias officiis beatae quae tempora voluptate?</p>
+                    <div>
+                        <button mat-raised-button color="primary">Editar</button>
+                        <button mat-raised-button color="warn">Borrar</button>
+                    </div>
+                </agm-info-window>
+            </agm-marker>
+        </agm-map>
+    </mat-card-content>
+</mat-card>
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 279. Creando marcadores de forma dinámica
