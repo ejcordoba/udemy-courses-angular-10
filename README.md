@@ -14026,6 +14026,96 @@ Vamos a trabajar con AgmInfoWindow de Components, que nos permitirá abrir una v
 
 ## 279. Creando marcadores de forma dinámica
 
+Haremos una generación dinámica de marcadores para cuando hagamos click en el mapa. Vamos a crear una clase para controlar los atributos de los marcadores y así poder trabajar sobre ellos, crearemos para ello el siguiente subdirectorio y archivo: /src/app/classes/marcador.class.ts, y en ese archivo definiremos una clase de Typescript para nuestros marcadores:
+
+```
+export class Marcador {
+
+    public lat: number;
+    public lng: number;
+
+    public titulo = 'Sin título';
+    public desc = 'Sin descripción';
+
+    constructor( lat: number, lng: number ) {
+        this.lat = lat;
+        this.lng = lng;
+    }
+}
+```
+
+Así ya podremos ir a nuestro mapa.component.ts y declarar un array de marcadores que será de la clase que acabamos de definir, y la cual deberemos de importar. Para construir nuestro primer marcador, dentro del constructor declararemos una constante que será una nueva instancia de la clase Marcador y le vamos a dar un valor fijo por defecto para la latitud y la longitud, que los necesita como argumento pues así lo hemos declarado en la clase. Haremos un push para que sea el primer marcador en nuestro array de marcadores.
+
+```
+export class MapaComponent implements OnInit {
+
+  marcadores: Marcador[] = [];
+
+  lat = 41.4072567;
+  lng = 2.1653522;
+
+  constructor() {
+
+    const nuevoMarcador = new Marcador(41.4072567, 2.1653522);
+
+    this.marcadores.push( nuevoMarcador );
+
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+```
+
+Ahora en el selector agm-marker podemos definir un *ngFor para que todos los marcadores del array de marcadores se rendericen y poder, además, acceder a los atributos del marcador (por ejemplo su latitud y longitud, además de título, descripción, etc)
+
+```
+<mat-card>
+    <mat-card-title> Mapa </mat-card-title>
+    <mat-card-content>
+        <agm-map [latitude]="lat" [longitude]="lng" [zoom]="15">
+            <agm-marker *ngFor="let marcador of marcadores" [latitude]="marcador.lat" [longitude]="marcador.lng">
+                <agm-info-window>
+                    <strong>{{ marcador.titulo }}</strong>
+                    <p>{{ marcador.desc }}</p>
+                    <div>
+                        <button mat-raised-button color="primary">Editar</button>
+                        <button mat-raised-button color="warn">Borrar</button>
+                    </div>
+                </agm-info-window>
+            </agm-marker>
+        </agm-map>
+    </mat-card-content>
+</mat-card>
+```
+
+Ahora para poder añadir más marcadores necesitaremos trabajar con el output de AgmMap que hemos mencionado anteriormente, el mapClick, que al ser un evento será definido entre paréntesis en el selector <agm-map> y que disparará una función que vamos a definir como agregarMarcador() y que recibirá un evento $event que será el susodicho click en el mapa `<agm-map (mapClick)="agregarMarcador( $event )" [latitude]="lat" [longitude]="lng" [zoom]="15">`. Podemos hacer un console.log para ver el formato del evento, que será de tipo evento.coords.atributos (longitud, latitud...)
+
+NOTA: Llegado a este punto da error, no hace bien los eventos, tuve que hacer rollback de @agm/core a la versión 1.0.0
+
+```
+  agregarMarcador( evento ) {
+    console.log( evento.coords.lat );
+  }
+```
+
+Para hacer el código declaremos una constante que estará esperando los atributos lat y lng de tipo number desde evento.coords `const coords: { lat: number, lng: number } = evento.coords;`, el resto del código será como con el que inicializamos el constructor.
+
+```
+  agregarMarcador( evento ) {
+
+    const coords: { lat: number, lng: number } = evento.coords;
+
+    const nuevoMarcador = new Marcador( coords.lat, coords.lng );
+
+    this.marcadores.push( nuevoMarcador );
+
+  }
+```
+
+Los marcadores, sin embargo, desaparecen (Exceptuando el primero definido en el constructor) cuando recargamos la página, esto lo resolveremos en la siguiente lección.
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 280. Guardando los marcadores en el LocalStorage
