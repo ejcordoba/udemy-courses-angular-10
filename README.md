@@ -13773,6 +13773,114 @@ Sólo para practicar vamos a añadir unos botones:
 
 ## 276. Módulos personalizados
 
+Vamos a hacer una importación para resolver algo de más adelante, en Angular Material busquemos un "progress bar" que nos guste para implementarlo. Por no repetir más de aquí en adelante, por cada componente de Angular Material que queramos utilizar tendremos que importarlo en app.module.ts y en los imports del mismo.
+
+```
+<mat-toolbar color="primary">
+    <span>Mis mapas</span>
+</mat-toolbar>
+<div class="main-container">
+    <!--     <button mat-raised-button>Basic</button>
+    <button mat-raised-button color="primary">Primary</button>
+    <button mat-raised-button color="accent">Accent</button>
+    <button mat-raised-button color="warn">Warn</button>
+    <button mat-raised-button disabled>Disabled</button>
+    <a mat-raised-button href="https://www.google.com/" target="_blank">Link</a> -->
+
+    <mat-progress-bar mode="query"></mat-progress-bar>
+
+</div>
+...
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// Angular Material
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
+
+
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatProgressBarModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+
+Vamos a crear módulos personalizados, porque todo lo hecho hasta ahora es para ejemplificar que app.module.ts va a crecer demasiado, queremos que sea un archivo ligero y que nuestra aplicación sea lo más modular y distribuida posible.`ng g module material --flat` --flat es para que lo cree en el mismo directorio (src/app).
+
+Para ello vamos a migrar el código de Material que teníamos en app.module.ts hacia material.module.ts.
+
+En app.module.ts sólo dejaremos el import de material.module.ts, y en material.module.ts haremos import de todos los componentes y también export para que puedan ser utilizados fuera de material.module.ts (en app.module.ts o cualquier otro lugar).
+
+app.module.ts
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material.module';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    MaterialModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+
+material.module.ts
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+// Angular Material
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
+
+
+@NgModule({
+  declarations: [],
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatProgressBarModule
+  ],
+  exports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatProgressBarModule
+  ]
+})
+export class MaterialModule { }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 277. Componente del mapa y su diseño
