@@ -14163,9 +14163,131 @@ Una vez definida la función podremos invocarla desde la función agregarMarcado
 
 ## 281. Borrar marcadores del mapa
 
+Queremos que se borre un marcador cuando hagamos click en él y posteriormente en el boton borrar de la infowindow del agm. Para ello declararemos un evento click en el botón que dispare una función borrarMarcador() que vamos a definir, a esa función tendríamos que pasarle la información del marcador que queremos borrar, esto hay varias maneras de hacerlo, la mas sencilla es, como ya hemos hecho en alguna ocasión anteriormente, en el ngFor del array de marcadores declarar un índice, que nos servirá para saber qué posición del array borrar, pasándoselo como argumento a la función borrarMarcador().
+
+En la declaración de borrarMarcador() haremos que, tras recibir ese índice, invoquemos el método splice sobre el array de marcadores, para que elimine el elemento del índice dado, actualizando posteriormente el localStorage guardando el array resultante.
+
+```
+    <agm-marker *ngFor="let marcador of marcadores; let i = index" [latitude]="marcador.lat" [longitude]="marcador.lng">
+                <agm-info-window>
+                    <strong>{{ marcador.titulo }}</strong>
+                    <p>{{ marcador.desc }}</p>
+                    <div>
+                        <button mat-raised-button color="primary">Editar</button>
+                        <button (click)="borrarMarcador(i)" mat-raised-button color="warn">Borrar</button>
+                    </div>
+```
+
+```
+  borrarMarcador( i: number ) {
+
+    this.marcadores.splice( i, 1 );
+    this.guardarStorage();
+
+  }
+```
+
+Queda un poco plano el efecto de borrar un marcador, en la siguiente lección crearemos un pop-up de aviso (el componente Snackbar de Material).
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 282. SnackBar - Retro alimentación en pantalla
+
+La funcionalidad del Snackbar va a ser la de avisar tanto cuando se agregue un marcador, como cuando se elimine. Para poder usarlo tendremos que importar en nuestro módulo de componentes de Material material.module.ts el MatSnackBarModule, recordando añadirlo a los imports y exports. Una vez hecho esto podremos crear una instancia de MatSnackBar en el constructor de mapa.component.ts, para poder llamar a sus métodos en las funciones agregarMarcador() y borrarMarcador().
+
+```
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+// Angular Material
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+
+
+
+@NgModule({
+  declarations: [],
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    MatCardModule,
+    MatSnackBarModule
+  ],
+  exports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    MatCardModule,
+    MatSnackBarModule
+  ]
+})
+export class MaterialModule { }
+
+```
+
+```
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Marcador } from 'src/app/classes/marcador.class';
+
+@Component({
+  selector: 'app-mapa',
+  templateUrl: './mapa.component.html',
+  styleUrls: ['./mapa.component.css']
+})
+export class MapaComponent implements OnInit {
+
+  marcadores: Marcador[] = [];
+
+  lat = 41.4072567;
+  lng = 2.1653522;
+
+  constructor( public snackBar: MatSnackBar ) {
+
+    if ( localStorage.getItem('marcadores')) {
+      this.marcadores = JSON.parse(localStorage.getItem('marcadores') );
+    }
+
+   }
+
+  ngOnInit(): void {
+  }
+
+  agregarMarcador( evento ) {
+
+    const coords: { lat: number, lng: number } = evento.coords;
+
+    const nuevoMarcador = new Marcador( coords.lat, coords.lng );
+
+    this.marcadores.push( nuevoMarcador );
+
+    this.guardarStorage();
+
+    this.snackBar.open('Marcador agregado', 'Cerrar');
+  }
+
+  borrarMarcador( i: number ) {
+
+    this.marcadores.splice( i, 1 );
+    this.guardarStorage();
+    this.snackBar.open('Marcador borrado', 'Cerrar');
+
+  }
+
+  guardarStorage() {
+    localStorage.setItem('marcadores', JSON.stringify( this.marcadores ) );
+  }
+
+}
+
+```
+
+Antes de terminar añadiremos un timeout al snackbar para que se cierre solo si no se pulsa el botón de cerrar durante un rato. Para eso simplemente al método open de snackBar le pasaremos un parámetro adicional en el cual especificaremos la duración (ver documentación para más info sobre las distintos parámetros disponibles) `this.snackBar.open('Marcador agregado', 'Cerrar', { duration: 3000 });`
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
