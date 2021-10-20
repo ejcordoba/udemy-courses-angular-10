@@ -14120,6 +14120,45 @@ Los marcadores, sin embargo, desaparecen (Exceptuando el primero definido en el 
 
 ## 280. Guardando los marcadores en el LocalStorage
 
+Para mantener los marcadores en el mapa, incluso si se hace un refresh de la página, vamos a usar el Local Storage del dispositivo para almacenar sus datos.
+
+Recordemos que en las opciones del navegador, bajo las herramientas de desarrollador del mismo, podemos encontrar la sección "Application" , donde tendremos mucha información del navegador, entre ella los archivos que tenemos en el Local Storage. Recordar también que en Local Storage **solo podemos guardar strings**.
+
+Para añadir esta funcionalidad en el componente mapa.component.ts crearemos una función guardarStorage(), para llamar a una instancia de localStorage no necesitamos declararla ni importarla, ya lo trae ECMAScript por defecto. Podemos añadir datos con la función setItem de localStorage, necesitando como argumento una pareja key/value, siendo la key 'marcadores' y su valor el array de marcadores, el cual tenemos que convertir a string en formato JSON, pues es el tipo que admite localStorage.
+
+```
+  guardarStorage() {
+    localStorage.setItem('marcadores', JSON.stringify( this.marcadores ) );
+  }
+```
+
+Una vez definida la función podremos invocarla desde la función agregarMarcador, pudiendo ya eliminar la definición del primer marcador en el constructor y el push en el array marcadores, puesto que tendremos un mapa vacío y al primer click en él ya estamos añadiéndolos directamente en el localStorage, del mismo modo, para poder leerlos en html, tendremos que leerlos del localStorage y volver a convertir esos string con formato JSON en array, esto será lo que hagamos ahora en el constructor, para que se compruebe cada vez que se cargue el componente.
+
+
+```
+  agregarMarcador( evento ) {
+
+    const coords: { lat: number, lng: number } = evento.coords;
+
+    const nuevoMarcador = new Marcador( coords.lat, coords.lng );
+
+    this.marcadores.push( nuevoMarcador );
+
+    this.guardarStorage();
+
+  }
+```
+
+```
+  constructor() {
+
+    if ( localStorage.getItem('marcadores')) {
+      this.marcadores = JSON.parse(localStorage.getItem('marcadores') );
+    }
+
+   }
+```
+
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 281. Borrar marcadores del mapa
