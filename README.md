@@ -13548,6 +13548,7 @@ Aunque aparece como 'deprecated' realmente para lo que lo vamos a usar sigue fun
  combineLatest([
 
       this.peliculasService.getPeliculaDetalle( id ),
+      
       this.peliculasService.getCast( id )
 
     ]).subscribe(objeto => {
@@ -14292,6 +14293,20 @@ Antes de terminar añadiremos un timeout al snackbar para que se cierre solo si 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
 ## 283. Dialog - Mostrar un modal para la edición del marcador
+
+La siguiente funcionalidad a realizar será la edición del marcador, para poder definir su título y su descripción. Para ello vamos a usar un modal de Material, que se abrirá al pulsar el botón editar del info window. En Angular Material lo encontraremos como 'Dialog'. Nos permitirá esto intercambiar información entre el modal y su padre (en este caso el info window). Empezaremos por añadir a nuestro módulo de componentes de Material el `import { MatDialogModule } from '@angular/material/dialog';`, instanciándolo en los imports y los exports.
+
+Una vez inyectada una instancia de MatDialog en el constructor de mapa.component.ts podremos definir la función openDialog(), que será la llamada al pulsar el botón editar, en esta función crearemos una referencia al objeto padre (el info window) y nos suscribiremos a ella para poder detectar los cambios que haya.
+
+Empezaremos por crear la pantalla del modal, para ello haremos un nuevo componente `ng g c components/mapa/mapa-editar --flat --skipTests --module=app.module.ts`.
+
+En mapa.component.ts, que va a ser la página que va a llamar al modal, vamos a importar `import {MatDialog} from '@angular/material/dialog';`, en el vídeo se añaden más librerías además de MatDialog, pero parece ser que se economizó esto en las últimas versiones de Material. E inyectaremos una instancia de la misma en el constructor. Tras esto podemos añadir el evento click al botón Editar del info window y declararemos una función editarMarcador() que necesitará que se le pase el mismo objeto marcador para poder manipularlo después `<button (click)="editarMarcador(marcador)" mat-raised-button color="primary">Editar</button>`.
+
+Ahora en mapa.component.ts definiremos la función editarMarcador, que recibirá un marcador de tipo Marcador y tendrá el código que podemos ver en la referencia de Angular Material (busquemos en la doc el método openDialog()), el argumento que tendremos que pasarle al método open() de la instancia de dialog será el modal a abrir, que en nuestro caso será el componente recién creado mapa-editar, asegurándonos que lo importa correctamente. En versiones más antiguas era necesario añadir entryComponents al @NgModule de app.module.ts y añadir el componente que se va a usar como argumento, pero ya está 'deprecated'. Como argumento adicional le pasaremos un objeto con una serie de atributos como el ancho y los datos que hay que pasarle al modal desde el padre (info window) (en nuestro caso el título y la descripción).
+
+```
+
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
