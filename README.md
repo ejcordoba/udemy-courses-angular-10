@@ -14310,15 +14310,30 @@ Ahora en mapa.component.ts definiremos la función editarMarcador, que recibirá
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 284. Pantalla para editar el marcador
+## 285. Pantalla para editar el marcador
+
+Ha pasado tiempo desde la última vez que trabajé en el curso y la numeración no concuerda porque algo ha cambiado desde entonces y ahora mismo no sé en qué punto fue.
+Vamos a trabajar en el html del modal del dialog, usaremos un input de Material 'MatInputModule', importando import { MatInputModule } from '@angular/material/input'; en nuestro material.module.ts. En nuestro mapa-editar.component.html pondremos el html de ejemplo del input de Material.
+
+```
+<form class="example-form">
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="Favorite food" value="Sushi">
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <textarea matInput placeholder="Leave a comment"></textarea>
+  </mat-form-field>
+</form>
+```
 
 [Volver al Índice](#%C3%ADndice-del-curso)
 
-## 285. Actualizar marcador con la información del dialog
+## 286. Actualizar marcador con la información del dialog
 
 
 [Volver al Índice](#%C3%ADndice-del-curso)
-## 286. Código fuente de la sección
+## 287. Código fuente de la sección
 
 
 [Volver al Índice](#%C3%ADndice-del-curso)

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Marcador } from 'src/app/classes/marcador.class';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog , MatDialogRef} from '@angular/material/dialog';
 import { MapaEditarComponent } from './mapa-editar.component';
 
 
@@ -49,7 +49,8 @@ export class MapaComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+      //console.log(`Dialog result: ${result}`);
+      console.log(result)
     });
   }
 
